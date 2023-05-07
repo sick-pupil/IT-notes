@@ -1,0 +1,244 @@
+## 1. 镜像、容器、仓库
+- 镜像：镜像是一个只读模板，带有创建Docker容器的指令。通常，一个镜像是基于另一个镜像的，还需要进行一些额外的定制
+- 容器：容器是用镜像创建的运行实例，每个容器都可以被启动，开始，停止，删除，同时容器之间相互隔离，保证应用运行期间的安全
+- 仓库：集中存放镜像文件的场所
+<img src="D:\Project\IT notes\框架or中间件\Docker\img\docker运行与三大要素.png" style="width:700px;height:350px;" />
+
+## 2. 安装docker
+```shell
+yum -y update
+yum install -y yum-utils
+yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+systemctl start docker
+docker run hello-world
+```
+
+## 3. docker常用操作命令
+<img src="D:\Project\IT notes\框架or中间件\Docker\img\docker命令大全.jpg" style="width:700px;height:500px;" />
+### 1. 帮助启动类命令
+```shell
+# 启动docker
+systemctl start docker
+# 停止docker
+systemctl stop docker
+# 重启docker
+systemctl restart docker
+# 查看docker状态
+systemctl status docker
+# 开机启动
+systemctl enable docker
+# 查看docker概要信息
+docker info
+# 查看docker总体帮助文档
+docker --help
+# 查看docker命令帮助文档
+docker 具体命令 --help
+```
+
+### 2. 镜像命令
+```shell
+# 列出本地所有镜像，包含历史镜像
+docker images -a
+# 只显示镜像ID
+docker images -q
+# 通过镜像名称搜索某个镜像
+docker search xxx
+# 通过镜像名称拉取某个镜像
+docker pull xxx
+# 查看镜像/容器/数据卷所占的空间
+docker system df
+# 通过镜像ID删除镜像
+docker rmi xxx
+```
+
+### 3. 容器命令
+```shell
+# 根据镜像运行容器
+docker run --name=xxx -it ubuntu /bin/bash
+# docker run 参数
+--name=xxx 为容器指定一个新名字
+-d 后台作为守护进程运行容器并返回容器ID
+-i 以交互模式运行容器，通常与-t同时使用
+-t 为容器重新分配一个伪输入终端，通常与-i配合使用
+# 端口映射格式为 hostPort:containerPort，分别为宿主机端口与容器端口
+-P(大写P) 随机端口暴露映射
+-p(小写p) 指定端口暴露映射
+
+# 列出正在运行的容器信息
+docker ps
+# docker ps 参数
+-a 列出当前所有正在运行的容器+历史上运行过的
+-l 显示最近创建的容器
+-n 显示最近n个创建的容器
+-q 静默模式，显示容器编号
+
+# 容器新建、退出、重启
+exit 退出后容器停止
+ctrl+p+q 退出容器后容器并没有停止
+# 启动已停止运行的容器
+docker start 容器ID或容器名称
+# 重启容器
+docker restart 容器ID或容器名称
+# 停止容器
+docker stop 容器ID或容器名称
+# 强制停止容器
+docker kill 容器ID或容器名称
+# 删除已停止的容器
+docker rm 容器ID
+
+# 查看容器日志
+docker logs 容器ID
+
+# 查看容器内运行的进程
+docker top 容器ID
+
+# 查看容器内部细节
+docker inspect 容器ID
+
+# 进入运行中的容器并以命令行进行交互
+docker exec -it 容器ID /bin/bash 在容器中打开新的终端，并可以启动新的进程，用exit退出不会导致容器停止
+docker attach 容器ID /bin/bash 直接进入容器启动命令的终端，不会启动新的进程，用exit退出会导致容器停止
+
+# 从容器内拷贝文件到主机上
+docker cp 容器ID:容器内路径 目的主机路径
+
+# 将容器导入与导出为镜像
+docker export 容器ID > 文件名.tar 导出容器内容作为一个tar归档文件
+cat 文件名.tar | docker import - 镜像用户/镜像名:镜像版本号 从tar包中的内容创建一个新的文件系统再导入为镜像
+```
+
+## 4. docker镜像分层
+`docker`镜像是由一系列层来构成的，每层代表`dockerfile`中的一条指令
+```text
+FROM ubuntu:18.04
+COPY . /app
+RUN make /app
+CMD python /app/app.py
+```
+以上`dockerfile`包含四个命令，每个命令都会新创建一个层：`FROM`语句会从`ubuntu:18.04`镜像创建一个层；`COPY`指令会从`docker`客户端的当前目录下添加一些文件；`RUN`指令使用了`make`指令来构建；最后`CMD`是指在容器中运行什么命令
+
+**可写容器层与镜像层**
+- 容器而对于`docker`来说，创建新容器时，每一层都会彼此堆叠，可以在基础层的基础上添加新的**可写容器层。对容器的所做的所有更改都将写入到该可写容器层中**。在容器中添加数据或者修改现有数据的所有读写操作都会存储在此可写层中。删除容器后，可写层也会被删除
+- 镜像层是只读的
+
+<img src="D:\Project\IT notes\框架or中间件\Docker\img\docker镜像层与容器层.png" style="width:700px;height:500px;" />
+
+`UnionFS`联合文件系统：`UnionFS`支持对文件系统的修改看作一次提交来一层层叠加，同时可以把不同目录挂载到同一个虚拟文件系统下。`UnionFS`文件系统是`docker`镜像的基础，镜像可以通过分层来进行继承。`UnionFS`一次同时加载多个文件系统，把各层文件系统叠加起来
+
+**docker镜像加载原理**：
+- `bootfs`主要包含`bootloader`和`kernel`，`bootloader`主要是引导加载`kernel`，`Linux`刚启动时也会加载`bootfs`文件系统，在`docker`镜像的最底层是`bootfs`，包含`boot`加载器和内核。加载完成后内核就存在于内存中
+- `rootfs`在`bootfs`之上，包括最基本的命令、工具和程序库就行，如`/dev /proc /bin /etc`，对应不同的操作系统发行版本
+
+**docker支持从容器构造一个新的镜像：commit命令**
+```shell
+docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
+docker commit -a="mrhelloworld" -m="jdk11 and tomcat9" 容器ID mycentos:7
+
+-a：提交的镜像作者
+-c：使用dockerfile指令创建镜像
+-m：提交时的文字说明
+-p：commit时将容器暂停
+```
+
+## 5. 容器数据卷
+`docker`实现了将文件或者目录（数据卷）挂载到容器中的功能，卷存在于多个容器当中，解决了数据持久化与共享数据的需求
+*在容器中创建新增的内容能在宿主机中看到；主机修改数据也会同步到容器中*
+
+容器卷特点：
+1. 数据卷可在容器之间共享或重用数据
+2. 数据卷中的更改不会包含在镜像的更新中
+3. 卷中的更改可以直接生效
+4. 数据卷的生命周期一直持续到没有容器使用它为止
+
+```shell
+# 卷创建命令
+docker volume create myvolume # 默认卷为local模式，仅允许本主机的容器访问
+docker run -it -v 宿主机绝对路径目录:容器内目录 镜像名 # 使用-v的方式指定容器内需要被持久化的路径，Docker会自动为我们创建卷，并且绑定到容器中
+docker run -it -v 宿主机绝对路径目录:容器内目录:ro 镜像名 # 挂载的数据卷内部只能由宿主机写
+docker run -it -v 宿主机绝对路径目录:容器内目录:rw 镜像名 # 宿主机与容器双方都有读写的权限
+docker run -d -P --name web -v my-vol:/wepapp --mount source=my-vol,target=/webapp training/webapp python app.py #创建一个容器，同时创建一个卷，并将卷挂载入容器中
+
+# 卷删除命令
+docker volume rm myvolume # 容器删除的同时并不会一带删除容器创建的数据卷，因此数据卷需要手动删除
+
+# 查看宿主机目录相关的卷信息
+docker volume inspect 宿主机目录
+
+# 查看宿主机的卷目录
+docker volume ls
+```
+
+如果用户需要在多个容器之间共享一些持续更新的数据，最简单的方式是使用**数据卷容器**。数据卷容器
+也是一个容器，但是它的目的是专门用来提供数据卷供其他容器挂载
+```shell
+docker run -d --name data-volume -v /data/nginx:/usr/share/nginx/html -v /data/mysql:/var/lib/mysql centos:7.8.2003
+
+docker run -itd --name nginx01 -p 80:80 --volumes-from data-volume nginx:1.19.3-alpine
+```
+
+## 6. dockerfile
+`docker`执行`dockerfile`大致流程
+1. 从基础镜像中运行一个容器
+2. 按照顺序执行`dockerfile`中的每一条指令，对容器作出修改
+3. 每执行一条指令，则进行一次`commit`提交一个新的镜像层
+4. 继续执行指令直至执行完成
+
+<img src="D:\Project\IT notes\框架or中间件\Docker\img\dockerfile构建docker镜像过程.png" style="width:700px;height:300px;" />
+
+<img src="D:\Project\IT notes\框架or中间件\Docker\img\执行dockerfile.png" style="width:700px;height:300px;" />
+
+**dockerfile保留字指令**
+- `FROM`：指定基础镜像
+- `MAINTAINER`：镜像维护者姓名及邮箱地址
+- `RUN`：容器构建时需要运行的命令
+- `EXPOSE`：当前容器对外暴露的端口号
+- `WORKDIR`：指定在创建容器后，终端默认登录进来的工作目录
+- `ENV`：用来在构建镜像过程中设置环境变量
+- `ADD`：将宿主机目录下的文件拷贝进镜像，`ADD`命令会自动处理`URL`和解压`tar`压缩包
+- `COPY`：拷贝文件、目录到镜像中。具体是将从构建上下文目录中<src原路径>的文件或目录复制到新一层镜像的<目标路径>位置 ，有两种写法：`COPY src dest` 或者 `COPY ["src", "dest"]`
+- `VOLUME`：容器数据卷，用于数据保存和持久化工作
+- `CMD`：指定一个容器启动时要运行的命令，`CMD`与`RUN`相似，存在`shell`与`exec`格式
+- `ENTRYPOINT`：指定一个容器启动时要运行的命令，与`CMD`一样都是在指定容器启动程序及参数
+- `ONBUILD`：当构建一个被继承的`DockerFile`时运行命令， 父镜像在被子镜像继承后，父镜像的ONBUILD被触发
+
+<img src="D:\Project\IT notes\框架or中间件\Docker\img\dockerfile指令.png" style="width:700px;height:400px;" />
+
+```shell
+FROM centos
+MAINTAINER lihongcheng<xxx@163.com>
+ENV ETCPATH /etc
+WORKDIR $ETCPATH
+RUN yum -y install vim
+RUN yum -y install net-tools
+EXPOSE 5000
+CMD echo "-----successful------"
+CMD /bin/bash
+
+FROM centos
+MAINTAINER lihongcheng<xxx@163.com>
+RUN yum -y install curl
+CMD ["curl", "-s", "http://ip.cn"]
+```
+
+`RUN`、`CMD`、`ENTRYPOINT`的区别：
+- `RUN`命令执行命令并创建新的镜像层，通常用于安装软件包
+- `CMD`命令设置容器启动后默认执行的命令及其参数，但`CMD`设置的命令能够被`docker run`命令后面的命令行参数替换
+- `ENTRYPOINT`配置容器启动时的执行命令（不会被忽略，一定会被执行，即使运行`docker run`时指定了其他命令），且`ENTRYPOINT`可使用`docker run`以及`CMD`的命令作为参数使用
+
+## 7. docker network
+`docker`默认内置三个网络
+
+| network id | name | driver |
+| ----- | ----- | ----- |
+| 7fca4eb8c647 | bridge | bridge |
+| 9f904ee27bf5 | none | null |
+| cf03ee007fb4 | host | host |
+
+`docker run -network=<NETWORK>`可以指定容器的网络模式，还存在以下四种网络模式
+- `host`模式：`--net=host`，与宿主机在同一个网络中，但没有独立IP地址
+- `none`模式：`--net=none`，关闭了容器的网络功能
+- `bridge`模式：`--net=bridge`，连接到`docker0`虚拟网卡，通过`docker0`网桥以及`Iptables nat`表配置与宿主机通信
+- `container`模式：`--net=container:NAME_or_ID`，不会创建自己的网卡，配置自己的IP，而是和一个指定的容器共享IP、端口范围
+
+## 8. docker compose
