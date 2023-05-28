@@ -1,14 +1,14 @@
 {
   "main": {
-    "id": "7a32202fd8899c51",
+    "id": "621d9b54621289a3",
     "type": "split",
     "children": [
       {
-        "id": "de849a67a342c055",
+        "id": "94cd4697073fea16",
         "type": "tabs",
         "children": [
           {
-            "id": "f1f78493fb7e36f9",
+            "id": "e176092d348720f0",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -25,15 +25,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "db17bfbf25c98797",
+    "id": "a3d6aad32a703558",
     "type": "split",
     "children": [
       {
-        "id": "e0d58239c84e7a71",
+        "id": "e8ee77bf9d3eebb8",
         "type": "tabs",
         "children": [
           {
-            "id": "c6e1d9ba0a621b40",
+            "id": "9e964c24066f1113",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -43,7 +43,7 @@
             }
           },
           {
-            "id": "1ea949a0e8c7cffe",
+            "id": "0a02d4810f6a14b7",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -58,7 +58,7 @@
             }
           },
           {
-            "id": "312530870bc73b02",
+            "id": "ad7a8c778481428f",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -69,18 +69,30 @@
       }
     ],
     "direction": "horizontal",
-    "width": 274.5
+    "width": 300,
+    "collapsed": true
   },
   "right": {
-    "id": "868e03af7d7e1dc6",
+    "id": "b3a3b99f186fa725",
     "type": "split",
     "children": [
       {
-        "id": "f1aa1d9ab4705e62",
+        "id": "6da914154bec018c",
         "type": "tabs",
         "children": [
           {
-            "id": "a582cc66d5621ed9",
+            "id": "2be54516579d08bc",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "41628745dd9dc106",
             "type": "leaf",
             "state": {
               "type": "backlink",
@@ -95,69 +107,66 @@
                 "unlinkedCollapsed": true
               }
             }
+          },
+          {
+            "id": "3e9e94f04ddc29f2",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "框架or中间件/Git/Git概念与配置.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "367506daf2a5a7b3",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "框架or中间件/Git/Git概念与配置.md"
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 320.5
   },
   "left-ribbon": {
     "hiddenItems": {
-      "canvas:新建白板": false,
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
-      "command-palette:打开命令面板": false,
-      "markdown-importer:打开 Markdown 格式转换器": false
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false
     }
   },
-  "active": "f1f78493fb7e36f9",
+  "active": "e176092d348720f0",
   "lastOpenFiles": [
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+    "框架or中间件/XXLJob",
+    "框架or中间件/ZooKeeper/Zookeeper相关原理与配置.md",
     "框架or中间件/Docker/Docker概念与应用.md",
-    "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
-    "框架or中间件/Minio/Minio概念与应用.md",
-    "Java/IO/AIO",
-    "Java/IO/BIO",
-    "Java/IO/NIO",
-    "框架or中间件/MQ/Kafka/img",
-    "框架or中间件/Minio/MinIO概念与应用.md",
-    "框架or中间件/Minio/img/对象存储概念图.png",
-    "框架or中间件/Minio/img",
-    "技术要点/文件上传下载.md",
-    "技术要点/套用模板生成文件.md",
-    "技术要点/多数据源切换.md",
-    "技术要点/登录认证与权限管理.md",
-    "框架or中间件/Docker/img/执行dockerfile.png",
-    "框架or中间件/Docker/img/dockerfile指令.png",
-    "框架or中间件/Docker/img/dockerfile构建docker镜像过程.png",
-    "框架or中间件/Git/Git概念与配置.md",
-    "框架or中间件/Docker/img/docker镜像层与容器层.png",
-    "框架or中间件/Docker/img/docker镜像层与容器层.png.crdownload",
-    "框架or中间件/Docker/img/docker命令大全.jpg",
-    "框架or中间件/Docker/img/docker命令大全.jpg.crdownload",
-    "框架or中间件/Docker/img/docker运行与三大要素.png",
-    "框架or中间件/Docker/img/docker运行与三大要素.png.crdownload",
-    "框架or中间件/Docker/img",
-    "框架or中间件/Git/img/Git文件状态与命令.png",
-    "框架or中间件/Git/img/Git文件状态.png",
-    "框架or中间件/Git/img/Git大致架构.png",
-    "框架or中间件/Git/img",
-    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
-    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
-    "框架or中间件/SpringMVC/SpringMVC配置与原理.md",
-    "框架or中间件/SpringMVC/SpringMVC相关概念.md",
-    "Java/并发/线程池.md",
-    "框架or中间件/Dubbo/Dubbo相关配置.md",
-    "框架or中间件/Dubbo/Dubbo原理.md",
-    "框架or中间件/Mysql/Mysql进阶.md",
     "框架or中间件/Redis/Redis进阶.md",
     "框架or中间件/MyCat2/Mycat2概念与应用.md",
-    "Java/JVM/垃圾收集器与内存分配策略.md",
-    "Java/JVM/类加载机制.md",
-    "Java/JVM/类文件结构.md",
-    "Java/JVM/字节码执行引擎.md",
-    "Java/JVM/Java内存区域与内存溢出异常.md"
+    "框架or中间件/Mysql/Mysql进阶.md",
+    "操作系统/并发：死锁与饥饿.md",
+    "未命名.canvas",
+    "框架or中间件/MQ/Kafka/img/Kafka3大纲.png",
+    "框架or中间件/Dubbo/Dubbo相关配置.md",
+    "框架or中间件/Git/Git概念与配置.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Eureka.md",
+    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
+    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
+    "框架or中间件/Mybatis/Mybatis-Plus.md",
+    "框架or中间件/Minio/Minio概念与应用.md",
+    "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
+    "技术要点/登录认证与权限管理.md"
   ]
 }

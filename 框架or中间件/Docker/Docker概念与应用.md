@@ -16,6 +16,7 @@ docker run hello-world
 
 ## 3. docker常用操作命令
 <img src="D:\Project\IT notes\框架or中间件\Docker\img\docker命令大全.jpg" style="width:700px;height:500px;" />
+
 ### 1. 帮助启动类命令
 ```shell
 # 启动docker
@@ -242,3 +243,81 @@ CMD ["curl", "-s", "http://ip.cn"]
 - `container`模式：`--net=container:NAME_or_ID`，不会创建自己的网卡，配置自己的IP，而是和一个指定的容器共享IP、端口范围
 
 ## 8. docker compose
+`docker compose`：用于定义和运行多容器`docker`应用程序的工具。`compose`可以使用`yaml`文件配置应用程序所需要的服务，使用命令就可以通过`yaml`配置文件创建并启动所有服务
+
+`docker-compose.yml`文件定义了一组相关联的容器为一个工程，一个工程包含多个服务，每个服务中又定义了创建容器所需的镜像、参数、依赖
+
+使用`docker compose`的三个步骤：
+1. 使用`dockerfile`文件定义应用程序的环境
+2. 使用`docker-compose.yml`文件定义构成应用程序的服务，这样它们可以在隔离环境中一起运行
+3. 最后执行`docker-compose up`命令创建并启动所有服务
+
+### 示例docker-compose.yml
+```yaml
+# 描述 Compose 文件的版本信息
+version: "3.8"
+# 定义服务，可以多个
+services:
+  nginx: # 服务名称
+    image: nginx # 创建容器时所需的镜像
+    container_name: mynginx # 容器名称，默认为"工程名称_服务条目名称_序号"
+    ports: # 宿主机与容器的端口映射关系
+      - "80:80" # 左边宿主机端口:右边容器端口
+    networks: # 配置容器连接的网络，引用顶级 networks 下的条目
+      - nginx-net
+
+# 定义网络，可以多个。如果不声明，默认会创建一个网络名称为"工程名称_default"的 bridge 网络
+networks:
+  nginx-net: # 一个具体网络的条目名称
+    name: nginx-net # 网络名称，默认为"工程名称_网络条目名称"
+    driver: bridge # 网络模式，默认为 bridge
+```
+
+```shell
+# 前台启动
+docker-compose up
+# 后台启动
+docker-compose up -d
+# 停止并删除容器、网络
+docker-compose down
+```
+
+### `compose`文件配置
+1. `version`：`compose`版本
+2. `services`：
+	- 服务名称，自定义
+		- `image`，镜像名称与标签
+		- `container_name`，容器名称
+		- `ports`，宿主机端口:容器端口
+		- `environment`：创建容器时的环境变量
+		- `volumes`，容器卷
+		- `build`，根据所给路径执行`dockerfile`
+			- `context`，`dockerfile`所在目录
+			- `dockerfile`，文件名称
+		- `depends_on`：该容器在哪些依赖容器后才启动执行
+		- `restart`：有四个选项，`no on-failure always unless-stopped`决定容器是否跟随`docker`服务同时启动
+		- `networks`：连接网络
+3. `networks`：
+	- 网络条目名称，自定义
+		- `name`：网络名称
+		- `driver`：网络模式，`bridge host none`
+
+### `compose`命令
+- `config`：验证`docker-compose`文件配置正确与否
+- `pull`：拉去服务依赖的镜像
+- `up`：创建并启动所有服务的容器
+- `logs`：查看服务容器的输出日志，可以使不同服务输出不同颜色的日志
+- `ps`：列出工程中的所有服务容器
+- `run`：在执行服务中的某个容器上执行一个命令
+- `exec`：进入服务容器
+- `pause`
+- `unpause`
+- `restart`
+- `start`
+- `stop`
+- `kill`
+- `rm`
+- `down`
+- `images`
+- `port`
+- `top`
