@@ -13,8 +13,8 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "框架or中间件/Git/Git概念与配置.md",
-                "mode": "preview",
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+                "mode": "source",
                 "source": false
               }
             }
@@ -69,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -97,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/Git/Git概念与配置.md",
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/Git/Git概念与配置.md",
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/Git/Git概念与配置.md"
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md"
               }
             }
           }
@@ -135,7 +134,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 320.5
+    "width": 320.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -149,6 +149,7 @@
   },
   "active": "e176092d348720f0",
   "lastOpenFiles": [
+    "框架or中间件/Git/Git概念与配置.md",
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
     "框架or中间件/XXLJob",
     "框架or中间件/ZooKeeper/Zookeeper相关原理与配置.md",
@@ -160,7 +161,6 @@
     "未命名.canvas",
     "框架or中间件/MQ/Kafka/img/Kafka3大纲.png",
     "框架or中间件/Dubbo/Dubbo相关配置.md",
-    "框架or中间件/Git/Git概念与配置.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Eureka.md",
     "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
     "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
