@@ -1,13 +1,32 @@
-<img src="D:\Project\IT notes\框架or中间件\MQ\Kafka\img\Kafka3大纲.png" style="width:700px;height：400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\Kafka3大纲.png" style="width:700px;height:300px;" />
 
 ## 1. 概述
+`kafka`是一个分布式基于发布订阅模式的消息队列，本质为一个`MQ`，应用场景有：多服务解耦、异步通信、缓冲
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\发布订阅模式.png" style="width:700px;height:200px;" />
+**发布订阅模式**：生产者将消息发布到主题`topic`中，多个消费者订阅该主题，被消费的数据不会从主题中立即被清除
 
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\基本架构.png" style="width:700px;height:400px;" />
+
+- `kafka`集群存在多个`kafka`节点，一个节点就是一个`broker`，每个节点存在多个分区`partition`。当存在一个比较大数据量的`topic`时，可以将大`topic`分割成多个`partition`分区进行分布式存储
+- 而从`topic`分割出来的多个`partition`还会存在`leader`与`follower`的**数据一致性**关系，即`zookeeper`中的`leader`与`follower`关系：`leader`存在多个`follower`从节点作为读节点备份，当`leader`节点宕机可以在`follower`中进行投票选举
 
 ## 2. 安装
 ### 1. 原生部署
-
+- 安装`zookeeper`
+- 下载`kafka.tar`安装包
+- 修改`server.properties`，每个节点都设置
+```prop
+broker.id=1
+log.dirs=/Volumns/doc/tmp/kafka-log
+```
+- 启动`zookeeper`：`zookeeper-server-start.sh -daemon config/zookeeper.properties`
+- 启动`kafka`：`kafka-server-start.sh config/server.properties`
+- 显示已有`topic`：`kafka-topics.sh --list --zookeeper localhost:2181`
+- 生产消息：`kafka-console-producer.sh --broker-list localhost:9092 --topic javaedge_ad_test_x`
+- 消费消息：`kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic javaedge_ad_test_x --from-beginning`
 
 ### 2. docker部署
+#### 1. `docker-zookeeper-compose.yml`
 ```yaml
 version: '2.17.3'
 
@@ -65,6 +84,7 @@ services:
 			- zk-net
 ```
 
+#### 2. `docker-kafka-compose.yml`
 ```yaml
 version: '2.17.3'
 
@@ -95,7 +115,6 @@ services:
 			- D:\Project\docker\kafka1\data:/kafka
 		networks:
 			- zk-net
-
 
 	kafka2:
 	    image: wurstmeister/kafka:2.12-2.5.1
