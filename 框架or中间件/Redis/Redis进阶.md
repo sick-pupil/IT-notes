@@ -1,4 +1,4 @@
-<img src="D:\Project\IT notes\框架or中间件\Redis\img\进阶.png" style="width:700px;height:600px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\进阶.png" style="width:700px;height:600px;" />
 
 ## 1. 事务
 `redis`事务主要是为了方便用户一次执行多个命令，可分为三个阶段：
@@ -21,7 +21,7 @@
 | `discard` | 在`multi`后`exec`前，取消事务队列组队 |
 | `unwatch` | 取消`watch`命令对`key`的监控 |
 
-<img src="D:\Project\IT notes\框架or中间件\Redis\img\事务执行过程.png" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\事务执行过程.png" style="width:700px;height:500px;" />
 
 例子
 ```
@@ -214,12 +214,12 @@ redis-server --port 6300 --slaveof 127.0.0.1 6379
 
 ### Sentinel哨兵模式：
 反客为主的自动版，后台监控主机是否正常，宕机故障则进行投票自动将从机升级为主机
-<img src="D:\Project\IT notes\框架or中间件\Redis\img\哨兵模式.png" style="width:400px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\哨兵模式.png" style="width:400px;height:300px;" />
 *哨兵模式存在一个独立的哨兵进程来监控redis集群*
 - 哨兵节点会以每秒一次的频率对每个 Redis 节点发送`PING`命令，并通过 Redis 节点的回复来判断其运行状态。
 - 当哨兵监测到主服务器发生故障时，会自动在从节点中选择一台将机器，并其提升为主服务器，然后使用`PubSub`发布订阅模式，通知其他的从节点，修改配置文件，跟随新的主服务器。
 
-<img src="D:\Project\IT notes\框架or中间件\Redis\img\多节点哨兵模式.png" style="width:600px;height:500px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\多节点哨兵模式.png" style="width:600px;height:500px;" />
 *多个节点通过Sentinel进程互相监控，Sentinel有点类似zookeeper的客户端去获取服务列表注册*
 
 - **主观下线**：适用于主服务器与从服务器，规定时间内`Sentinel`发出的`ping`命令没有接收到相应的`pong`命令，则认为对方下线
@@ -302,7 +302,7 @@ public static Jedis getJedisFromSentinel() {
 
 ## 6. 应用问题
 ### 1. 秒杀
-<img src="D:\Project\IT notes\框架or中间件\Redis\img\秒杀流程图.png" style="width:700px;height:200px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\秒杀流程图.png" style="width:700px;height:200px;" />
 
 秒杀过程：
 1. userid与prodid的非空判断

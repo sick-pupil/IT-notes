@@ -1,17 +1,17 @@
 ## 1. MQ工作类型
 - 简单模式
-<img src="D:\Project\IT notes\框架or中间件\MQ\RabbitMQ\img\simple简单模式.png" style="width:300px;height:100px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\simple简单模式.png" style="width:300px;height:100px;" />
 - work工作模式
-<img src="D:\Project\IT notes\框架or中间件\MQ\RabbitMQ\img\work工作模式.png" style="width:300px;height:100px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\work工作模式.png" style="width:300px;height:100px;" />
 - 发布订阅共享模式
-<img src="D:\Project\IT notes\框架or中间件\MQ\RabbitMQ\img\发布订阅共享模式.png" style="width:300px;height:100px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\发布订阅共享模式.png" style="width:300px;height:100px;" />
 - 路由模式
-<img src="D:\Project\IT notes\框架or中间件\MQ\RabbitMQ\img\路由模式.png" style="width:300px;height:100px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\路由模式.png" style="width:300px;height:100px;" />
 - 主题模式
-<img src="D:\Project\IT notes\框架or中间件\MQ\RabbitMQ\img\主题模式.png" style="width:300px;height:100px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\主题模式.png" style="width:300px;height:100px;" />
 
 ## 2. MQ四大概念
-<img src="D:\Project\IT notes\框架or中间件\MQ\RabbitMQ\img\MQ工作原理.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\MQ工作原理.png" style="width:700px;height:300px;" />
 - 生产者：产生数据发送消息的程序
 - 消费者：消费与接收含义相似，消费者类似于等待接收消息的程序
 - 交换机：一方面接收来自生产者的消息，另一方面把接收到的消息推送到队列中
@@ -285,7 +285,7 @@ MQ持久化包括三步：
 	...
 ```
 - 异步批量确认``：
-<img src="D:\Project\IT notes\框架or中间件\MQ\RabbitMQ\img\异步批量确认.png" style="width:700px;height:350px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\异步批量确认.png" style="width:700px;height:350px;" />
 ```java
 	channel.queueDeclare(queueName, true, false, false, null);
 	//开启发布确认
@@ -363,7 +363,7 @@ MQ持久化包括三步：
 **临时队列**：连接`RabbitMQ`时被`RabbitMQ Server`创建的一个全新的、具有随机名称的队列，一旦断开连接队列则自动被删除`String queueName = channel.queueDeclare().getQueue()`
 
 ### 2. Fanout扇出广播Exchange
-<img src="D:\Project\IT notes\框架or中间件\MQ\RabbitMQ\img\fanout广播.png" style="width:500px;height:200px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\fanout广播.png" style="width:500px;height:200px;" />
 将消息广播到所路由到的所有队列，**`fanout`类型`exchange`会把同一个消息从交换机发给匹配到的所有队列**
 ```java
 	public static final String EXANGE_NAME = "logs";
@@ -394,8 +394,8 @@ MQ持久化包括三步：
 ```
 
 ### 3. Direct直接路由Exchange
-<img src="D:\Project\IT notes\框架or中间件\MQ\RabbitMQ\img\direct单个绑定.png" style="width:500px;height:200px;" />
-<img src="D:\Project\IT notes\框架or中间件\MQ\RabbitMQ\img\direct多个绑定.png" style="width:500px;height:200px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\direct单个绑定.png" style="width:500px;height:200px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\direct多个绑定.png" style="width:500px;height:200px;" />
 支持多重`routingKey`绑定
 ```java
 	public static final String EXANGE_NAME = "console";
@@ -426,7 +426,7 @@ MQ持久化包括三步：
 ```
 
 ### 4. Topic主题Exchange
-<img src="D:\Project\IT notes\框架or中间件\MQ\RabbitMQ\img\topic主题.png" style="width:500px;height:200px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\topic主题.png" style="width:500px;height:200px;" />
 `topic`交换机的`routingKey`不能随便乱写，需要满足为单调列表，以点号分隔开，如`"stock.usd.nyse/nyse.vmw"`，存在替换符：星号`*`代替一个单词，井号`#`代替零个或多个单词，如：`*.orange.*/*.*.rabbit/lazy.#`
 
 当`routingKey`被设置为单独一个`#`，则类似`fanout`；当`routingKey`中没有出现`#`和`*`，则类似`direct`
@@ -476,7 +476,7 @@ MQ持久化包括三步：
 2. 队列达到最大长度，队列满了
 3. 消息被拒绝`basic.reject`或者`basic.nack`，并且`requeue=false`
 
-<img src="D:\Project\IT notes\框架or中间件\MQ\RabbitMQ\img\死信队列.png" style="width:500px;height:500px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\死信队列.png" style="width:500px;height:500px;" />
 
 ```java
 public class Consumer01 {
@@ -554,7 +554,7 @@ public class Producer {
 ```
 
 ## 10. TTL延迟队列
-<img src="D:\Project\IT notes\框架or中间件\MQ\RabbitMQ\img\TTL延迟队列.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\TTL延迟队列.png" style="width:700px;height:300px;" />
 ### 1. 基于死信的延迟队列
 ```xml
 <dependency>
@@ -909,7 +909,7 @@ public class produceController {
 
 **达到备份与报警的功能**
 
-<img src="D:\Project\IT notes\框架or中间件\MQ\RabbitMQ\img\备份交换机.png" style="width:700px;height:250px;" />
+<img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\备份交换机.png" style="width:700px;height:250px;" />
 
 ```java
 	//确认交换机

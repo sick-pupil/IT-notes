@@ -1,7 +1,7 @@
 ## 1. Zookeeper相关概念
 Zookeeper基于观察者模式设计，负责存储和管理分布式数据，接收观察者的注册，负责将分布式数据变化通知给在Zookeeper上注册的观察者，**Zookeeper=文件系统+通知机制**
 
-<img src="D:\Project\IT notes\框架or中间件\Zookeeper\img\Zookeeper集群结构.png" style="width:700px;height:200px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Zookeeper\img\Zookeeper集群结构.png" style="width:700px;height:200px;" />
 
 Zookeeper特点：
 1. Zookeeper服务中，存在一个领导者leader、多个跟随者follower
@@ -12,7 +12,7 @@ Zookeeper特点：
 6. 一定时间范围中，Client能读到最新数据
 
 Zookeeper存在多个server，每个server都可以被多个client连接，server中存在命名空间，命名空间中的节点结构可以看作一棵树，每个节点为一个ZNode，每一个ZNode默认能存储1MB数据，每个ZNode拥有一个唯一路径标识
-<img src="D:\Project\IT notes\框架or中间件\Zookeeper\img\Zookeeper数据结构.png" style="width:500px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Zookeeper\img\Zookeeper数据结构.png" style="width:500px;height:300px;" />
 
 应用场景：
 1. 统一命名服务，对应用服务进行统一命名，类似域名-IP映射关系
@@ -171,10 +171,10 @@ Zookeeper节点中的四种状态：
 使用`./zkCli.sh -server ip:clientPort`，让客户端连上对应IP地址的server
 
 - 使用客户端连上服务器后，使用`ls /`可以查看命名空间中`/`路径下所存在的节点
-<img src="D:\Project\IT notes\框架or中间件\ZooKeeper\img\客户端ls命令.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\ZooKeeper\img\客户端ls命令.png" style="width:700px;height:400px;" />
 
 - `ls -s /`查看`/`路径下的节点信息
-<img src="D:\Project\IT notes\框架or中间件\ZooKeeper\img\客户端ls -s命令.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\ZooKeeper\img\客户端ls -s命令.png" style="width:700px;height:400px;" />
 
 ### 节点属性信息
 | ZNode状态信息      | 解释 |
@@ -227,10 +227,10 @@ Zookeeper节点中的四种状态：
 
 ### 1. get path \[watch\]监听节点数据变化
 get -s path注册一次监听器，只会监听一次数据变化
-<img src="D:\Project\IT notes\框架or中间件\ZooKeeper\img\get -w监听.png" style="width:600px;height:100px;" />
+<img src="D:\Project\IT-notes\框架or中间件\ZooKeeper\img\get -w监听.png" style="width:600px;height:100px;" />
 
 ### 2. ls path \[watch\]监听子节点增减变化
-<img src="D:\Project\IT notes\框架or中间件\ZooKeeper\img\ls -w监听.png" style="width:600px;height:100px;" />
+<img src="D:\Project\IT-notes\框架or中间件\ZooKeeper\img\ls -w监听.png" style="width:600px;height:100px;" />
 
 ## 8. 客户端API
 ```xml
@@ -891,7 +891,7 @@ Zookeeper使用多种算法协议保证实现分布式中的一致性
 - **Accept接收阶段**：Acceptor收到Propose请求后，在不违背自己之前作出的承诺下，接受并持久化当前Proposal ID和提案Value
 - **Learn**：Proposer收到多数Acceptors的Accept后，决议形成并发送给所有Learners
 
-<img src="D:\Project\IT notes\框架or中间件\ZooKeeper\img\Paxos流程.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\ZooKeeper\img\Paxos流程.png" style="width:700px;height:400px;" />
 
 当Proposer存在多个时，可能会因为Proposal ID（比如Proposal ID=timestamp.server）导致相互争夺Acceptor，导致提案无法达成一致。因此提出一次Paxos流程中只有一个Proposer的算法：**ZAB**
 
@@ -913,7 +913,7 @@ ZAB是一种专门为Zookeeper设计的一种支持**崩溃恢复**的**原子�
 5. Leader接受到超过半数以上Follower的ACK响应后，即认为消息发送成功，可以发送commit消息
 6. Leader向所有Follower广播commit消息，同时自身也会完成事务提交。Follower接受到commit消息后，会将上一条事务提交
 
-<img src="D:\Project\IT notes\框架or中间件\ZooKeeper\img\消息广播过程.jpg" style="width:700px;height:800px;" />
+<img src="D:\Project\IT-notes\框架or中间件\ZooKeeper\img\消息广播过程.jpg" style="width:700px;height:800px;" />
 
 #### 2. ZAB两种模式之一：崩溃恢复
 当Leader服务器出现崩溃或由于网络原因导致Leader服务器失去了与过半Follower的联系，就会进入**崩溃恢复模式**：

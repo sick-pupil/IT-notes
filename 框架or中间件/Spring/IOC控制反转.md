@@ -4,13 +4,13 @@
 
 作用：降低对象之间的耦合度
 
-<img src="D:\Project\IT notes\框架or中间件\spring\img\springtest图例1.png" style="width:300px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\spring\img\springtest图例1.png" style="width:300px;height:400px;" />
 
-<img src="D:\Project\IT notes\框架or中间件\spring\img\springtest图例2.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\spring\img\springtest图例2.png" style="width:700px;height:300px;" />
 
-<img src="D:\Project\IT notes\框架or中间件\spring\img\springtest图例3.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\spring\img\springtest图例3.png" style="width:700px;height:300px;" />
 
-<img src="D:\Project\IT notes\框架or中间件\spring\img\springtest图例4.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\spring\img\springtest图例4.png" style="width:700px;height:300px;" />
 
 #### XML配置文件
 ```xml
@@ -33,7 +33,7 @@
 ## 2. 底层原理
 **xml解析、工厂模式、反射**
 
-<img src="D:\Project\IT notes\框架or中间件\spring\img\工厂模式.png" style="width:700px;height:150px;" />
+<img src="D:\Project\IT-notes\框架or中间件\spring\img\工厂模式.png" style="width:700px;height:150px;" />
 
 1. xml配置文件，配置创建的对象
 ```xml
@@ -58,7 +58,7 @@ Spring提供IOC容器的两种实现方式（接口）：
 1. BeanFactory对象工厂，Spring内部接口，**加载配置文件时不会创建对象，在获取对象getBean()时才会加载对象**
 2. ApplicationContext应用上下文，BeanFactory的子接口，面向外部供开发者使用，**在ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml")就已经开始加载配置文件中的对象**
 
-<img src="D:\Project\IT notes\框架or中间件\spring\img\ApplicationContext实现类与接口.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\spring\img\ApplicationContext实现类与接口.png" style="width:700px;height:300px;" />
 
 ## 4. IOC具体操作
 ```xml

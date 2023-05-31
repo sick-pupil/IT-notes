@@ -1,5 +1,5 @@
 ## 1. Executor框架模型
-<img src="D:\Project\IT notes\Java\并发\img\Executor框架模型.png" style="width:700px;height:600px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\Executor框架模型.png" style="width:700px;height:600px;" />
 
 ## 2. Executor框架结构
 Executor框架由三大部分组成：
@@ -7,9 +7,9 @@ Executor框架由三大部分组成：
 2. 任务的执行：核心接口`Executor`、继承自`Executor`的`ExecutorService`接口
 3. 异步计算：接口`Future`与`FuturnTask`类
 
-<img src="D:\Project\IT notes\Java\并发\img\Executor类与接口的关系谱.png" style="width:700px;height:600px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\Executor类与接口的关系谱.png" style="width:700px;height:600px;" />
 
-<img src="D:\Project\IT notes\Java\并发\img\Executor使用示意.png" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\Executor使用示意.png" style="width:700px;height:500px;" />
 
 1. 主线程首先要创建实现`Runnable`或者`Callable`接口的任务对象
 2. 然后可以把`Runnable`对象直接交给`ExecutorService`执行
@@ -131,9 +131,9 @@ public static ExecutorService newCachedThreadPool()
 ### 3. FutureTask详解
 `FutureTask`除了实现`Future`接口外，还实现了`Runnable`接口。因此，`FutureTask`可以交给`Executor`执行，也可以由调用线程直接执行（`FutureTask.run()`）
 
-<img src="D:\Project\IT notes\Java\并发\img\FutureTask状态迁移.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\FutureTask状态迁移.png" style="width:700px;height:400px;" />
 
-<img src="D:\Project\IT notes\Java\并发\img\FutureTask方法调用.png" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\FutureTask方法调用.png" style="width:700px;height:500px;" />
 
 - `Callable`：`Callable`是一个接口，一个函数式接口，也是个泛型接口。`call()`有返回值，且返回值类型与泛型参数类型相同，且可以抛出异常。`Callable`可以看作是`Runnable`接口的补充
 - `Future`：`Future`是为了配合`Callable/Runnable`而产生的，既然有返回值，那么返回什么？什么时候返回？这些问题其实都可以算在`Future`机制里

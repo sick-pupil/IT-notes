@@ -1,5 +1,5 @@
 ## 1. Dubbo分层架构
-<img src="D:\Project\IT notes\框架or中间件\Dubbo\img\Dubbo底层分层.png" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Dubbo\img\Dubbo底层分层.png" style="width:700px;height:500px;" />
 
 - `Service`，业务层，就是咱们开发的业务逻辑层。
 - `Config`，配置层，主要围绕`ServiceConfig`和`ReferenceConfig`，初始化配置信息。
@@ -54,7 +54,7 @@ private static BeanDefinition parse(Element element, ParserContext parserContext
 5. 标签解析出对应类时，存在`<dubbo:service>`标签解析出`ServiceBean`，`ServiceBean`解析的过程涉及到服务暴漏的过程
 
 ## 3. 服务暴漏
-<img src="D:\Project\IT notes\框架or中间件\Dubbo\img\服务暴露.png" style="width:700px;height:350px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Dubbo\img\服务暴露.png" style="width:700px;height:350px;" />
 
 `ServiceBean`实现了两个重要机制：
 1. 实现Spring接口`InitializingBean`，当`ServiceBean`创建成功后，会调用接口的`afterPropertiesSet`方法
@@ -234,7 +234,7 @@ public class ProviderConsumerRegTable {
 ```
 
 ## 4. 获取服务引用
-<img src="D:\Project\IT notes\框架or中间件\Dubbo\img\服务引用.png" style="width:700px;height:350px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Dubbo\img\服务引用.png" style="width:700px;height:350px;" />
 
 在解析Dubbo配置文件生成`ServiceBean`的同时，也会由<dubbo:reference>标签生成`ReferenceBean`
 
@@ -305,7 +305,7 @@ public <T> Invoker<T> refer(Class<T> serviceType, URL url) throws RpcException {
 ```
 
 ## 5. 服务调用
-<img src="D:\Project\IT notes\框架or中间件\Dubbo\img\服务调用流程.png" style="width:700px;height:600px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Dubbo\img\服务调用流程.png" style="width:700px;height:600px;" />
 
 ```java
 public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

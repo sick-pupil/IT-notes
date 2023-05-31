@@ -8,7 +8,7 @@
 | 服务下线 Cancel   | Eureka客户端在程序关闭时向Eureka服务器发送取消请求。 发送请求后，该客户端实例信息将从服务器的实例注册表中删除。该下线请求不会自动完成，它需要调用以下内容：`DiscoveryManager.getInstance().shutdownComponent()`        |
 | 服务剔除 Eviction   | 在默认的情况下，当Eureka客户端连续90秒(3个续约周期)没有向Eureka服务器发送服务续约，即心跳，Eureka服务器会将该服务实例从服务注册列表删除，即服务剔除        |
 
-<img src="D:\Project\IT notes\框架or中间件\SpringCloud\img\Eureka架构图.png" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\框架or中间件\SpringCloud\img\Eureka架构图.png" style="width:700px;height:500px;" />
 
 ## 2. Eureka常用配置
 #### 添加依赖

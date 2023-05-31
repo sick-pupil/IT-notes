@@ -4,7 +4,7 @@
 - **文件存储**：一般以**文件和目录**形式存在，数据以文件的形式进行存取，也可以进行一些高级管理功能，比如文件层面的访问权限控制，文件共享，但读写速度慢，例：NAS网络附加存储服务器
 
 ## 2. 对象存储
-<img src="D:\Project\IT notes\框架or中间件\Minio\img\对象存储概念图.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Minio\img\对象存储概念图.png" style="width:700px;height:400px;" />
 
 - **租户**：用于隔离存储资源。在租户下可以建立桶、存储对象
 - **用户**：在租户下面创建的用于访问不同桶的账号。可以使用minio提供的mc命令设置不同用户访问各个桶的权限

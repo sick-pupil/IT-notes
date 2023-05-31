@@ -72,7 +72,7 @@ public static void main(String[] args) {
 
 ## 4. Spring中AOP的实现操作
 Spring中AOP操作一般基于AspectJ实现，需要引入spring-aop依赖、spring-aspects依赖、cglib依赖、aopalliance依赖、aspectj-weaver依赖
-<img src="D:\Project\IT notes\框架or中间件\spring\img\spring新增AOP依赖.png" style="width:250px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\spring\img\spring新增AOP依赖.png" style="width:250px;height:400px;" />
 
 ### 1. xml实现
 ```java

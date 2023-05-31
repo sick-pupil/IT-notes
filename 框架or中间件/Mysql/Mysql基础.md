@@ -1,4 +1,4 @@
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\基础大纲.png" style="width:700px;height:250px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\基础大纲.png" style="width:700px;height:250px;" />
 
 ## 1. 基本的select语句
 ```sql
@@ -76,7 +76,7 @@ select * from A where exists (select 1 from B where B.id=A.id) --exists子查询
 分页公式：`select * from table limit (pageNum - 1) * pageSize, pageSize`
 
 ## 4. 多表查询
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\多表连结.png" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\多表连结.png" style="width:700px;height:500px;" />
 
 ## 5. 单行函数
 ### 字符串函数

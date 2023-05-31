@@ -6,7 +6,7 @@ Spring Cloud Gateway 通过 Predicate 断言来实现 Route 路由的匹配规�
 -   一个请求想要转发到指定的路由上，就必须同时匹配路由上的所有断言
 -   当一个请求同时满足多个路由的断言条件时，请求只会被首个成功匹配的路由转发
 
-<img src="D:\Project\IT notes\框架or中间件\SpringCloud\img\断言匹配.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\SpringCloud\img\断言匹配.png" style="width:700px;height:400px;" />
 
 | 断言 | 示例 | 说明 |
 | ---------- | ---------- | ---------- |

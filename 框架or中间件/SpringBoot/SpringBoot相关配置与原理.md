@@ -391,7 +391,7 @@ public class HelloWorld {
 当应用中存在默认的日志实现依赖，而又想使用其他日志实现框架来替换它，则可以排除原本的日志框架后引入新的日志框架依赖
 
 而SpringBoot框架中存在sping-boot-starter-logging，已经引入了多个日志实现依赖以及替换依赖包，引入第三方框架时只需要排除该框架中的默认日志框架即可
-<img src="D:\Project\IT notes\框架or中间件\SpringBoot\img\spring-boot-starter-logging依赖树.png" style="width:700px;height:350px;" />
+<img src="D:\Project\IT-notes\框架or中间件\SpringBoot\img\spring-boot-starter-logging依赖树.png" style="width:700px;height:350px;" />
 ```xml
 <dependency>
     <groupId>org.apache.activemq</groupId>
@@ -760,7 +760,7 @@ SpringBoot通过MVC的自动配置类WebMvcAutoConfiguration为这些WebJars前�
 
 ### 5. 国际化
 在`src/main/resources`目录下创建一个`i18n`目录，目录中创建国际化资源文件，其命名格式为基本名_语言代码_国家或地区代码，最后添加`key=value`键值对
-<img src="D:\Project\IT notes\框架or中间件\SpringBoot\img\国际化.png" style="width:400px;height:200px;" />
+<img src="D:\Project\IT-notes\框架or中间件\SpringBoot\img\国际化.png" style="width:400px;height:200px;" />
 
 ### 6. 拦截器
 1. 定义拦截器，创建一个实现了`HandlerInterceptor`接口的拦截器实现类，并重写`preHandle`、`postHandle`、`afterCompletion`方法

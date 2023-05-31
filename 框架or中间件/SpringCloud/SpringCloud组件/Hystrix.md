@@ -152,7 +152,7 @@ public interface DeptHystrixService {
 - 熔断开启状态（Open）：默认情况下，在固定时间内接口调用出错比率达到一个阈值（例如 50%），熔断器会进入熔断开启状态。进入熔断状态后，后续对该服务的调用都会被切断，熔断器会执行本地的降级（FallBack）方法
 - 半熔断状态（Half-Open）： 在熔断开启一段时间之后，熔断器会进入半熔断状态。在半熔断状态下，熔断器会尝试恢复服务调用方对服务的调用，允许部分请求调用该服务，并监控其调用成功率。如果成功率达到预期，则说明服务已恢复正常，熔断器进入关闭状态；如果成功率仍旧很低，则重新进入熔断开启状态
 
-<img src="D:\Project\IT notes\框架or中间件\SpringCloud\img\Hystrix机制.png" style="width:500px;height:500px;" />
+<img src="D:\Project\IT-notes\框架or中间件\SpringCloud\img\Hystrix机制.png" style="width:500px;height:500px;" />
 
 Hystrix 实现服务熔断的步骤如下：  
 1. 当服务的调用出错率达到或超过 Hystix 规定的比率（默认为 50%）后，熔断器进入熔断开启状态

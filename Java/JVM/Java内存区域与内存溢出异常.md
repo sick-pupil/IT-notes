@@ -1,5 +1,5 @@
 ## 1. 运行时数据区域
-<img src="D:\Project\IT notes\Java\JVM\img\Java虚拟机运行时数据区.png" style="width:700px;height:600px;" />
+<img src="D:\Project\IT-notes\Java\JVM\img\Java虚拟机运行时数据区.png" style="width:700px;height:600px;" />
 
 - #### 程序计数器
 	- 程序计数器（`Program Counter Register`）是一块较小的内存空间，它可以看作是当前线程所执行的字节码的行号指示器；字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令
@@ -7,7 +7,7 @@
 - #### Java虚拟机栈
 	- Java虚拟机栈（`Java Virtual Machine Stack`）也是线程私有的，它的生命周期与线程相同；每个方法被执行的时候，Java虚拟机都会同步创建一个**栈帧**，用于存储**局部变量表、操作数栈、动态连接、方法出口**等信息；每一个方法被调用直至执行完毕的过程，就对应着一个栈帧在虚拟机栈中从入栈到出栈的过程
 
-<img src="D:\Project\IT notes\Java\JVM\img\栈帧结构.png" style="width:500px;height:900px;" />
+<img src="D:\Project\IT-notes\Java\JVM\img\栈帧结构.png" style="width:500px;height:900px;" />
 
 - #### 本地方法栈
 	与虚拟机栈所发挥的作用是非常相似的，其区别只是虚拟机栈为虚拟机执行Java方法（也就是字节码）服务，而本地方法栈则是为虚拟机使用到的本地（Native）方法服务
@@ -37,8 +37,8 @@
 - #### 对象访问定位
 1. 通过句柄访问对象
 	如果使用句柄访问的话，Java堆中将可能会划分出一块内存来作为句柄池，`reference`中存储的就是对象的句柄地址，而句柄中包含了对象实例数据与类型数据各自具体的地址信息
-	<img src="D:\Project\IT notes\Java\JVM\img\通过句柄访问对象.png" style="width:600px;height:350px;" />
+	<img src="D:\Project\IT-notes\Java\JVM\img\通过句柄访问对象.png" style="width:600px;height:350px;" />
 2. 通过直接指针访问对象
 	如果使用直接指针访问的话，Java堆中对象的内存布局就必须考虑如何放置访问类型数据的相关信息，`reference`中存储的直接就是对象地址，如果只是访问对象本身的话，就不需要多一次间接访问的开销
-	<img src="D:\Project\IT notes\Java\JVM\img\通过直接指针访问对象.png" style="width:600px;height:350px;" />
+	<img src="D:\Project\IT-notes\Java\JVM\img\通过直接指针访问对象.png" style="width:600px;height:350px;" />
 

@@ -13,7 +13,7 @@ SpringMVC处理请求过程：
 6. 返回一个视图`ModelAndView`(比如“hello”)
 7. Dispathcher查询一个或多个`ViewResolver`视图解析器，并按`ModelAndView`的要求找到对应的视图对象文件
 8. 响应（视图对象负责渲染返回给客户端）
-<img src="D:\Project\IT notes\框架or中间件\SpringMVC\img\SpringMVC处理请求详细过程.png" style="width:700px;height:200px;" />
+<img src="D:\Project\IT-notes\框架or中间件\SpringMVC\img\SpringMVC处理请求详细过程.png" style="width:700px;height:200px;" />
 
 ## 2. 相关配置
 ### 1. 在web.xml注册DispatcherServlet

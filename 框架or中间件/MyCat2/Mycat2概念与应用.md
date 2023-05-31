@@ -9,13 +9,13 @@
 `mycat`官网：`http://www.mycat.org.cn`
 
 #### 读写分离
-<img src="D:\Project\IT notes\框架or中间件\Mycat2\img\Mycat读写分离.png" style="width:700px;height:350px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mycat2\img\Mycat读写分离.png" style="width:700px;height:350px;" />
 
 #### 数据分片
-<img src="D:\Project\IT notes\框架or中间件\Mycat2\img\Mycat数据分片.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mycat2\img\Mycat数据分片.png" style="width:700px;height:400px;" />
 
 #### 多数据源整合
-<img src="D:\Project\IT notes\框架or中间件\Mycat2\img\Mycat多数据源整合.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mycat2\img\Mycat多数据源整合.png" style="width:700px;height:400px;" />
 
 `Mycat`原理中比较重要的一点：**拦截**，拦截了用户发送过来的`SQL`语句，对语句做了一定的分析，如分片分析、路由分析、读写分离分析、缓存分析等，然后将语句送往特定真实数据库执行，结果作适当处理返回给用户
 
@@ -327,7 +327,7 @@ change master to这条命令中的master_log_file与master_log_pos可在主机�
 **数据源代表连接具体IP与端口的Mysql机器，若干数据源组成一个集群，再之后创建的逻辑库会根据schema配置文件中的targetName指向集群，并在集群中创建与逻辑库对应的物理库。因此对逻辑库作操作就是对集群中对应的物理库作操作**
 
 ### 6. Mycat双主双从
-<img src="D:\Project\IT notes\框架or中间件\Mycat2\img\Mycat双主双从架构图.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mycat2\img\Mycat双主双从架构图.png" style="width:700px;height:300px;" />
 
 | 编号 | 角色 | IP地址 | 机器名 |
 | ----- | ----- | ----- | ----- |
@@ -524,7 +524,7 @@ create table `mydb`.`orders` (
 `mycat1`需要自己创建`ER`表；`mycat2`在表与表关联时，无需自行创建`ER`关系支持关联。在同一个`schema`中所有的表都存在`ER`关系，即互相关联的两表，即使物理数据不在同一个库中，但只要两表的逻辑表都在同一个逻辑库中，则支持互相关联
 
 #### 4. 分片算法
-<img src="D:\Project\IT notes\框架or中间件\Mycat2\img\分片算法.png" style="width:700px;height:600px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mycat2\img\分片算法.png" style="width:700px;height:600px;" />
 
 
 ### 8. 全局ID，snowflake雪花ID算法
@@ -534,7 +534,7 @@ create table `mydb`.`orders` (
 
 如果不需要`MyCAT`默认全局序列，可以通过配置关闭自动加全局序列；建表语句方式关闭全局序列。如果不需要使用`MyCAT`的自增序列，而使用`MySQL`本身的自增主键的功能。需要在配置中更改对应的建表`SQL`。不设置`auto increment`关键字，这样`MyCAT`就不认为这个表有自增主键的功能。就不会使用`MyCAT`全局序列号，这样，对应的插入`SQL`在`MySQL`中去处理，由`MySQL`的自增主键功能补全
 
-<img src="D:\Project\IT notes\框架or中间件\Mycat2\img\雪花算法.png" style="width:700px;height:250px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mycat2\img\雪花算法.png" style="width:700px;height:250px;" />
 
 ### 9. Mycat2 UI客户端工具 assistant.jar
 

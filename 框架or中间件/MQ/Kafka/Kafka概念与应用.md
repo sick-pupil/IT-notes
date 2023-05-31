@@ -18,9 +18,10 @@
 ```prop
 broker.id=1
 log.dirs=/Volumns/doc/tmp/kafka-log
+zookeeper.connect=zk1_host:2181,zk2_host:2181,zk3_host:2181
 ```
 - 启动`zookeeper`：`zookeeper-server-start.sh -daemon config/zookeeper.properties`
-- 启动`kafka`：`kafka-server-start.sh config/server.properties`
+- 启动`kafka`：`kafka-server-start.sh -daemon config/server.properties`
 - 显示已有`topic`：`kafka-topics.sh --list --zookeeper localhost:2181`
 - 生产消息：`kafka-console-producer.sh --broker-list localhost:9092 --topic javaedge_ad_test_x`
 - 消费消息：`kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic javaedge_ad_test_x --from-beginning`
@@ -183,3 +184,20 @@ services:
 ```
 
 ## 3. 命令行操作
+- 生产者：`kafka-console-producer.sh`
+- 主题：`kafka-topic.sh`
+- 消费者：`kafka-console-consumer.sh`
+
+| 参数 | 描述 |
+| ----- | ----- |
+| --bootstrap-server <String: server toconnect to> | 连接的Kafka Broker主机名称和端口号 |
+| --topic <String: topic> | 操作的topic名称 |
+| --create | 创建主题 |
+| --delete | 删除主题 |
+| --alter | 修改主题 |
+| --list | 查看所有主题 |
+| --describe | 查看主题详细描述 |
+| --partitions <Integer: # of partitions> | 设置分区数 |
+| --replication-factor<Integer: replication factor> | 设置分区副本 |
+| --config <String: name=value> | 更新系统默认的配置 |
+

@@ -8,7 +8,7 @@
 6. IO模块有自己的局部存储器，事实上本身是台计算机。使用这种体系结构可以控制许多IO设备，并使需要CPU参与的程度达到最小。这种结构通常用于控制与交互终端的通信，IO处理器负责大多数控制终端的任务
 
 ## 2. 直接存储器访问DMA
-<img src="D:\Project\IT notes\操作系统\img\典型的DMA框图.png" style="width:200px;height:300px;" />
+<img src="D:\Project\IT-notes\操作系统\img\典型的DMA框图.png" style="width:200px;height:300px;" />
 
 DMA单元能够模拟处理器，且实际上能够像处理器一样获得系统总线的控制权。这样做是为了能利用系统总线与存储器进行双向数据传送
 
@@ -20,7 +20,7 @@ DMA技术工作流程如下：处理器试图读或写一块数据时，它通�
 
 然后处理器继续执行其他工作，这个IO操作已经委托给DMA模块执行（DMA充当代理角色）。DMA模块直接从存储器中或向存储器中传送整块数据，并且数据不再需要通过处理器。传送结束后，DMA模块向处理器发送一个中断信号（只有在传送开始与结束时才会用到处理器）
 
-<img src="D:\Project\IT notes\操作系统\img\可选DMA配置.png" style="width:400px;height:400px;" />
+<img src="D:\Project\IT-notes\操作系统\img\可选DMA配置.png" style="width:400px;height:400px;" />
 
 ## 3. IO缓冲
 假设某个用户进程需要从磁盘中读入多个数据块，每次读一块，每块的长度为512字节。这些数据将被读入用户进程地址空间中的某个区域，如从虚拟地址1000到1511的区域。最简单的方法是对磁盘单元执行一个IO命令，并等待数据传送完毕。这个等待可以是忙等待，也可以是进程被中断挂起
@@ -34,7 +34,7 @@ DMA技术工作流程如下：处理器试图读或写一块数据时，它通�
 
 **存在面向块的IO设备和面向流的IO设备：面向块的设备将信息保存在块中，块的大小通常是固定的，传送过程中一次传送一块；面向流的设备以字节流的方式输入输出数据**
 
-<img src="D:\Project\IT notes\操作系统\img\IO缓冲方案－输入.png" style="width:350px;height:500px;" />
+<img src="D:\Project\IT-notes\操作系统\img\IO缓冲方案－输入.png" style="width:350px;height:500px;" />
 
 ### 单缓冲
 输入传送的数据被放到系统缓冲区中。当传送完成时，进程把该块移到用户空间，并立即请求另一块（**预读或预先输入**）。用户进程可在下一数据块读取的同时，处理已读入的数据块。由于输入发生在系统内存而非用户进程内存中，因此操作系统可以将该进程换出
@@ -51,9 +51,9 @@ DMA技术工作流程如下：处理器试图读或写一块数据时，它通�
 
 ## 4. 磁盘调度
 
-<img src="D:\Project\IT notes\操作系统\img\磁盘调度算法比较.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\操作系统\img\磁盘调度算法比较.png" style="width:700px;height:300px;" />
 
-<img src="D:\Project\IT notes\操作系统\img\磁盘调度算法.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\操作系统\img\磁盘调度算法.png" style="width:700px;height:300px;" />
 
 ### 先进先出FIFO
 按顺序处理队列中的项目
@@ -80,9 +80,9 @@ SCAN策略偏爱请求接近最靠里或最靠外的磁道的作业，且偏爱�
 使用两个子队列，扫描开始时，所有请求都在一个队列中，另一个队列为空。在扫描过程中，所有新到的请求都放入另一个队列中。因此对新请求的服务会延迟到老请求处理完成之后
 
 ## 5. RAID
-<img src="D:\Project\IT notes\操作系统\img\RAID级别.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\操作系统\img\RAID级别.png" style="width:700px;height:300px;" />
 
-<img src="D:\Project\IT notes\操作系统\img\RAID级别图示.png" style="width:400px;height:850px;" />
+<img src="D:\Project\IT-notes\操作系统\img\RAID级别图示.png" style="width:400px;height:850px;" />
 
 ## 6. 磁盘高速缓存
 磁盘高速缓存是内存中为磁盘扇区设置的一个缓冲区，包含有磁盘中某些扇区的副本。出现对某一特定扇区的IO请求时，首先会进行检测，以确定该扇区是否在磁盘高速缓存中。若在，则该请求可通过这个高速缓存来满足；若不在，则把被请求的扇区从磁盘读到磁盘高速缓存中
@@ -93,4 +93,4 @@ SCAN策略偏爱请求接近最靠里或最靠外的磁道的作业，且偏爱�
 其次是**最补偿使用页面置换算法LFU**：置换集合中访问次数最少的块，通过给每个块关联一个计数器实现
 为了克服LFU中由于局部性原理出现短时间重复访问某一块导致计数器值高，但该块将来并没有很快被访问的情况，出现一种基于频率的置换算法
 
-<img src="D:\Project\IT notes\操作系统\img\基于频率的置换.png" style="width:400px;height:350px;" />
+<img src="D:\Project\IT-notes\操作系统\img\基于频率的置换.png" style="width:400px;height:350px;" />

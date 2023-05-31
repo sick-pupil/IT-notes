@@ -2,7 +2,7 @@
 - 镜像：镜像是一个只读模板，带有创建Docker容器的指令。通常，一个镜像是基于另一个镜像的，还需要进行一些额外的定制
 - 容器：容器是用镜像创建的运行实例，每个容器都可以被启动，开始，停止，删除，同时容器之间相互隔离，保证应用运行期间的安全
 - 仓库：集中存放镜像文件的场所
-<img src="D:\Project\IT notes\框架or中间件\Docker\img\docker运行与三大要素.png" style="width:700px;height:350px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Docker\img\docker运行与三大要素.png" style="width:700px;height:350px;" />
 
 ## 2. 安装docker
 ```shell
@@ -15,7 +15,7 @@ docker run hello-world
 ```
 
 ## 3. docker常用操作命令
-<img src="D:\Project\IT notes\框架or中间件\Docker\img\docker命令大全.jpg" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Docker\img\docker命令大全.jpg" style="width:700px;height:500px;" />
 
 ### 1. 帮助启动类命令
 ```shell
@@ -123,7 +123,7 @@ CMD python /app/app.py
 - 容器而对于`docker`来说，创建新容器时，每一层都会彼此堆叠，可以在基础层的基础上添加新的**可写容器层。对容器的所做的所有更改都将写入到该可写容器层中**。在容器中添加数据或者修改现有数据的所有读写操作都会存储在此可写层中。删除容器后，可写层也会被删除
 - 镜像层是只读的
 
-<img src="D:\Project\IT notes\框架or中间件\Docker\img\docker镜像层与容器层.png" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Docker\img\docker镜像层与容器层.png" style="width:700px;height:500px;" />
 
 `UnionFS`联合文件系统：`UnionFS`支持对文件系统的修改看作一次提交来一层层叠加，同时可以把不同目录挂载到同一个虚拟文件系统下。`UnionFS`文件系统是`docker`镜像的基础，镜像可以通过分层来进行继承。`UnionFS`一次同时加载多个文件系统，把各层文件系统叠加起来
 
@@ -185,9 +185,9 @@ docker run -itd --name nginx01 -p 80:80 --volumes-from data-volume nginx:1.19.3-
 3. 每执行一条指令，则进行一次`commit`提交一个新的镜像层
 4. 继续执行指令直至执行完成
 
-<img src="D:\Project\IT notes\框架or中间件\Docker\img\dockerfile构建docker镜像过程.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Docker\img\dockerfile构建docker镜像过程.png" style="width:700px;height:300px;" />
 
-<img src="D:\Project\IT notes\框架or中间件\Docker\img\执行dockerfile.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Docker\img\执行dockerfile.png" style="width:700px;height:300px;" />
 
 **dockerfile保留字指令**
 - `FROM`：指定基础镜像
@@ -203,7 +203,7 @@ docker run -itd --name nginx01 -p 80:80 --volumes-from data-volume nginx:1.19.3-
 - `ENTRYPOINT`：指定一个容器启动时要运行的命令，与`CMD`一样都是在指定容器启动程序及参数
 - `ONBUILD`：当构建一个被继承的`DockerFile`时运行命令， 父镜像在被子镜像继承后，父镜像的ONBUILD被触发
 
-<img src="D:\Project\IT notes\框架or中间件\Docker\img\dockerfile指令.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Docker\img\dockerfile指令.png" style="width:700px;height:400px;" />
 
 ```shell
 FROM centos

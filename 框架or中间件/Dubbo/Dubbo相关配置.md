@@ -1,7 +1,7 @@
 ## 1. RPC(Remote Procedure Call)远程过程调用
 本地调用可以理解为进程内的互相调用；而远程调用可以理解为进程间的互相调用
 
-<img src="D:\Project\IT notes\框架or中间件\Dubbo\img\RPC过程调用.png" style="width:700px;height:600px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Dubbo\img\RPC过程调用.png" style="width:700px;height:600px;" />
 
 1. 服务消费者（client客户端）通过本地调用的方式调用服务
 2. 客户端存根（client stub）接收到请求后负责将方法、入参等信息序列化（组装）成能够进行网络传输的消息体
@@ -22,7 +22,7 @@
 - 可视化服务治理
 
 ## 3. Dubbo架构
-<img src="D:\Project\IT notes\框架or中间件\Dubbo\img\Dubbo架构.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Dubbo\img\Dubbo架构.png" style="width:700px;height:400px;" />
 
 ## 4. Dubbo-admin管理控制台
 1.  下载代码: `git clone https://github.com/apache/dubbo-admin.git`
@@ -323,7 +323,7 @@ public class DubboDemoConsumerConfig {
 -   **ConsistentHash LoadBalance**
     一致性 Hash，方法与参数作为Hash参数值进行Hash，结果为调用目标服务器
 
-<img src="D:\Project\IT notes\框架or中间件\Dubbo\img\Dubbo负载均衡算法.png" style="width:700px;height:200px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Dubbo\img\Dubbo负载均衡算法.png" style="width:700px;height:200px;" />
 
 配置方式：
 1. 服务端服务级别与方法级别

@@ -1,10 +1,10 @@
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\进阶大纲.png" style="width:700px;height:250px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\进阶大纲.png" style="width:700px;height:250px;" />
 
 ## 1. Mysql逻辑架构
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\Mysql逻辑架构.png" style="width:700px;height:600px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\Mysql逻辑架构.png" style="width:700px;height:600px;" />
 
 ### SQL查询流程
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\SQL查询流程.png" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\SQL查询流程.png" style="width:700px;height:500px;" />
 
 1. 客户端发送一条SQL查询给服务器
 2. 服务器先检查查询缓存，如果命中了缓存，则立刻返回存储在缓存中的结果，否则进入下一阶段
@@ -50,7 +50,7 @@
 存储引擎和上述所说的类似，不同的存储引擎存入到数据中存储的形式不同，所以导致占用空间、性能等不同，但是给用户展现的数据都是相同的
 
 使用`show engines`查看当前数据库可以支持的存储引擎
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\Mysql支持的存储引擎.png" style="width:700px;height:180px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\Mysql支持的存储引擎.png" style="width:700px;height:180px;" />
 
 1. MyISAM
 每个MyISAM在磁盘上存储成三个文件。这三个文件第一个文件的名字以表的名字开始，扩展名指出文件类型。.frm文件存储表定义。数据文件的扩展名为.MYD (MYData)。索引文件的扩展名是.MYI (MYIndex)
@@ -102,7 +102,7 @@ Mysql存在默认数据库：
 Mysql配置信息文件：`my.cnf`、`my.ini`
 
 ## 4. InnoDB逻辑存储结构（表空间内存储结构）
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\InnoDB逻辑存储结构.png" style="width:700px;height:550px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\InnoDB逻辑存储结构.png" style="width:700px;height:550px;" />
 
 ### 1. 表空间
 表空间可以看做是InnoDB存储引擎逻辑结构的最高层，所有的数据都存放在表空间中。在默认情况下InnoDB存储引擎有一个共享表空间`ibdata1`，所有数据都存放在这个表空间内
@@ -126,7 +126,7 @@ InnoDB 将数据划分为若干个页，以页作为磁盘和内存之间交互�
 -   如果不符合上述条件，InnoDB会自动创建一个名为`row_id`的6字节的隐藏列作为主键
 
 为了能快速的从磁盘中检索出数据，InnoDB采用`B+树`结构来组织数据
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\InnoDB中B+树组织结构.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\InnoDB中B+树组织结构.png" style="width:700px;height:400px;" />
 
 `B+树`是多层的，`B+树`每一层中的页都会形成一个双向链表。在这棵树中，只有最底层的叶节点才存储数据，这些数据是按主键顺序存储的。上层的非叶子节点存储的则是索引目录，索引目录则根据主键区间划分了多个页和层级，这样就可以通过类似二分法的方式快速找到某条数据所在的页，然后通过主键定位到具体的某条数据
 
@@ -138,7 +138,7 @@ B+树中每一层都是通过双向链表连接起来的，如果是以页为单
 
 不论是系统表空间还是独立表空间，都可以看成是由若干个区组成的，每个区64个页，然后每256个区又被划分成一组
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\InnoDB的256个区组成组的某些固定结构.png" style="width:700px;height:600px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\InnoDB的256个区组成组的某些固定结构.png" style="width:700px;height:600px;" />
 
 #### 6. 段
 从前面B+树的结构知道，B+树分为叶子节点和非叶子节点，最底层的叶子节点才存储了数据，非叶子节点是索引目录。如果将叶子节点页和非叶子节点页混合在一起存储，那在检索数据的时候同样也会有大量的随机I/O
@@ -156,7 +156,7 @@ InnoDB支持四种行记录格式：
 
 可使用`show variables like 'innodb_default_row_format'`查看设置的行格式
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\行格式中的记录头信息.png" style="width:700px;height:100px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\行格式中的记录头信息.png" style="width:700px;height:100px;" />
 
 - `delete_mark`：标记当前记录是否被删除
 - `min_rec_mask`：B+树的每层非叶子节点中的最小记录都会添加该标记，并设置为1，否则为0
@@ -166,7 +166,7 @@ InnoDB支持四种行记录格式：
 - `next_record`：当前记录真实数据到下一记录的真实数据的地址偏移量
 
 ### 1. Compact行记录格式
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\Compact行记录格式.png" style="width:700px;height:150px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\Compact行记录格式.png" style="width:700px;height:150px;" />
 
 - 变长字段长度列表
 	**变长字段长度列表**按照非null变长列的逆序记录变长字段真实占用字节数；若字段占用字节数过多导致单页无法完全存储，则会把一部分数据存储在**溢出页**中
@@ -176,7 +176,7 @@ InnoDB支持四种行记录格式：
 - 记录的真实数据
 
 ### 2. Redundant行记录格式
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\Redundant行记录格式.png" style="width:700px;height:150px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\Redundant行记录格式.png" style="width:700px;height:150px;" />
 
 - 字段长度偏移列表
 	将字段长度偏移列表中的各个列对应的偏移量的第一个比特位作为是否为NULL的依据
@@ -186,13 +186,13 @@ InnoDB支持四种行记录格式：
 ### 3. Compressed和Dynamic行记录格式
 Compressed 和 Dynamic 行记录格式与 Compact 行记录格式是类似的，只不过在处理行溢出数据时有些区别
 Compact行记录溢出：
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\Compact行记录格式溢出.png" style="width:700px;height:250px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\Compact行记录格式溢出.png" style="width:700px;height:250px;" />
 
 Compressed、Dynamic行记录溢出：
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\Compressed和Dynamic行记录格式溢出.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\Compressed和Dynamic行记录格式溢出.png" style="width:700px;height:300px;" />
 
 ## 6. InnoDB页结构
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\InnoDB页结构.png" style="width:700px;height:700px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\InnoDB页结构.png" style="width:700px;height:700px;" />
 
 - `file header`：记录页的头信息，其中包括
 	- `fil_page_offset`：页号
@@ -269,7 +269,7 @@ Mysql中不同的存储引擎支持的索引都是不一致的，即使都支持
 ### 5. InnoDB索引
 相比MyISAM，索引文件和数据文件是分离的，其表数据文件本身就是按照B+Tree组织的一个索引结构，树的叶节点data域保存了完整的数据记录。这个索引的Key是数据表的主键，因此InnoDB表数据文件本身就是主索引。这被称为“**聚簇索引（聚集索引）**”。而其余的索引都作为辅助索引，辅助索引的data域存储相应记录主键的值而不是地址，这也是和MyISAM不同的地方
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\InnoDB索引原理.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\InnoDB索引原理.png" style="width:700px;height:400px;" />
 
 - 在根据主索引搜索时，直接找到Key所在的节点即可取出数据
 - 在根据辅助索引查找时，则需要先取出主键的值，再走一遍主索引
@@ -278,7 +278,7 @@ Mysql中不同的存储引擎支持的索引都是不一致的，即使都支持
 ### 6. MyISAM索引
 B+Tree叶节点的data域存放的是数据记录的地址。在索引检索的时候，首先按照B+Tree搜索算法搜索索引，如果指定的Key存在，则根据data域中磁盘地址到磁盘中寻址定位到对应的磁盘块，然后读取相应的数据记录，这被称为“非聚簇索引
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\MyISAM索引原理.png" style="width:700px;height:600px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\MyISAM索引原理.png" style="width:700px;height:600px;" />
 
 - 用户数据按照记录的插入顺序单独存储在一个文件中，称之为数据文件，也就是`.MYD`为后缀的文件。这个文件并不划分数据页，所有记录都按照插入顺序插入就行了，然后通过每行数据的物理地址来快速访问到一条记录
 - 索引信息则另外存储到一个单独的索引文件中，就是`.MYI`为后缀的文件。MyISAM 会单独为表的主键创建一个索引，只不过在索引的叶子节点中存储的不是完整的用户记录，而是主键值 + 物理地址的组合。也就是先通过索引找到行对应的物理地址，再通过物理地址去找对应的记录
@@ -527,11 +527,11 @@ select语句执行顺序：
 - 大表优化
 	1. 限制查询范围，查询只按照某个维度进行，返回部分数据，避免大数据检索
 	2. 读写分离
-		<img src="D:\Project\IT notes\框架or中间件\Mysql\img\读写分离模式.png" style="width:700px;height:300px;" />
+		<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\读写分离模式.png" style="width:700px;height:300px;" />
 	3. 分库分表
-		<img src="D:\Project\IT notes\框架or中间件\Mysql\img\分库分表模式1.png" style="width:700px;height:400px;" />
-		<img src="D:\Project\IT notes\框架or中间件\Mysql\img\分库分表模式2.png" style="width:700px;height:500px;" />
-		<img src="D:\Project\IT notes\框架or中间件\Mysql\img\分库分表模式3.png" style="width:700px;height:600px;" />
+		<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\分库分表模式1.png" style="width:700px;height:400px;" />
+		<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\分库分表模式2.png" style="width:700px;height:500px;" />
+		<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\分库分表模式3.png" style="width:700px;height:600px;" />
 
 ## 9. 事务
 事务必须满足的四个条件：
@@ -550,7 +550,7 @@ select语句执行顺序：
 - **失败**`failed`：事务处于活动的或者部分提交的状态时，可能遇到错误或人为停止事务而无法继续执行，此时的状态为失败
 - **中止**`aborted`：在事务处于失败状态后，需要对事务操作进行回滚，回滚后的状态成为中止
 - **提交**`committed`：当事务操作都同步到磁盘上后，事务处于提交
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\事务状态.jpg" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\事务状态.jpg" style="width:700px;height:400px;" />
 
 事务隔离级别：
 
@@ -638,12 +638,12 @@ InnoDB中的行锁类型：
 ### 3. MVCC
 在事务并发对行记录进行修改操作时，为了实现事务间的隔离与相应隔离级别的事务间数据可见度，InnoDB使用了**版本链**记录每次修改的事务ID与日志信息
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\简易行格式.png" style="width:700px;height:180px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\简易行格式.png" style="width:700px;height:180px;" />
 
 行格式中使用`roll_pointer`连接行记录的各个版本、`trx_id`则为生成该版本的事务ID
 （对于读写事务而言，只有在它第一次对某个表进行**增删改**操作时，才会为这个事务分配一个事务id，否则不会分配；如果不分配事务id，事务id的值默认为0）
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\版本链.png" style="width:700px;height:500px;"/>
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\版本链.png" style="width:700px;height:500px;"/>
 
 每对记录做一次修改操作，都要记录一条修改之前的日志，并且该日志还保存了当前事务的id，和行格式类似，这条日志也有一个`roll_pointer`节点
 当对同一条记录更新的次数多了，所有的这些日志会被`roll_pointer`属性连接成一个单链表，这个链表就是版本链，而版本链的头节点就是当前记录的最新值
@@ -654,7 +654,7 @@ ReadView数据结构：
 - `max_trx_id`：生成`ReadView`时，待分配给下一个事务的id号
 - `creator_trx_id`：生成当前`ReadView`的事务的事务id
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\ReadView数据结构.png" style="width:700px;height:250px;"/>
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\ReadView数据结构.png" style="width:700px;height:250px;"/>
 
 结合版本链与ReadView，事务判断数据可见性规则如下：
 1. 从版本链中的最新版本开始判断
@@ -737,7 +737,7 @@ Mysql中的数据以页为基本单位在内存和磁盘之间加载与载入。
 
 **`InnoDB`存储引擎还存在一个后台线程，每隔`1`秒，就会把`redo log buffer`中的内容写到文件系统缓存（`page cache`），然后调用`fsync`刷盘**
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\redo log刷盘流程.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\redo log刷盘流程.png" style="width:700px;height:400px;" />
 
 `InnoDB`存储引擎为`redo log`的刷盘时机策略提供了`innodb_flush_log_at_trx_commit`参数，它支持三种策略
 - 设置为0的时候，表示每次事务提交时不进行刷盘操作（提交事务那一刻宕机而没有进行`redo log`刷盘，可能会造成1秒内数据丢失）
@@ -745,7 +745,7 @@ Mysql中的数据以页为基本单位在内存和磁盘之间加载与载入。
 - 设置为2的时候，表示每次事务提交时都只把redo log buffer内容写入page cache（写入page cache但没有调用fsync刷盘，可能造成1秒的数据丢失）
 
 磁盘上`redo log`日志文件不只一个，是以一组日志文件存在的，组内每个日志文件大小一致，读写与擦除都是以环形文件组结构的顺序进行的
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\环形redo log文件组.png" style="width:700px;height:600px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\环形redo log文件组.png" style="width:700px;height:600px;" />
 
 环形日志文件组中存在`write pos`与`checkpoint`指针：
 - `write pos`：当前写记录的位置，一边写一边后移
@@ -756,23 +756,23 @@ Mysql中的数据以页为基本单位在内存和磁盘之间加载与载入。
 回顾InnoDB的表空间存储结构，在InnoDB表空间中，存在`数据段`、`索引段`、`回滚段`，而`undo log`存放在表空间的回滚段中，用于保证事务的原子性与多版本MVCC并发控制，主要记录对数据库表增删改的撤销日志
 一个事务中可能有多个增删改SQL，一个增删改SQL可能会产生多条`undo log`，一个事务中的`undo log`会从0开始被编号
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\行记录格式隐藏列.png" style="width:700px;height:60px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\行记录格式隐藏列.png" style="width:700px;height:60px;" />
 在InnoDB的行记录格式中，存在三个隐藏列：
 - `DB_ROW_ID`：如果表中没有定义非空主键以及非空唯一索引，InnoDB会自动为表结构添加一个`row_id`隐藏列作为主键
 - `DB_TRX_ID`：对某条记录作增删改操作，会将最后操作的事务ID写入该隐藏列
 - `DB_ROLL_PTR`：回滚指针，指向`undo log`指针
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\undo log页结构.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\undo log页结构.png" style="width:700px;height:400px;" />
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\undo page header结构.png" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\undo page header结构.png" style="width:700px;height:500px;" />
 
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\事务之间、普通临时表之间、insertupdate undo之间的页链表结构.png" style="width:700px;height:350px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\事务之间、普通临时表之间、insertupdate undo之间的页链表结构.png" style="width:700px;height:350px;" />
 
 #### 1. insert undo
 插入一条数据，与之对应的`undo`操作是根据主键删除该条数据，`insert`产生的`undo log`类型为`TRX_UNDO_INSERT_REC`，产生的行记录中`roll pointer`指向`undo log`日志
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\insert undo的日志结构.png" style="width:700px;height:450px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\insert undo的日志结构.png" style="width:700px;height:450px;" />
 
 #### 2. delete undo
 删除一条记录包括两个步骤：
@@ -781,7 +781,7 @@ Mysql中的数据以页为基本单位在内存和磁盘之间加载与载入。
 
 如果想实现事务提交前回滚，只需要针对删除记录中的第一个步骤作回滚即可，即将行记录格式中的`delete_mask`置为0
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\delete undo的日志结构.png" style="width:700px;height:650px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\delete undo的日志结构.png" style="width:700px;height:650px;" />
 
 在对一条记录进行`delete mark`操作前，需要把该记录的旧`trx_id`和`roll_pointer`隐藏列的值都记录到对应的`undo日志`中，就是上图中显示的`old trx_id`和`old roll_pointer`属性。这样就可以通过`undo日志`的`old roll_pointer`找到记录在修改之前对应的`undo`日志
 通过`roll_pointer`串成的日志链称为**MVCC中的版本链**
@@ -798,7 +798,7 @@ Mysql中的数据以页为基本单位在内存和磁盘之间加载与载入。
 	- 根据更新后各列的值创建一条新纪录，并把它插入到聚簇索引中
 
 在`update`不更新主键情况下，对应`undo`日志结构：
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\update undo的日志结构.png" style="width:700px;height:700px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\update undo的日志结构.png" style="width:700px;height:700px;" />
 
 在`update`更新主键情况下，对记录进行`delete_mark`操作前，会产生一条`TRX_UNDO_DEL_MARK_REC`的`undo`日志；之后插入新纪录，又会产生一条`TRX_UNDO_INSERT_REC`的`undo`日志
 
@@ -816,7 +816,7 @@ MySQL 主从复制是基于主服务器在二进制日志跟踪所有对数据�
 2. I/O 线程去请求主库的 binlog，并将得到的 binlog 日志**写到** relay log(中继日志) 文件中；
 3. 主库会**生成**一个 log dump 线程，用来给从库 I/O 线程传 binlog；
 4. SQL 线程会读取 relay log 文件中的日志，并**解析**成具体操作，来实现主从的操作一致，而最终数据一致；
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\主从复制过程.png" style="width:700px;height:350px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\主从复制过程.png" style="width:700px;height:350px;" />
 
 主从复制可以分为：
 - 主从同步：当主库执行完一个事务，然后所有的从库都复制了该事务并**成功执行完**才返回成功信息给客户端
@@ -875,7 +875,7 @@ change master to option='new value'
 	3. 相同数据库的新环境搭建
 	4. 数据库或者数据迁移
 
-<img src="D:\Project\IT notes\框架or中间件\Mysql\img\备份方案.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Mysql\img\备份方案.png" style="width:700px;height:300px;" />
 
 |  | 备份方法1 | 备份方法2 | 备份方法3 |
 | ----- | ----- | ----- | ----- |

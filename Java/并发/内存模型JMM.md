@@ -9,7 +9,7 @@ Java的并发采用的是共享内存模型，Java线程之间的通信总是隐
 
 Java线程之间的通信由Java内存模型JMM控制，JMM决定一个线程对共享变量的写入何时对另一个线程可见。从抽象的角度来看，JMM定义了线程和主内存之间的抽象关系：线程之间的共享变量存储在主内存中，每个线程都有一个私有的本地内存，本地内存中存储了该线程以读/写共享变量的副本。本地内存是JMM的一个抽象概念，并不真实存在。它涵盖了缓存、写缓冲区、寄存器以及其他的硬件和编译器优化
 
-<img src="D:\Project\IT notes\Java\并发\img\JMM抽象结构示意.png" style="width:750px;height:500px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\JMM抽象结构示意.png" style="width:750px;height:500px;" />
 
 ## 2. 从源代码到指令序列的重排序
 在执行程序时，为了提高性能，编译器和处理器常常会对指令做重排序：
@@ -17,7 +17,7 @@ Java线程之间的通信由Java内存模型JMM控制，JMM决定一个线程对
 - 指令集并行的重排序：将多条指令重叠执行，对于不存在数据依赖性的可以改变执行顺序
 - 内存系统的重排序：使用缓存以及读写缓冲区，使得加载和存储操作看上去乱序执行
 
-<img src="D:\Project\IT notes\Java\并发\img\从源码到最终执行的指令序列.png" style="width:700px;height:100px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\从源码到最终执行的指令序列.png" style="width:700px;height:100px;" />
 
 对于编译器，JMM的编译器重排序规则会禁止特定类型的编译器重排序。对于处理器重排序，JMM的处理器重排序规则会要求Java编译器在生成指令序列时，插入特定类型的内存屏障指令，通过内存屏障指令来禁止特定类型的处理器重排序
 
@@ -57,7 +57,7 @@ volatile写的内存语义：当写一个volatile变量时，JMM会把该线程�
 
 volatile读的内存语义：当读一个volatile变量时，JMM会把该线程对应的本地内存置为无效。线程接下来将从主内存中读取共享变量
 
-<img src="D:\Project\IT notes\Java\并发\img\volatile重排序规则表.png" style="width:700px;height:180px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\volatile重排序规则表.png" style="width:700px;height:180px;" />
 
 从表中可知：
 - 当第二个操作是volatile写时，不管第一个操作是什么，都不能重排序；
@@ -81,7 +81,7 @@ volatile读的内存语义：当读一个volatile变量时，JMM会把该线程�
 
 锁获取内存语义=读volatile变量内存语义；锁释放内存语义=写volatile变量内存语义
 
-<img src="D:\Project\IT notes\Java\并发\img\concurrent包实现.png" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\concurrent包实现.png" style="width:700px;height:500px;" />
 
 ## 10. final域的内存语义
 对于final域，编译器和处理器要遵守如下重排序规则：
@@ -129,7 +129,7 @@ public class InstanceFactory {
 }
 ```
 
-<img src="D:\Project\IT notes\Java\并发\img\两个线程并发执行双重检查锁.png" style="width:700px;height:450px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\两个线程并发执行双重检查锁.png" style="width:700px;height:450px;" />
 
 初始化一个类，包括执行这个类的静态初始化和初始化在这个类中声明的静态字段。在首次发生下列任意一种情况时，一个类或接口类型T将被立即初始化
 - T是一个类，而且一个T类型的实例被创建
@@ -140,7 +140,7 @@ public class InstanceFactory {
 
 由于Java语言是多线程的，多个线程可能在同一时间尝试去初始化同一个类或接口，对于每一个类或接口C，都有一个唯一的初始化锁LC与之对应。从C到LC的映射，由JVM的具体实现去自由实现。JVM在类初始化期间会获取这个初始化锁，并且每个线程至少获取一次锁来确保这个类已经被初始化过了
 
-<img src="D:\Project\IT notes\Java\并发\img\类初始化-第1阶段.png" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\类初始化-第1阶段.png" style="width:700px;height:500px;" />
 
 ```
 1. A1 尝试获取 Class 对象的初始化锁。这里假设线程 A 获取到了初始化锁
@@ -148,21 +148,21 @@ public class InstanceFactory {
 3. 线程 A 看到线程还未被初始化（因为读取到 state == noInitialization），线程设置 state = initializing，线程 A 释放初始化锁
 ```
 
-<img src="D:\Project\IT notes\Java\并发\img\类初始化-第2阶段.png" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\类初始化-第2阶段.png" style="width:700px;height:500px;" />
 
 ```
 1. 线程 A 执行类的静态初始化和初始化类中声明的静态字段
 2. 线程 B 获取到初始化锁，读取到 state == initializing，释放初始化锁，在初始化锁的 condition 中等待
 ```
 
-<img src="D:\Project\IT notes\Java\并发\img\类初始化-第3阶段.png" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\类初始化-第3阶段.png" style="width:700px;height:500px;" />
 
 ```
 1. 线程 A 获取初始化锁，设置 state = initialized，唤醒在 condition 中等待的所有线程，释放初始化锁
 2. 线程 B 获取初始化锁，读取到 state == initialized，释放初始化锁，线程 B 的类初始化处理过程完成
 ```
 
-<img src="D:\Project\IT notes\Java\并发\img\类初始化-第4阶段.png" style="width:700px;height:500px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\类初始化-第4阶段.png" style="width:700px;height:500px;" />
 
-<img src="D:\Project\IT notes\Java\并发\img\类初始化-第5阶段.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\Java\并发\img\类初始化-第5阶段.png" style="width:700px;height:400px;" />
 

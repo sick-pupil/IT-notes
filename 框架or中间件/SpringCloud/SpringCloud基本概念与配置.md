@@ -1,5 +1,5 @@
 ## 1. 基础概念
-<img src="D:\Project\IT notes\框架or中间件\SpringCloud\img\SpringCloud各组件流程关系与作用.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\SpringCloud\img\SpringCloud各组件流程关系与作用.png" style="width:700px;height:400px;" />
 
 ### 1. Eureka
 - **服务发现**：作为服务管理中心，提供服务注册、服务信息统计、服务暴露功能
@@ -14,7 +14,7 @@
 
 ### 2. Ribbon
 **Ribbon**是一个运行在消费者端的负载均衡器，可以使用组件中已经定义好的负载均衡算法、或者自定义算法
-<img src="D:\Project\IT notes\框架or中间件\SpringCloud\img\Ribbon负载均衡流程图.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\SpringCloud\img\Ribbon负载均衡流程图.png" style="width:700px;height:400px;" />
 
 ### 3. OpenFeign
 在还不存在Feign时，服务之间互相调用需要写入完整的目标URL。Feign让这个过程更加简洁，把服务接口与服务应用名、服务接口请求路径互相映射
@@ -29,7 +29,7 @@
 所以*熔断*和*降级*定义上都类似于：当服务接口出现预料之中的某些异常时，调用回调方法，防止雪崩，提高用户体验
 
 ### 5. Gateway
-<img src="D:\Project\IT notes\框架or中间件\SpringCloud\img\网关大致流程.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\SpringCloud\img\网关大致流程.png" style="width:700px;height:300px;" />
 
 ## 2. 基础配置
 ### 1. 创建父模块

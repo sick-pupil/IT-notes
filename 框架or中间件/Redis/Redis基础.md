@@ -1,4 +1,4 @@
-<img src="D:\Project\IT notes\框架or中间件\Redis\img\基础.png" style="width:700px;height:600px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\基础.png" style="width:700px;height:600px;" />
 
 ## 1. 启用Redis服务
 将`redis`服务注册到`windows`服务中：`redis-server.exe --service-install redis.windows.conf --loglevel verbose`
