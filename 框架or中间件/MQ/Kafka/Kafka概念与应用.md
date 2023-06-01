@@ -201,3 +201,47 @@ services:
 | --replication-factor<Integer: replication factor> | 设置分区副本 |
 | --config <String: name=value> | 更新系统默认的配置 |
 
+## 4. 存储机制
+`kafka`消息队列支持大数据量的写入写出，因此即使是基于`scale`和`java`实现的，也不会在`JVM`上进行读写（需要开辟大量的堆空间、内存空间），因此使用磁盘存储数据
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\存储机制.png" style="width:700px;height:350px;" />
+
+采用**分片**和**索引**机制，将每个`partition`分为多个`segment`，每个`segment`又分为两个文件：一个`.log`数据文件，一个`.index`索引文件
+
+`partition`文件夹以**topic名称+分区序号**命名；而`partition`文件夹下存在多对`.log .index`文件对，一个文件对代表一个`segment`，文件对的命名方式以上一个`segment`的最后那一条消息的偏移量+1命名
+```
+kafka-topic
+	kafka-topic-1
+		0000000000000000000.log
+		0000000000000000000.index
+		0000000000000002584.log
+		0000000000000002584.index
+		0000000000000006857.log
+		0000000000000006857.index
+	kafka-topic-2
+		...
+	kafka-topic-3
+		...
+```
+
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\segment中的log和index.png" style="width:700px;height:250px;" />
+
+## 5. 生产者
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\生产者发送消息流程.png" style="width:700px;height:700px;" />
+
+1. 根据原始消息组装`ProducerRecord`进行发送
+2. 经过`Serializer`进行序列化
+3. 经过`Partitioner`分发到对应的`partition`
+	- 如果已经指定了`partition`则分发到指定的分区中
+	- 如果没有指定`partition`但存在消息`key`则根据`hash(key) % partitions.size`得到`partition`值
+	- 也可以生成一个随机数`random`，后根据`random % partitions.size`得到`partition`值
+4. 根据确定的`topic`与`partition`放置消息，存储在`partition`中的`batch`区域，等待积攒至阈值并让额外的线程批量发送至`broker`中
+5. `broker`接受成功后返回消息记录的头信息`RecordMetadata`
+
+### 1. Ack
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\发送ack机制.png" style="width:700px;height:300px;" />
+- 成功发送：生产消息给`leader partition`，成功返回`ack`，并同步消息给`follower`副本，最后继续执行下一个消息的`send`
+- 失败发送：生产消息并发送后并没有返回`ack`，则寻找`follower`副本发送，并让副本同步给`leader partition`
+
+`ISR`：Leader会维护一个`ISR in-sync Replicas`，内部是所有和`leader`进行同步的`follower`，当`ISR`的所有`follower`完成同步后，`leader`会发送`ack`给`producer`。如果`follower`长时间未向`leader`同步数据，则会将该`follower`踢出`ISR`。如果`leader`宕机了，则会从`ISR`重新选举`leader`
+`OSR`：不能和`leader`保持同步的集合
+
