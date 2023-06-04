@@ -228,20 +228,154 @@ kafka-topic
 ## 5. 生产者
 <img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\生产者发送消息流程.png" style="width:700px;height:700px;" />
 
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\Kafka生产者发送消息流程.png" style="width:700px;height:350px;" />
+
 1. 根据原始消息组装`ProducerRecord`进行发送
 2. 经过`Serializer`进行序列化
 3. 经过`Partitioner`分发到对应的`partition`
 	- 如果已经指定了`partition`则分发到指定的分区中
 	- 如果没有指定`partition`但存在消息`key`则根据`hash(key) % partitions.size`得到`partition`值
 	- 也可以生成一个随机数`random`，后根据`random % partitions.size`得到`partition`值
-4. 根据确定的`topic`与`partition`放置消息，存储在`partition`中的`batch`区域，等待积攒至阈值并让额外的线程批量发送至`broker`中
-5. `broker`接受成功后返回消息记录的头信息`RecordMetadata`
-
-### 1. Ack
+4. 根据确定的`topic`与`partition`放置消息，存储在`partition`中的`batch`缓冲队列区域，等待积攒至区域空间阈值或者到达时间阈值，就会让额外的线程批量发送至`broker`中
+5. 发送到`broker`前会由`sender`创建请求`request`并将`request`置于请求队列中
+6. `broker`接受成功后返回消息记录的头信息`RecordMetadata`
 <img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\发送ack机制.png" style="width:700px;height:300px;" />
 - 成功发送：生产消息给`leader partition`，成功返回`ack`，并同步消息给`follower`副本，最后继续执行下一个消息的`send`
 - 失败发送：生产消息并发送后并没有返回`ack`，则寻找`follower`副本发送，并让副本同步给`leader partition`
 
-`ISR`：Leader会维护一个`ISR in-sync Replicas`，内部是所有和`leader`进行同步的`follower`，当`ISR`的所有`follower`完成同步后，`leader`会发送`ack`给`producer`。如果`follower`长时间未向`leader`同步数据，则会将该`follower`踢出`ISR`。如果`leader`宕机了，则会从`ISR`重新选举`leader`
-`OSR`：不能和`leader`保持同步的集合
+- `ISR`：`leader`会维护一个`ISR in-sync Replicas`，内部是所有和`leader`进行同步的`follower`，当`ISR`的所有`follower`完成同步后，`leader`会发送`ack`给`producer`。如果`follower`长时间未向`leader`同步数据，则会将该`follower`踢出`ISR`。如果`leader`宕机了，则会从`ISR`重新选举`leader`
+- `OSR`：不能和`leader`保持同步的集合
 
+应答机制：
+```yaml
+kafka:
+    bootstrap-servers: 192.168.184.134:9092,192.168.184.135:9092,192.168.184.136:9092
+    producer:
+      # 值的序列化方式
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # acks=0 ： 生产者在成功写入消息之前不会等待任何来自服务器的响应。
+      # acks=1 ： 只要集群的leader节点收到消息，生产者就会收到一个来自服务器成功响应。
+      # acks=-1 or all ：只有当所有参与复制的节点全部收到消息时，生产者才会收到一个来自服务器的成功响应。
+      acks: all
+```
+
+### 1. 异步发送
+```java
+	//配置
+	Properties prop = new Properties();
+	//连接地址
+	prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka1:9092,kafka2:9092,kafka3:9092");
+	//key value序列化
+	prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+	prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+	
+	//创建客户端对象
+	KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(prop);
+	
+	for(int i = 0; i < 10; i++) {
+		//回调函数异步发送
+		kafkaProducer.send(new ProducerRecord<>("topic-1", "value-" + i), new Callback() {
+			@Override
+			public void onCompletion(RecordMetadata metadata, Exception exception) {
+				if(exception == null) {
+					System.out.println("主题: " + metadata.topic() + " 分区: " + metadata.partition());
+				}
+			}
+		});
+	}
+	
+	kafkaProducer.close();
+```
+
+### 2. 同步发送
+```java
+	//配置
+	Properties prop = new Properties();
+	//连接地址
+	prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka1:9092,kafka2:9092,kafka3:9092");
+	//key value序列化
+	prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+	prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+	
+	//创建客户端对象
+	KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(prop);
+	
+	for(int i = 0; i < 10; i++) {
+		//同步发布
+		kafkaProducer.send(new ProducerRecord<>("topic-1", "value-" + i)).get();
+	}
+	
+	kafkaProducer.close();
+```
+
+### 3. 分区
+```java
+public ProducerRecord(String topic, Integer partition, Long timestamp, K key, V value, Iterable<Header> headers)
+
+public ProducerRecord(String topic, Integer partition, Long timestamp, K key, V value)
+
+public ProducerRecord(String topic, Integer partition, K key, V value, Iterable<Header> headers)
+
+public ProducerRecord(String topic, Integer partition, K key, V value)
+
+public ProducerRecord(String topic, K key, V value)
+
+public ProducerRecord(String topic, V value)
+```
+
+**自定义分区**
+```java
+//自定义分区器
+public class MyPartitioner implements Partitioner {
+
+	@Override
+	public int partition(String topic, 
+						Object key, byte[] keyBytes, 
+						Object value, byte[] valueBytes, 
+						Cluster cluster) {
+		String msgValues = value.toString();
+		int partition;
+		
+		if(msgValues.contains("0")) {
+			partition = 0;
+		} else {
+			partition = 1;
+		}
+		
+		return partition;
+	}
+}
+
+//生产者配置
+...
+properties.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, "com. ... .MyPartitioner");
+...
+```
+
+### 4. 提高吞吐量
+```java
+//kafka生产者配置
+//发送缓冲区大小，默认32M
+properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
+//缓冲区中的批次大小，默认16k
+properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
+//在批次中的等待时间，默认0
+properties.put(ProducerConfig.LINGER_MS_CONFIG, 1);
+//压缩，默认none，可配置值qzip、snappy、lz4、zstd
+properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
+```
+
+### 5. 数据可靠、重复、有序、乱序
+```java
+//发送确认
+properties.put(ProducerConfig.ACKS_CONFIG, "all");
+//发送重试
+properties.put(ProducerConfig.RETRIES_CONFIG, 3);
+
+//幂等阻止单分区单会话数据重复，根据<pid, partition, seq>判断，pid为生产者会话id，partition为分区序号，seq为消息序号
+properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+
+//生产者事务，开启事务必须开启幂等性
+
+
+```
