@@ -1,19 +1,19 @@
 ## 1. Git基本概念
-<img src="D:\Project\IT notes\框架or中间件\Git\img\Git大致架构.png" style="width:700px;height:200px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Git\img\Git大致架构.png" style="width:700px;height:200px;" />
 Git存在四个逻辑区域：
 - 工作区`workspace`：工作区，就是你平时存放项目代码的地方
 - 暂存区`index/stage`：暂存区，用于临时存放你的改动，事实上它只是一个文件，保存即将提交到文件列表信息
 - 本地仓库`repository`：仓库区，就是安全存放数据的位置，这里面有你提交到所有版本的数据。其中`HEAD`指向最新放入仓库的版本
 - 远程仓库`remote`：远程仓库，托管代码的服务器
 
-<img src="D:\Project\IT notes\框架or中间件\Git\img\Git文件状态.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Git\img\Git文件状态.png" style="width:700px;height:300px;" />
 Git中的文件存在四个状态：
 - `untracked`：未跟踪，此文件在文件夹中，但并没有加入到`git`库，不参与版本控制，通过`git add`状态变为`Staged`
 - `unmodify`：文件已经入库，未修改，即本地仓库中的文件快照内容与工作区文件夹中完全一致。这种类型的文件有两种去处，如果它被修改，而变为`Modified`。如果使用`git rm`移出版本库，则成为`Untracked`文件
 - `modified`：文件已修改，仅仅是修改，并没有进行其他的操作。这个文件也有两个去处，通过`git add`可进入暂存`staged`状态，使用`git checkout`则丢弃修改过，返回到`unmodify`状态, 这个`git checkout`即从库中取出文件, 覆盖当前修改
 - `staged`：暂存状态，执行`git commit`则将修改同步到库中，这时库中的文件和本地文件又变为一致，文件为`Unmodify`状态.。执行`git reset HEAD filename`取消暂存，文件状态为`Modified`
 
-<img src="D:\Project\IT notes\框架or中间件\Git\img\Git文件状态与命令.png" style="width:700px;height:400px;" />
+<img src="D:\Project\IT-notes\框架or中间件\Git\img\Git文件状态与命令.png" style="width:700px;height:400px;" />
 
 ## 2. Git主要命令
 ### 1. 新建代码库
@@ -224,6 +224,31 @@ git rm -r <文件夹路径>
 # 移除跟踪指定的文件，在本地仓库的文件夹中保留该文件
 git rm --cached
 
+# 暂存当前正在进行的工作。比如希望pull最新代码但是又不想提交当前更改的commit；比如需要fix一个紧急bug，先暂存stash保存自己之前的开发工作，后reset到上一个commit，修复bug后stash pop继续原本的开发工作
+git stash
+git stash pop
 ```
 
-
+### 8. 切换分支并提交代码
+**例：将develop分支中的部分代码提交到test分支中**
+```shell
+# 将目前分支的修改保存下来并拉取到新分支，并提交
+# 先切换到develop分支中
+git checkout develop
+# 将未提交的修改暂时储藏起来
+git stash
+# 切换到test分支中
+git checkout test
+# 将未提交的修改记录重新刷到工作区中
+git stash pop
+# 查看目前分支中的日志与状态
+git log
+git status
+# 对修改记录进行提交
+git commit -m "xxx"
+# 切换到新分支之后进行拉取
+git checkout test
+git pull origin test:test
+# 进行修改并上传更改
+git push origin test:test
+```
