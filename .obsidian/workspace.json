@@ -14,7 +14,7 @@
               "type": "markdown",
               "state": {
                 "file": "技术要点/定时任务.md",
-                "mode": "source",
+                "mode": "preview",
                 "source": false
               }
             }
@@ -147,9 +147,14 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "9e964c24066f1113",
+  "active": "4424775d71e389c5",
   "lastOpenFiles": [
+    "技术要点/登录认证与权限管理.md",
     "技术要点/文件上传下载.md",
+    "技术要点/套用模板生成文件.md",
+    "技术要点/批处理.md",
+    "技术要点/多数据源切换.md",
+    "技术要点/动态注入bean.md",
     "技术要点/定时任务.md",
     "框架or中间件/Git/Git概念与配置.md",
     "框架or中间件/MQ/Kafka/img/Kafka生产者发送消息流程.png",
@@ -158,8 +163,6 @@
     "文档编写/UML.md",
     "文档编写/PDM.md",
     "文档编写",
-    "技术要点/批处理.md",
-    "技术要点/动态注入bean.md",
     "技术要点/具体SQL优化.md",
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
     "框架or中间件/MQ/Kafka/img/发送ack机制.png",
@@ -182,9 +185,6 @@
     "Java/并发/并发容器与框架.md",
     "Java/并发/并发机制底层实现原理.md",
     "Java/并发/并发编程基础.md",
-    "Java/并发/线程池.md",
-    "Java/并发/锁.md",
-    "技术要点/登录认证与权限管理.md",
     "框架or中间件/MQ/Kafka/img/基本架构.png",
     "框架or中间件/MQ/Kafka/img/基本架构.png.crdownload",
     "框架or中间件/MQ/Kafka/img/发布订阅模式.png",
