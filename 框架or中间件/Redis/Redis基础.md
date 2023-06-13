@@ -230,7 +230,10 @@ zrange class 0 4
 | zunionstore destination numkeys key \[key...\] | 求两个或多个有序集合的并集，并将返回结果存储在新的 key 中 |
 | zscan key cursor \[match pattern\] \[count count\] | 迭代有序集合中的元素（包括元素成员和元素分值） |
 
-### 6. 关于key键
+### 6. stream
+
+
+### 7. 关于key键
 - `key`的类型对应`value`的类型，使用`type key`命令查看类型
 - 可以使用空字符串作为`key`值，`set "" value`，但不建议
 - 可以对相同类型相同`key`值的键值对重新赋值，`value`会被覆盖
@@ -365,7 +368,13 @@ Reading messages... (press Ctrl-C to quit)
 | subscribe channel \[channel...\] | 订阅一个或者多个频道的消息 |
 | unsubscribe \[channel \[channel...\]\] | 退订指定的频道 |
 
-## 6. Springboot+Redis整合
+## 6. 命名空间
+`redis`进行数据缓存，可以对多个键值对使用**命名空间**进行分类；以命名空间开头的方式存储数据，使不同类型的数据统一到一个命名空间下
+
+- 键值以`namespace:key`命名，则在库中创建了一个以`namespace`命名的文件夹，文件夹下存在多个`key`
+- 键值以`namespace::key`命名，则在库中创建了一个以`namespace`命名的文件夹，该文件夹下还存在一个无名文件夹，而无名文件夹下才存在多个`key`
+
+## 7. Springboot+Redis整合
 ### 1. 使用Jedis
 ```xml
 <dependency>
@@ -1227,3 +1236,5 @@ public final class RedisUtil {
     }
 }
 ```
+
+### 3. Springboot整合redis订阅发布

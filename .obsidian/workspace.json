@@ -13,8 +13,8 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "技术要点/定时任务.md",
-                "mode": "preview",
+                "file": "框架or中间件/Redis/Redis基础.md",
+                "mode": "source",
                 "source": false
               }
             }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "技术要点/定时任务.md",
+                "file": "框架or中间件/Redis/Redis基础.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "技术要点/定时任务.md",
+                "file": "框架or中间件/Redis/Redis基础.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "技术要点/定时任务.md"
+                "file": "框架or中间件/Redis/Redis基础.md"
               }
             }
           }
@@ -149,13 +149,14 @@
   },
   "active": "4424775d71e389c5",
   "lastOpenFiles": [
-    "技术要点/登录认证与权限管理.md",
+    "框架or中间件/Redis/Redis进阶.md",
     "技术要点/文件上传下载.md",
     "技术要点/套用模板生成文件.md",
     "技术要点/批处理.md",
+    "技术要点/登录认证与权限管理.md",
+    "技术要点/定时任务.md",
     "技术要点/多数据源切换.md",
     "技术要点/动态注入bean.md",
-    "技术要点/定时任务.md",
     "框架or中间件/Git/Git概念与配置.md",
     "框架or中间件/MQ/Kafka/img/Kafka生产者发送消息流程.png",
     "文档编写/流程图.md",
@@ -184,7 +185,6 @@
     "Java/并发/内存模型JMM.md",
     "Java/并发/并发容器与框架.md",
     "Java/并发/并发机制底层实现原理.md",
-    "Java/并发/并发编程基础.md",
     "框架or中间件/MQ/Kafka/img/基本架构.png",
     "框架or中间件/MQ/Kafka/img/基本架构.png.crdownload",
     "框架or中间件/MQ/Kafka/img/发布订阅模式.png",
