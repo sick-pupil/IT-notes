@@ -386,13 +386,68 @@ properties.put(ProducerConfig.RETRIES_CONFIG, 3);
 properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
 ```
 
-**开启事务必须开启幂等性**，幂等性由消息的主键：`<PID, Partition, SeqNumber>`起主要作用，
+**开启事务必须开启幂等性**，幂等性由消息的主键：`<PID, Partition, SeqNumber>`起主要作用：
+- `pid`：`ProducerID`，每个生产者启动时，`Kafka`都会分配生产者客户端一个`ID`，`Kafka`重启也会重新分配`pid`
+- `partition`：消息需要发往的分区号
+- `seqNumber`：生产者记录下来的消息的自增`ID`
+`Kafka`不会持久化以上主键一致的数据，然而只能保证单分区内数据不重复
 
-### 7. 有序
+**Kafka的事务机制可以实现对多个topic多个partition原子性的写入，即处于同一个事务内的所有消息，要么写入成功，要么写入失败**
 
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\kafka事务的工作流程.png" style="width:700px;height:500px;" />
 
-### 8. 乱序
+1. 生产者启动，获取用户配置的事务`ID`；该生产者的事务信息会被存储到`__transaction_state`主题，该分区每个`broker`都有且默认有50个分区；根据事务`ID hash(transactional.id) % 50`计算出该事务属于哪个数据分区，这个数据分区的`leader`副本所在的`broker`节点即为该事务的事务协调器节点`transaction coordinator`
+2. 生产者向`brokers`请求`producer id`生产者`ID`
+3. 生产者获取到生产者`ID`后，`send`发送数据
+4. 生产者发送完数据则`commit`提交请求
+5. 生产者的事务相关的事务协调器会持久化本次`commit`请求
+6. 事务协调器持久化`commit`成功后返回成功信号给生产者
+7. 事务协调器向数据发送的目标分区发送`commit`请求
+8. 数据目标分区返回成功则持久化本次发送事务到`__transaction_state`主题
+
 ```java
-//保证数据不重复
+//初始化事务
+void initTransactions();
 
+//开启事务
+void beginTransaction() throws ProducerFencedException;
+
+//在事务内提交已经消费的偏移量(主要用于消费者)
+void sendOffsetsToTransaction(Map<TopicPartition, OffsetAndMetadata> offsets, String consumerGroupId) throws ProducerFencedException;
+
+//提交事务
+void commitTransaction() throws ProducerFencedException;
+
+//放弃事务，回滚
+void abortTransaction() throws ProducerFencedException;
 ```
+
+```java
+//配置事务ID
+properties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "transactional_id_01");
+
+KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(properties);
+kafkaProducer.initTransactions();
+kafkaProducer.beginTransaction();
+
+try {
+	for(int i = 0; i < 5; i++) {
+		kafkaProducer.send(new ProducerRecord<>("first", i));
+	}
+	kafkaProducer.commitTransaction();
+} catch(Exception e) {
+	kafkaProducer.abortTransaction();
+} finally {
+	kafkaProducer.close();
+}
+```
+
+### 7. 有序乱序
+生产者生产数据到多个分区，消费者希望消费有序数据，单分区内能实现有序；而多分区则需要消费者把分区中的数据全部拉去到消费者后，在消费者内进行排序
+
+单分区中有可能出现因为某个消息发送失败导致最后接收到的数据乱序，存在多种解决方案
+- `kafka 1.x`之前：`max.in.flight.requests.per.connection = 1`只允许生产者发送缓存里存在一个发送请求，因此发送失败则缓存中继续重试上一个请求
+- `kafka 1.x`及之后，且未开启幂等：`max.in.flight.requests.per.connection = 1`
+- `kafka 1.x`及之后，且开启幂等：`max.in.flight.requests.per.connection`设置为小于等于5，由于启用幂等后`kafka`会缓存生产者最近发送来的五个`request`的元数据；如果最近五个以内的`request`为乱序或者出现中间序号缺少的情况，会自动排序或者等待缺少的目标序号`request`出现并自动排序
+
+## 6. Broker

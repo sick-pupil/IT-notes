@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "框架or中间件/Redis/Redis基础.md",
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
                 "mode": "source",
                 "source": false
               }
@@ -97,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/Redis/Redis基础.md",
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/Redis/Redis基础.md",
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/Redis/Redis基础.md"
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md"
               }
             }
           }
@@ -135,7 +135,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 320.5
+    "width": 320.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -147,12 +148,14 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "9e964c24066f1113",
+  "active": "d09f55c2fd69f3da",
   "lastOpenFiles": [
+    "框架or中间件/MQ/Kafka/img/kafka事务的工作流程.png",
+    "框架or中间件/MQ/Kafka/img/kafka事务的工作流程.png.crdownload",
+    "框架or中间件/Redis/Redis基础.md",
     "框架or中间件/Redis/Redis进阶.md",
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
     "技术要点/文件上传下载.md",
-    "框架or中间件/Redis/Redis基础.md",
     "框架or中间件/Mybatis/Mybatis-Plus.md",
     "框架or中间件/Minio/Minio概念与应用.md",
     "技术要点/登录认证与权限管理.md",
@@ -184,7 +187,6 @@
     "Java/JVM/字节码执行引擎.md",
     "Java/JVM/类加载机制.md",
     "Java/JVM/类文件结构.md",
-    "Java/并发/Executor框架.md",
     "框架or中间件/MQ/Kafka/img/基本架构.png",
     "框架or中间件/MQ/Kafka/img/基本架构.png.crdownload",
     "框架or中间件/MQ/Kafka/img/发布订阅模式.png",
