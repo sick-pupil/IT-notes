@@ -353,6 +353,12 @@ properties.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, "com. ... .MyPartitioner
 ```
 
 ### 4. 提高吞吐量
+提高`kafka`吞吐量，由四个配置参数决定
+- `buffer.memory`：设置生产者内存缓冲区的大小，生产者用它缓冲要发送到`broker`服务器的消息；如果发送消息出去的速度小于写入消息进去的速度，就会导致缓冲区写满，此时生产消息就会阻塞住
+- `compression.type`：消息被发送到`broker`之前使用压缩算法对消息进行压缩，通常存在`snappy gzp 1z4`压缩算法
+- `batch.size`：多个消息被发送到同一分区，生产者则会它们放到同一个批次中；当批次被塞满则整个批次的消息会被发送出去
+- `linger.ms`：生产者在发送批次之前等待更多消息加入批次的时间
+
 ```java
 //kafka生产者配置
 //发送缓冲区大小，默认32M
@@ -365,17 +371,28 @@ properties.put(ProducerConfig.LINGER_MS_CONFIG, 1);
 properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
 ```
 
-### 5. 数据可靠、重复、有序、乱序
+### 5. 数据可靠
+**数据可靠通过生产者ack三种应答级别实现**
 ```java
 //发送确认
 properties.put(ProducerConfig.ACKS_CONFIG, "all");
 //发送重试
 properties.put(ProducerConfig.RETRIES_CONFIG, 3);
+```
 
+### 6. 数据不重复
+```java
 //幂等阻止单分区单会话数据重复，根据<pid, partition, seq>判断，pid为生产者会话id，partition为分区序号，seq为消息序号
 properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+```
 
-//生产者事务，开启事务必须开启幂等性
+**开启事务必须开启幂等性**，幂等性由消息的主键：`<PID, Partition, SeqNumber>`起主要作用，
 
+### 7. 有序
+
+
+### 8. 乱序
+```java
+//保证数据不重复
 
 ```

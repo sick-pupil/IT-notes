@@ -4,28 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "8b712290bff891de",
+        "id": "2969674dd606aaca",
         "type": "tabs",
         "children": [
           {
-            "id": "900e77e1f65e6bfe",
+            "id": "d09f55c2fd69f3da",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
                 "file": "框架or中间件/Redis/Redis基础.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "08ab6c34c5409fa3",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
                 "mode": "source",
                 "source": false
               }
@@ -159,13 +147,13 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "900e77e1f65e6bfe",
+  "active": "9e964c24066f1113",
   "lastOpenFiles": [
-    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
-    "框架or中间件/Redis/Redis基础.md",
     "框架or中间件/Redis/Redis进阶.md",
-    "框架or中间件/Mybatis/Mybatis-Plus.md",
+    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
     "技术要点/文件上传下载.md",
+    "框架or中间件/Redis/Redis基础.md",
+    "框架or中间件/Mybatis/Mybatis-Plus.md",
     "框架or中间件/Minio/Minio概念与应用.md",
     "技术要点/登录认证与权限管理.md",
     "技术要点/定时任务.md",
