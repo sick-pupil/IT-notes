@@ -1306,6 +1306,27 @@ mybatis:
     <version>2.9.2</version>
 </dependency>
 
+<!-- 另外的增强swagger-ui -->
+<!-- http://ip:port/document.html -->
+<dependency>
+	<groupId>com.zyplayer</groupId>
+	<artifactId>swagger-mg-ui</artifactId>
+	<version>1.0.6</version>
+</dependency>
+
+<!-- http://ip:port/docs.html -->
+<dependency>
+	<groupId>com.github.caspar-chen</groupId>
+	<artifactId>swagger-ui-layer</artifactId>
+	<version>${last-version}</version>
+</dependency>
+
+<!-- http://ip:port/doc.html -->
+<dependency>
+	<groupId>com.github.xiaoymin</groupId>
+	<artifactId>knife4j-spring-ui</artifactId>
+	<version>${lastVersion}</version>
+</dependency>
 ```
 
 2. 启动类添加注解`@EnableSwagger2`
