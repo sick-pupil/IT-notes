@@ -1387,6 +1387,77 @@ public class SwaggerConfig {
 }
 
 ```
+4. 访问`ip:port/swagger-ui.html`
+5. 访问`ip:port/v2/api-docs`，可以获取项目中所有配置了`swagger api`接口的
+6. 如果应用配置了认证鉴权的框架，如`springsecurity`或者`shiro`，需要开放`swagger`的接口权限
+```java
+@Configuration
+@EnableWebSecurity
+public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                .antMatchers("/swagger-ui.html").permitAll()
+                .antMatchers("/webjars/**").permitAll()
+                .antMatchers("/swagger-resources/**").permitAll()
+                .antMatchers("/v2/*").permitAll()
+                .antMatchers("/csrf").permitAll()
+                .antMatchers("/").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+        ;
+    }
+}
+```
+7. 可以为`swagger`配置`jwt`
+```java
+@EnableSwagger2
+@Configuration
+public class Swagger2Config {
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                .securityContexts(Arrays.asList(securityContext()))
+                .securitySchemes(Arrays.asList(apiKey()))
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.any())
+                .build();
+    }
+    //构建 api文档的详细信息函数
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                //页面标题
+                .title("XX平台API接口文档")
+                //创建人
+                .contact(new Contact("冯冬冬", "http://www.javachat.cc",
+                        "3049352171@qq.com"))
+                //版本号
+                .version("1.0")
+                //描述
+                .description("系统API描述")
+                .build();
+    }
+    private ApiKey apiKey() {
+        return new ApiKey("JWT", "Authorization", "header");
+    }
+    private SecurityContext securityContext() {
+        return SecurityContext.builder().securityReferences(defaultAuth()).build();
+    }
+
+    private List<SecurityReference> defaultAuth() {
+        AuthorizationScope authorizationScope 
+         = new AuthorizationScope("global", "accessEverything");
+        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+        authorizationScopes[0] = authorizationScope;
+        return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
+    }
+
+}
+```
 
 ### 2. Swagger常用注解
 - ### @Api 
