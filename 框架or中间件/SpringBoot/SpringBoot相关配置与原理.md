@@ -1324,6 +1324,13 @@ mybatis:
 <!-- http://ip:port/doc.html -->
 <dependency>
 	<groupId>com.github.xiaoymin</groupId>
+	<artifactId>swagger-bootstrap-ui</artifactId>
+	<version>${lastVersion}</version>
+</dependency>
+
+<!-- http://ip:port/doc.html -->
+<dependency>
+	<groupId>com.github.xiaoymin</groupId>
 	<artifactId>knife4j-spring-ui</artifactId>
 	<version>${lastVersion}</version>
 </dependency>
