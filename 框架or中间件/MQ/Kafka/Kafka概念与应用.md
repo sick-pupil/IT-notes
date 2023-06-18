@@ -615,5 +615,5 @@ try {
 ```
 2. 执行副本存储计划：`bin/kafka-reassign-partitions.sh --bootstrap-server ip:port --reassignment-json-file increase-replication-factor.json --execute`
 
-## 9. 生产者
+## 9. 消费者
 
