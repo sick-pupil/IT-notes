@@ -225,7 +225,49 @@ kafka-topic
 
 <img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\segment中的log和index.png" style="width:700px;height:250px;" />
 
-## 5. 生产者
+## 5. 清理策略
+
+`kafka`中默认的日志保存时间为7天，可以通过调整如下参数修改保存时间：
+- `log.retention.hours`：最低优先级小时，默认7天
+- `log.retention.minutes`：分钟
+- `log.retention.ms`：最高优先级毫秒
+- `log.retention.check.interval.ms`：负责设置检查周期，默认5分钟
+
+日志超时后，`kafka`提供两种清理数据策略：`delete删除`和`compact压缩`：
+1. `delete`过期日志数据删除
+	- `log.cleanup.policy = delete`所有数据启用删除策略
+		- 基于时间：默认打开，以`segment`中所有记录中的最大时间戳作为该文件时间戳，`segment`文件时间戳超时才删除
+		- 基于大小：默认关闭，超过设置的所有日志总大小，删除最早的`segment`，`log.retention.bytes`默认-1即无穷大
+2. `compact`日志压缩：对于相同`key`不同`value`，只保留最后一个版本
+	- `log.cleanup.policy = compact`所有数据启用压缩策略
+		- 压缩后的`offset`可能是不连续的，从这些压缩后的`offset`消费消息时，将会拿到比这个`offset`大的`offset`对应的消息，实际上会拿到`offset`为7的消息，并从这个位置开始消费
+
+## 6. 页缓存PageCache与零拷贝
+
+**`kafka`高效读写的原因**：
+- `kafka`采用零拷贝技术，减少数据拷贝和上下文环境切换
+- 使用多个分区存储一个`topic`，提高吞吐量
+- 磁盘顺序读写，磁盘中的文件顺序读写增加读写速度
+- 批量删除和复制，数据被消费后并非马上被删除，而是到达一定量后批量删除
+- 使用页缓存，避免使用`jvm`，不需要垃圾回收
+
+**传统拷贝**：
+1. 发起读操作请求，CPU收到请求后给DMA发起调度命令，由DMA将磁盘数据写入内存缓冲区（第一次拷贝）取完成后给CPU发送读取完成消息
+2. CPU再将内存缓冲区数据写入到用户缓冲区（第二次拷贝）
+3. 将用户态数据写入Socket缓存区（第三次拷贝）
+4. 完成后，CPU调度DMA，让DMA将Socket缓存区数据写入网卡缓存区（第四次拷贝），发送数据
+
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\传统拷贝.png" style="width:700px;height:400px;" />
+
+**零拷贝**：
+1. 发起sedfile()请求，首先会在PageCache查找数据，若存在则直接开始滴2步，不存在则使用DMA将数据从磁盘上拷贝至PageCache缓存区
+2. 读取完成后，DMA给CPU发送信号，CPU将内存地址和页内偏移量传输给Socket
+3. DMA将PageCache中的缓存数据写入网卡设备中
+4. DMA发送写完信号给Socket，返回Seedfile()调用结束
+
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\零拷贝.png" style="width:700px;height:400px;" />
+
+## 7. 生产者
 <img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\生产者发送消息流程.png" style="width:700px;height:700px;" />
 
 <img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\Kafka生产者发送消息流程.png" style="width:700px;height:350px;" />
@@ -450,4 +492,128 @@ try {
 - `kafka 1.x`及之后，且未开启幂等：`max.in.flight.requests.per.connection = 1`
 - `kafka 1.x`及之后，且开启幂等：`max.in.flight.requests.per.connection`设置为小于等于5，由于启用幂等后`kafka`会缓存生产者最近发送来的五个`request`的元数据；如果最近五个以内的`request`为乱序或者出现中间序号缺少的情况，会自动排序或者等待缺少的目标序号`request`出现并自动排序
 
-## 6. Broker
+## 8. Broker
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\kafka在zookeeper中的存储信息.png" style="width:700px;height:350px;" />
+
+### 1. 总体工作流程
+1. `broker`启动后会在`zookeeper`注册节点，注册即在`/brokers/ids`的`zookeeper`目录中添加节点信息
+2. `zookeeper`中存在`kafka`的`/controller`目录，每个`broker`争先注册信息入`controller`，哪个`broker`抢占成功则哪个`broker`为`leader`选举的主持人
+3. `broker`抢占`controller`目录成功后，对`/brokers/ids`目录的变化进行监听，开始`leader`的选举
+4. 选举“在`isr`中存活且`broker`节点序号在`/brokers/ids`目录中排在前面的节点”作为`leader`，选举结束后，把选举结果：`leader`信息与节点信息上传`zookeeper`的`/brokers/topics/...`中
+5. 其他从`broker`中的`controller`会从`/brokers/topics/...`拉去节点信息
+6. 生产者生产数据，`kafka`进行主从同步
+
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\broker工作流程.png" style="width:700px;height:350px;" />
+
+### 2. 节点服役与退役
+向一个正在运行的旧集群中的`topic`新增一个新节点，或者重新分配正在使用的主题分区到新的`broker`列表，并重新同步原始数据到新的`broker`列表
+#### 1. 服役
+1. 创建一个要负载均衡的主题，`vim topics-to-move.json`
+```json
+{
+	"topic": [
+		{"topic": "first"}
+	],
+	"version": 1
+}
+```
+2. 生成一个负载均衡的计划，`bin/kafka-reassign-partitions.sh --bootstrap-server ip:port --topics-to-move-json-file topics-to-move.json --broker-list "0,1,2,3" --generate`
+3. 将`kafka-reassign-partitions.sh`命令生成出来的新计划存入`increase-replication-factor.json`，并执行新计划`bin/kafka-reassign-partitions.sh --bootstrap-server ip:port --reassignment-json-file increase-replication-factor.json --execute`
+4. 验证副本存储计划`bin/kafka-reassign-partitions.sh --bootstrap-server ip:port --reassignment-json-file increase-replication-factor.json --verify`
+
+#### 2. 退役
+1. 创建一个要负载均衡的主题，`vim topics-to-move.json`
+```json
+{
+	"topic": [
+		{"topic": "first"}
+	],
+	"version": 1
+}
+```
+2. 生成一个负载均衡的计划`bin/kafka-reassign-partitions.sh --bootstrap-server hadoop102:9092 --topics-to-move-json-file topics-to-move.json --broker-list "0,1,2" --generate`，计划中已减少服役`broker`节点数量
+3. 创建计划文件，`vim increase-replication-factor.json`
+4. 执行新的计划，`bin/kafka-reassign-partitions.sh --bootstrap-server hadoop102:9092 --reassignment-json-file increase-replication-factor.json --execute`
+5. 验证计划，`bin/kafka-reassign-partitions.sh --bootstrap-server hadoop102:9092 --reassignment-json-file increase-replication-factor.json --verify`
+
+### 3. 副本
+`kafka`副本，提高数据可靠性
+1. `kafka`默认副本1个，生产环境一般配置2个，保证数据可靠性；太多副本会增加磁盘存储空间，增加网络上数据传输，降低效率
+2. `kafka`副本分为`leader`与`follower`，生产者发送数据到`kafka`后，`follower`会从`leader`中同步数据
+3. `kafka`分区中所有副本统称为`AR`，其中`AR = ISR + OSR`，`OSR`为长时间未向`leader`发送通信请求或同步数据的`follower`列表，`ISR`则为活跃的`follower`列表
+
+### 4. Leader选举
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\broker工作流程.png" style="width:700px;height:350px;" />
+
+### 5. Follower故障处理
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\LEO与HW.png" style="width:700px;height:300px;" />
+
+`LEO log end offset`：每个副本的最后一个`offset`，`LEO = offset + 1`
+`HW high watermark`：所有副本中最小的`LEO`，可以理解为`HW`为所有副本的`HW`，即分区的`HW`
+
+如果`Follower`节点故障：
+1. 将故障的`Follower`节点临时踢出`ISR`队列
+2. 期间`Leader`与其他`Follower`继续接收数据
+3. 故障的`Follower`节点恢复后，读取自己本地磁盘的故障前的`HW`记录，并将自己`log`文件高于`HW`的部分截取掉，从`HW`开始向`Leader`进行数据同步
+4. 恢复后的`Follower`同步数据直至自己的`LEO`大于等于该分区所有副本的`HW`，即`Follower`追上`Leader`后，该`Follower`节点就可以重新加入`ISR`
+
+### 6. Leader故障处理
+1. `Leader`发生故障后，会从`ISR`中选出一个新的`Leader`
+2. 为保证多个副本之间的数据一致性，其余的`Follower`会先将各自的`log`文件高于新`HW`的部分截掉，然后从新`Leader`同步数据
+
+**Leader故障处理只能保证数据的一致性，并不能保证数据不丢失或者不重复**
+
+### 7. 分区副本分配
+例：有一个拥有四台机器的`kafka cluster`，创建一个名为`test`的`topic`，`topic`存在五个`partition`，每个`partition`一共拥有两个`replicate`：五个`partition`分别位于`broker-0、broker-1、broker-2、broker-3、broker-0`，每个`partition`的`follower replicate`于`leader replicate`所在`broker`的`id + 2`对应`broker id`的`broker`中
+
+**默认宗旨：leader与follower均匀分配在多个机器中**
+
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\kafka默认分区副本分配方式例1.png" style="width:700px;height:350px;" />
+
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\kafka默认分区副本分配方式例2.png" style="width:700px;height:300px;" />
+
+也会存在动态分配分区副本，即设置分区副本分配不均匀的场景：
+1. 创建新`topic`：`bin/kafka-topics.sh --bootstrap-server ip:port --create --partitions 4 --replication-factor 2 --topic test`
+2. 查看分区副本存储情况：`bin/kafka-topics.sh --bootstrap-server ip:port --describe --topic test`
+3. 指定所有副本存储在`broker-0 broker-1`：`vim increase-replication-factor.json`
+```json
+{
+	"version": 1, 
+	"partitions": [
+		{"topic":"test", "partition": 0, "replicas": [0,1]},
+		{"topic":"test", "partition": 1, "replicas": [0,1]},
+		{"topic":"test", "partition": 2, "replicas": [1,0]},
+		{"topic":"test", "partition": 3, "replicas": [1,0]}
+	]
+}
+```
+4. 执行副本存储计划：`bin/kafka-reassign-partitions.sh --bootstrap-server ip:port --reassignment-json-file increase-replication-factor.json --execute`
+5. 验证副本存储计划：`bin/kafka-reassign-partitions.sh --bootstrap-server ip:port --reassignment-json-file increase-replication-factor.json --verify`
+6. 查看：`bin/kafka-topics.sh --bootstrap-server ip:port --describe --topic test`
+
+### 8. 分区副本的负载均衡
+正常情况下，`kafka`本身会自动把`leader partition`均匀分散在各个机器上，来保证每台机器的读写吞吐量都是均匀的。但是如果某些`broker`宕机，会导致`leader partition`过于集中在其他少部分几台`broker`上，这会导致少数几台`broker`读写请求压力过高，其他宕机的`broker`重启之后都是`follower partition`，读写请求很低，造成集群负载不均衡
+
+- `auto.leader.rebalance.enable`：默认为`true`，自动`leader partition`平衡
+- `leader.imbalance.per.broker.percentage`：默认是10%，每个`broker`允许的不平衡的`leader`比率。如果每个`broker`超过这个值，控制器会触发`leader`的平衡
+- `leader.imbalance.check.interval.seconds`：默认值300秒，检查`leader`负载是否平衡的间隔时间
+
+### 9. 增加副本
+需要对已经配置好分区数以及每个分区副本数量的topic，再次进行副本数量的配置修改
+**手动添加副本**
+1. 创建副本存储计划：`vim increase-replication-factor.json`
+```json
+{
+	"version": 1, 
+	"partitions": [
+		{"topic":"test", "partition": 0, "replicas": [0,1]},
+		{"topic":"test", "partition": 1, "replicas": [0,1]},
+		{"topic":"test", "partition": 2, "replicas": [1,0]},
+		{"topic":"test", "partition": 3, "replicas": [1,0]}
+	]
+}
+```
+2. 执行副本存储计划：`bin/kafka-reassign-partitions.sh --bootstrap-server ip:port --reassignment-json-file increase-replication-factor.json --execute`
+
+## 9. 生产者
+

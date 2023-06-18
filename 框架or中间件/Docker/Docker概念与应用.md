@@ -303,6 +303,15 @@ docker-compose down
 		- `driver`：网络模式，`bridge host none`
 
 ### `compose`命令
+`docker-compose`命令基本使用格式：`docker-compose [-f or --file -p or --project-name --x-networking --x-network-driver --verbose -v] [command] [args]`
+1. `-f or --file`：指定使用的`compose`模板文件
+2. `-p or --project-name`：指定项目名称
+3. `--x-networking`：使用`docker`可插拔网络特性
+4. `--x-network-driver`：指定后端驱动，默认`bridge`
+5. `--verbose`：输出更多调试信息
+6. `-v or --version`：打印版本并退出
+
+`docker-compose`具体命令：
 - `config`：验证`docker-compose`文件配置正确与否
 - `pull`：拉去服务依赖的镜像
 - `up`：创建并启动所有服务的容器
@@ -310,14 +319,13 @@ docker-compose down
 - `ps`：列出工程中的所有服务容器
 - `run`：在执行服务中的某个容器上执行一个命令
 - `exec`：进入服务容器
-- `pause`
-- `unpause`
-- `restart`
-- `start`
-- `stop`
-- `kill`
-- `rm`
-- `down`
-- `images`
-- `port`
-- `top`
+- `pause`：暂停容器
+- `unpause`：恢复被暂停容器
+- `restart`：重启容器
+- `start`：启动容器
+- `stop`：停止容器
+- `kill`：杀死容器
+- `rm`：删除容器
+- `down`：停止被`up`命令启动的容器，并移除网络
+- `images`：列出`compose`文件包含的镜像
+- `ports`：设置端口映射
