@@ -616,4 +616,19 @@ try {
 2. 执行副本存储计划：`bin/kafka-reassign-partitions.sh --bootstrap-server ip:port --reassignment-json-file increase-replication-factor.json --execute`
 
 ## 9. 消费者
+### 1. 消费方式
+- `pull`：消费者主动拉取
+- `push`：`broker`主动推送
 
+如果`kafka`采用`push`的消费模式，则不一定所有消费者的消费速率都跟得上；而采用`push`，如果`kafka`中没有数据，则消费者可能会陷入循环中，一直返回空数据
+
+### 2. 消费者组
+**一个消费者可以消费一个分区的数据，一个消费者也可以消费多个分区的数据；而每个分区的数据只能由消费者组中的一个消费者消费**
+
+当`kafka cluster`中出现某个`broker`忽然宕机，这个`broker`中的`leader replicate partition`被哪个消费者消费到偏移量为多少的记录上，都会由`offset`变量记录；这种情况下每个消费者都存在一个`offset`而且由消费者提交到系统主题`__consumer_offsets`保存，即落到磁盘上
+
+`consumer group GC`：消费者组，由多个`consumer`组成，形成一个消费者组的条件，是所有消费者的`groupid`相同
+- 消费者组内每个消费者负责消费不同分区的数据，一个分区只能由一个组内消费者消费
+- 消费者组之间互不影响，所有消费者都属于某个消费者组，即消费者组是逻辑上的一个订阅者
+
+### 3. 消费者组初始化

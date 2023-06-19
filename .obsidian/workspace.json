@@ -69,7 +69,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 254.5
+    "width": 254.5,
+    "collapsed": true
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -134,7 +135,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 320.5
+    "width": 320.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -146,7 +148,7 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "9e964c24066f1113",
+  "active": "b06182bbfde301eb",
   "lastOpenFiles": [
     "框架or中间件/MQ/Kafka/img/零拷贝.png",
     "框架or中间件/MQ/Kafka/img/零拷贝.png.crdownload",
