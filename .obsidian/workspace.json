@@ -13,8 +13,8 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
-                "mode": "source",
+                "file": "Plan.md",
+                "mode": "preview",
                 "source": false
               }
             }
@@ -69,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 254.5,
-    "collapsed": true
+    "width": 254.5
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -97,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+                "file": "Plan.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+                "file": "Plan.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md"
+                "file": "Plan.md"
               }
             }
           }
@@ -150,12 +149,14 @@
   },
   "active": "b06182bbfde301eb",
   "lastOpenFiles": [
+    "技术要点/奇淫巧计.md",
+    "框架or中间件/Git/Git概念与配置.md",
+    "Plan.md",
+    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
     "框架or中间件/MQ/Kafka/img/零拷贝.png",
     "框架or中间件/MQ/Kafka/img/零拷贝.png.crdownload",
     "框架or中间件/MQ/Kafka/img/传统拷贝.png",
     "框架or中间件/MQ/Kafka/img/传统拷贝.png.crdownload",
-    "Plan.md",
-    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
     "Java/并发/原子操作类.md",
     "框架or中间件/MQ/Kafka/img/kafka默认分区副本分配方式例2.png",
     "框架or中间件/MQ/Kafka/img/kafka默认分区副本分配方式例2.png.crdownload",
@@ -193,9 +194,7 @@
     "assets/img/philly-magic-garden.jpg.md",
     "assets/img",
     "框架or中间件/MQ/Kafka/img/kafka事务的工作流程.png",
-    "技术要点/文件上传下载.md",
     "框架or中间件/MQ/Kafka/img/Kafka生产者发送消息流程.png",
-    "框架or中间件/MQ/Kafka/img/发送ack机制.png",
     "未命名.canvas"
   ]
 }
