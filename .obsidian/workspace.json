@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "技术要点/奇淫巧计.md",
+                "file": "技术要点/奇技淫巧.md",
                 "mode": "source",
                 "source": false
               }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "技术要点/奇淫巧计.md",
+                "file": "技术要点/奇技淫巧.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "技术要点/奇淫巧计.md",
+                "file": "技术要点/奇技淫巧.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "技术要点/奇淫巧计.md"
+                "file": "技术要点/奇技淫巧.md"
               }
             }
           }
@@ -147,10 +147,10 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "9e964c24066f1113",
+  "active": "b06182bbfde301eb",
   "lastOpenFiles": [
     "Plan.md",
-    "技术要点/奇淫巧计.md",
+    "技术要点/奇技淫巧.md",
     "框架or中间件/Git/Git概念与配置.md",
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
     "框架or中间件/MQ/Kafka/img/零拷贝.png",
