@@ -1,8 +1,7 @@
 ### 小plan
-1. Java Optional
-2. springboot整合validation
-3. easy javadoc
-4. git checkout 不同分支
+1. springboot整合validation
+2. easy javadoc
+3. git checkout 不同分支
 
 ### 大plan
 1. 项目中的shd.jar源码
