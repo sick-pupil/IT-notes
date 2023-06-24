@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "22b1be1e369dd596",
+        "id": "f50c4eaedc5c2618",
         "type": "tabs",
         "children": [
           {
-            "id": "b06182bbfde301eb",
+            "id": "d295485fea58eb9b",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "技术要点/奇技淫巧.md",
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
                 "mode": "source",
                 "source": false
               }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "技术要点/奇技淫巧.md",
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "技术要点/奇技淫巧.md",
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "技术要点/奇技淫巧.md"
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md"
               }
             }
           }
@@ -134,8 +134,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 320.5,
-    "collapsed": true
+    "width": 321.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -147,12 +146,25 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "b06182bbfde301eb",
+  "active": "d295485fea58eb9b",
   "lastOpenFiles": [
-    "Plan.md",
-    "技术要点/奇技淫巧.md",
-    "框架or中间件/Git/Git概念与配置.md",
+    "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+    "未命名.canvas",
+    "2023-06-24.md",
+    "操作系统/并发：死锁与饥饿.md",
+    "assets/img/philly-magic-garden.jpg.md",
+    "技术要点/登录认证与权限管理.md",
+    "技术要点/定时任务.md",
+    "技术要点/动态注入bean.md",
+    "技术要点/多数据源切换.md",
+    "技术要点/加解密.md",
+    "技术要点/文件上传下载.md",
+    "技术要点/套用模板生成文件.md",
+    "技术要点/奇技淫巧.md",
+    "技术要点/批处理.md",
+    "Plan.md",
+    "框架or中间件/Git/Git概念与配置.md",
     "框架or中间件/MQ/Kafka/img/零拷贝.png",
     "框架or中间件/MQ/Kafka/img/零拷贝.png.crdownload",
     "框架or中间件/MQ/Kafka/img/传统拷贝.png",
@@ -172,29 +184,15 @@
     "框架or中间件/Redis/Redis进阶.md",
     "框架or中间件/Redis/Redis基础.md",
     "框架or中间件/Spring/JdbcTemplate.md",
-    "框架or中间件/Spring/IOC控制反转.md",
-    "框架or中间件/Spring/数据与事务.md",
-    "框架or中间件/Spring/AOP面向切面.md",
-    "框架or中间件/ZooKeeper/Zookeeper相关原理与配置.md",
-    "框架or中间件/SpringCloud/SpringCloud基本概念与配置.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Hystrix.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Eureka.md",
-    "README.md",
-    "计划/未命名.md",
     "计划",
-    "框架or中间件/Docker/Docker概念与应用.md",
     "框架or中间件/MQ/Kafka/img/broker工作流程.png",
     "框架or中间件/MQ/Kafka/img/broker工作流程.png.crdownload",
-    "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
     "框架or中间件/MQ/Kafka/img/kafka在zookeeper中的存储信息.png.crdownload",
     "框架or中间件/MQ/Kafka/img/kafka在zookeeper中的存储信息.png",
     "框架or中间件/MQ/Kafka/img/未命名绘图.png",
-    "框架or中间件/Minio/Minio概念与应用.md",
     "框架or中间件/Redis/Redis进阶.docx",
-    "assets/img/philly-magic-garden.jpg.md",
     "assets/img",
     "框架or中间件/MQ/Kafka/img/kafka事务的工作流程.png",
-    "框架or中间件/MQ/Kafka/img/Kafka生产者发送消息流程.png",
-    "未命名.canvas"
+    "框架or中间件/MQ/Kafka/img/Kafka生产者发送消息流程.png"
   ]
 }

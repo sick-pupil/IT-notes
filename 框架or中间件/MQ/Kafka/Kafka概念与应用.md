@@ -422,7 +422,7 @@ properties.put(ProducerConfig.ACKS_CONFIG, "all");
 properties.put(ProducerConfig.RETRIES_CONFIG, 3);
 ```
 
-### 6. 数据不重复
+### 6. 数据不重复与事务
 ```java
 //幂等阻止单分区单会话数据重复，根据<pid, partition, seq>判断，pid为生产者会话id，partition为分区序号，seq为消息序号
 properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
@@ -623,12 +623,114 @@ try {
 如果`kafka`采用`push`的消费模式，则不一定所有消费者的消费速率都跟得上；而采用`push`，如果`kafka`中没有数据，则消费者可能会陷入循环中，一直返回空数据
 
 ### 2. 消费者组
-**一个消费者可以消费一个分区的数据，一个消费者也可以消费多个分区的数据；而每个分区的数据只能由消费者组中的一个消费者消费**
+**一个消费者可以消费一个分区的数据，一个消费者也可以消费多个分区的数据；而每个分区的数据只能由消费者组中的一个消费者消费，如果一个分区被一个消费者组中的多个消费者消费，则会需要进行数据去重，这是不被允许的**
 
 当`kafka cluster`中出现某个`broker`忽然宕机，这个`broker`中的`leader replicate partition`被哪个消费者消费到偏移量为多少的记录上，都会由`offset`变量记录；这种情况下每个消费者都存在一个`offset`而且由消费者提交到系统主题`__consumer_offsets`保存，即落到磁盘上
 
 `consumer group GC`：消费者组，由多个`consumer`组成，形成一个消费者组的条件，是所有消费者的`groupid`相同
 - 消费者组内每个消费者负责消费不同分区的数据，一个分区只能由一个组内消费者消费
 - 消费者组之间互不影响，所有消费者都属于某个消费者组，即消费者组是逻辑上的一个订阅者
+- 每个消费者都隶属于一个消费者组，每个消费者都存在`groupid`，默认`groupid`不指定则自动生成
+- 消费者组内的消费者数量多于分区数，则会存在若干消费者空闲
 
-### 3. 消费者组初始化
+**消费者组初始化流程**：
+1. 每个`broker`都存在一个`coordinator`组件辅助消费者组的消费`offset`提交（`offset`持久化），**消费者组需要选出该组对应的`coordinator`**：指定消费者组的`groupid`后，`hash(groupid) % 50`得到的`__consumer_offsets`主题具体的某个分区序号，序号对应的分区`broker`上的`coordinator`则作为这个消费者组的负责人，消费者组的所有消费者`offset`则向这个分区提交
+2. 消费者组中的所有消费者主动向`coordinator`发送`joinGroup`入组请求，`coordinator`随机选出一个消费者作为消费者`leader`
+3. `coordinator`会把收集到的所有消费者信息以及`topic`发送给`leader`消费者
+4. 消费者`leader`制定消费计划，把消费计划发给`coordinator`
+5. `coordinator`把消费计划发给其他消费者
+（每个消费者都会与`coordinator`保持心跳，一旦超时则认为消费者挂了，需要移除消费者；移除消费者后需要将消费任务再平衡）
+
+**消费者组详细消费流程**
+1. 消费者组创建一个`consumerNetworkClient`客户端与`brokers`进行通信，`consumer`向`client`进行`sendFetches`发送消费请求，指定消费批次配置
+	- `fetch.min.bytes`从`broker`中每批次最小抓取消费数据大小，默认一字节
+	- `fetch.max.wait.ms`从`broker`中抓取一批消费数据的超时时间，默认500ms；批次实际内容大小未到达设置大小，只要超时则抓取
+	- `fetch.max.bytes`每批次抓取消费数据的上限大小，默认50m
+2. `consumerNetworkClient`向`broker`发送`send`请求，回调`onSuccess completedFetches`抓取数据，数据存入缓存队列`queue`中
+3. 消费者组向缓存队列中进行数据拉取，可以设置`max.poll.records`配置批次拉取数据的一批次最大条数，先反序列化，再经过拦截器，最后处理数据
+
+### 3. 消费一个主题
+```java
+//配置
+Properties properties = new Properties();
+
+//连接bootstrap.servers
+properties.put(ConsumerConfig.BOOTSTRAP_SERVER_CONFIG, "ip:port,ip:port");
+//反序列化
+properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+//消费者组id
+properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
+
+//创建连接
+KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
+
+//订阅主题
+ArrayList<String> topics = new ArrayList<>();
+topics.add("test-topic");
+kafkaConsumer.subscribe(topics);
+
+//消费数据
+while(true) {
+	//消费间隔时间为1秒
+	ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
+	
+	for(ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+		log.info("{}", consumerRecord);
+	}
+}
+```
+
+### 4. 消费一个分区
+```java
+//配置
+Properties properties = new Properties();
+
+//连接bootstrap.servers
+properties.put(ConsumerConfig.BOOTSTRAP_SERVER_CONFIG, "ip:port,ip:port");
+//反序列化
+properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+//消费者组id
+properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
+
+//创建连接
+KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
+
+//订阅主题对应的分区
+ArrayList<TopicPartition> topicPartitions = new ArrayList<>();
+topicPartitions.add(new TopicPartition("test-topic", 0));
+kafkaConsumer.assign(topicPartitions);
+
+//消费数据
+while(true) {
+	//消费间隔时间为1秒
+	ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
+	
+	for(ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+		log.info("{}", consumerRecord);
+	}
+}
+```
+
+### 5. 分区分配与再平衡
+一个`consumer group`中有多个`consumer`组成，一个`topic`有多个`partition`组成，而消费组中的每个`consumer`具体来消费哪个`partition`，是存在策略配置的
+又或者消费者组中的消费者与`coordinator`无法保持正常心跳，导致消费者被踢出消费者组，也会触发分区分配与再平衡
+
+分区分配策略（默认`range + cooperativeSticky`，通过设置`partition.assignment.strategy`实现，`kafka`可以同时使用多种分区分配策略）：
+- `range`：针对一个`topic`，按照`partitions / consumers`得到每个`consumer`需要消费的分区数，余数将一个一个按照`consumer`列表顺序分配给`consumer`
+	- 容易使排在`consumer`列表前面的`consumer`消费过多分区，导致数据倾斜
+	- 某个消费者被踢出后，再平衡，会把该被踢出消费者原本负责消费的分区分配给按照`consumer`列表顺序排在前面的`consumer`上
+- `roundRobin`：与`range`不同，针对所有`topic`的所有`partition`，把所有的`partition`与所有`consumer`列出来并按照`hashcode`排序，最后通过轮询算法分配`partition`给每个消费者
+	- 某个消费者被踢出后，再平衡，会把该被踢出消费者原本负责消费的分区轮询分配给剩余消费者
+- `sticky`：尽量均匀而且随机的分配分区给消费者，尽量均匀地按照`partitions / consumers`得到每个`consumer`需要消费的分区数
+	- 某个消费者被踢出后，再平衡，会把该被踢出消费者原本负责消费的分区尽量均匀随机分配给剩余消费者
+- `cooperativeSticky`
+
+| 参数名称 | 描述 |
+| ----- | ----- |
+| `heartbeat.interval.ms` | 消费者与`coordinator`之间的心跳时间，该配置项必须小于`session.timeout.ms`，也不应高于`session.timeout.ms`的1/3 |
+| `session.timeout.ms` | 消费者和`coordinator`之间连接超时时间，超过该值，消费者被移除，消费者组执行再平衡 |
+| `max.poll.interval.ms` | 消费者处理消息最大时长，超过该值，消费者被移除，消费者组执行再平衡 |
+| `partition.assignment.strategy` | 分区分配策略 |
+
