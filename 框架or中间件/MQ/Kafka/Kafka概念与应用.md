@@ -863,4 +863,92 @@ while(true) {
 - 消费能力不足，数据积压在消费者端，可以增加单个`topic`的分区数，并同时提升消费者组的消费者数量；也可以增大消费者单次拉取数据的批次大小
 - 生产速度大于消费速度，也会出现生产者端的数据积压
 
-### 10. kafka-eagle监控
+## 10. kafka-eagle监控
+
+## 11. springboot整合kafka
+### 1. 生产者
+```xml
+<dependency>
+	<groupId>org.springframework.kafka</groupId>
+	<artifactId>spring-kafka</artifactId>
+</dependency>
+```
+
+```yaml
+server:
+	port: 18081
+spring:
+	kafka:
+	bootstrap-servers: 192.168.211.130:9092,192.168.211.130:9093,192.168.211.130:9094
+	producer: # producer 生产者
+		retries: 0 # 重试次数
+		acks: 1 # 应答级别:多少个分区副本备份完成时向生产者发送ack确认(可选0、1、all/-1)
+		batch-size: 16384 # 批量大小
+		buffer-memory: 33554432 # 生产端缓冲区大小
+		key-serializer: org.apache.kafka.common.serialization.StringSerializer
+		value-serializer: org.apache.kafka.common.serialization.StringSerializer
+```
+
+```java
+@RestController
+@RequestMapping(value = "/producer")
+public class SendController {
+
+    @Autowired
+    private KafkaTemplate kafkaTemplate;
+
+    /***
+     * 发送消息
+     * topic:要发送的队列
+     * msg:发送的消息
+     */
+    @GetMapping(value = "/send/{topic}/{msg}")
+    public String send(@PathVariable(value = "topic")String topic,@PathVariable(value = "msg")String msg){
+        //消息发送
+        kafkaTemplate.send(topic,msg);
+        return "SUCCESS";
+    }
+}
+
+```
+
+### 2. 消费者
+```xml
+<dependency>
+	<groupId>org.springframework.kafka</groupId>
+	<artifactId>spring-kafka</artifactId>
+</dependency>
+```
+
+```yaml
+server:
+	port: 18082
+spring:
+	kafka:
+	bootstrap-servers: 192.168.211.130:9092,192.168.211.130:9093,192.168.211.130:9094
+	consumer: # consumer消费者
+		group-id: mentugroup # 默认的消费组ID
+		enable-auto-commit: true # 是否自动提交offset
+		auto-commit-interval: 100  # 提交offset延时(接收到消息后多久提交offset)
+		# earliest:当各分区下有已提交的offset时，从提交的offset开始消费；无提交的offset时，从头开始消费
+		# latest:当各分区下有已提交的offset时，从提交的offset开始消费；无提交的offset时，消费新产生的该分区下的数据
+		# none:topic各分区都存在已提交的offset时，从offset后开始消费；只要有一个分区不存在已提交的offset，则抛出异常
+		auto-offset-reset: latest
+		key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+		value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+```
+
+```java
+@Component
+public class MessageListener {
+
+    @KafkaListener(topics = {"itmentu"},groupId = "itmentuGroup")
+    public void listener(ConsumerRecord<String,String> record){
+        //获取消息
+        String message = record.value();
+        //消息偏移量
+        long offset = record.offset();
+        System.out.println("读取的消息："+message+"\n当前偏移量："+offset);
+    }
+}
+```

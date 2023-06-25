@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+                "file": "Plan.md",
                 "mode": "source",
                 "source": false
               }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+                "file": "Plan.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+                "file": "Plan.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md"
+                "file": "Plan.md"
               }
             }
           }
@@ -134,7 +134,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 321.5
+    "width": 321.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -148,8 +149,8 @@
   },
   "active": "d295485fea58eb9b",
   "lastOpenFiles": [
-    "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+    "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
     "未命名.canvas",
     "2023-06-24.md",
     "操作系统/并发：死锁与饥饿.md",
