@@ -734,3 +734,133 @@ while(true) {
 | `max.poll.interval.ms` | 消费者处理消息最大时长，超过该值，消费者被移除，消费者组执行再平衡 |
 | `partition.assignment.strategy` | 分区分配策略 |
 
+### 6. offset
+消费者在消费分区时都会有一个`offset`记录消费者消费某个分区的记录偏移量，`offset`默认保存在`kafka`的内置`topic`：`__consumer_offsets`中
+
+`__consumer_offsets`主题采用`key-value`方式存储数据。`key`是`groupid + topic + partitionSeq`，`value`则是`offset`的值。每隔一段时间，`kafka`内部会对这个`topic`进行`compact`压缩，以缩小`topic`占用空间并保留最新的记录
+**可以设置exclude.internal.topics=false使系统主题可见，默认true系统主题不可见**
+
+`kafka`自动提交`offset`配置：
+- `enable.auto.commit`：是否开启自动提交`offset`功能，默认是`true`
+- `auto.commit.interval.ms`：自动提交`offset`的时间间隔，默认`5s`
+
+`kafka`手动提交`offset`分为两种：`commitSync`同步提交与`commitAsync`异步提交
+- `commitSync`同步提交：必须等待`offset`提交完毕，再去消费下一批数据
+- `commitAsync`异步提交：发送完提交`offset`请求后，就开始消费下一批数据
+
+`commitSync`与`commitAsync`相同点与不同点：
+- 相同：都会将本次一批数据中的最高的`offset`偏移量进行提交
+- 不同：同步提交存在自动失败重试，异步提交没有失败重试机制
+
+```java
+//配置
+Properties properties = new Properties();
+
+//连接bootstrap.servers
+properties.put(ConsumerConfig.BOOTSTRAP_SERVER_CONFIG, "ip:port,ip:port");
+//反序列化
+properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+//消费者组id
+properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
+
+//手动提交offset
+properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+
+//创建连接
+KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
+
+//订阅主题对应的分区
+ArrayList<TopicPartition> topicPartitions = new ArrayList<>();
+topicPartitions.add(new TopicPartition("test-topic", 0));
+kafkaConsumer.assign(topicPartitions);
+
+//消费数据
+while(true) {
+	//消费间隔时间为1秒
+	ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
+	
+	for(ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+		log.info("{}", consumerRecord);
+	}
+	
+	//同步提交offset
+	kafkaConsumer.commitSync();
+	//异步提交offset
+	kafkaConsumer.commitAsync();
+}
+```
+
+指定`offset`位置进行消费，配置`auto.offset.reset`：
+- `earliest`：自动将偏移量重置为最早的偏移量，即`--from-beginning`
+- `latest`：默认值，自动将偏移量重置为最新的偏移量
+- `none`
+
+```java
+//配置
+Properties properties = new Properties();
+
+//连接bootstrap.servers
+properties.put(ConsumerConfig.BOOTSTRAP_SERVER_CONFIG, "ip:port,ip:port");
+//反序列化
+properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+//消费者组id
+properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
+
+//创建连接
+KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
+
+//订阅主题
+ArrayList<String> topics = new ArrayList<>();
+topics.add("test");
+kafkaConsumer.subscribe(topics);
+
+//获取主题下所有分区
+Set<TopicPartition> assignment = kafkaConsumer.assignment();
+
+//保证消费者初始化broker分区信息完毕，即分区分配方案完成，消费者中已经有分区信息
+while(assignment.size() == 0) {
+	kafkaConsumer.poll(Duration.ofSeconds(1));
+	assignment = kafkaConsumer.assignment();
+}
+
+//时间转化为offset，即可将offset按照时间进行seek偏移
+//HashMap<TopicPartition, Long> topicPartitionLongHashMap = new HashMap<>();
+//for (TopicPartition topicPartition : assignment) {
+	//topicPartitionLongHashMap.put(topicPartition, System.currentTimeMills() - 1 * 24 * 3600 * 1000);
+//}
+//
+//
+//Map<TopicPartition, OffsetAndTimestamp> map = kafkaConsumer.offsetsForTimes(topicPartitionLongHashMap);
+
+for(TopicPartition topicPartition : assignment) {
+	//指定主题、分区、offset
+	kafkaConsumer.seek(topicPartition, 100);
+	//OffsetAndTimestamp offsetAndTimestamp = map.get(topicPartition);
+	//kafkaConsumer.seek(topicPartition, offsetAndTimestamp.offset());
+}
+
+//消费数据
+while(true) {
+	//消费间隔时间为1秒
+	ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
+	
+	for(ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+		log.info("{}", consumerRecord);
+	}
+}
+```
+
+### 7. 消费者事务
+- **重复消费**：已经消费了数据，但是`offset`没提交（`offset`自动提交时在设置的自动提交时间间隔中消费者挂了，即使消费了数据也仍然从旧的`offset`重新开始消费）
+- **漏消费**：先提交`offset`后消费，有可能会造成数据的漏消费（手动提交`offset`时消费的数据还在内存消费完毕但未落盘，而`offset`已被提交，此刻消费者挂了，则未落盘的消费数据丢失）
+
+使用支持事务的消费者架构，如支持事务的数据库（`Mysql`），事务提交成功才提交`offset`
+
+### 8. 数据积压
+数据积压情况在生产者与消费者两端都可能出现：
+- 消费能力不足，数据积压在消费者端，可以增加单个`topic`的分区数，并同时提升消费者组的消费者数量；也可以增大消费者单次拉取数据的批次大小
+- 生产速度大于消费速度，也会出现生产者端的数据积压
+
+### 10. kafka-eagle监控
