@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "f50c4eaedc5c2618",
+        "id": "eb2fbf8775caa478",
         "type": "tabs",
         "children": [
           {
-            "id": "d295485fea58eb9b",
+            "id": "00829a619d2be604",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Plan.md",
+                "file": "Python/Python基础.md",
                 "mode": "source",
                 "source": false
               }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Plan.md",
+                "file": "Python/Python基础.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Plan.md",
+                "file": "Python/Python基础.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Plan.md"
+                "file": "Python/Python基础.md"
               }
             }
           }
@@ -147,24 +147,30 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "d295485fea58eb9b",
+  "active": "9e964c24066f1113",
   "lastOpenFiles": [
+    "Java/JVM/垃圾收集器与内存分配策略.md",
+    "Python/Python基础.md",
+    "Python/Scrapy应用.md",
+    "Python/img",
+    "Python.md",
+    "Python",
+    "技术要点/定时任务.md",
+    "Plan.md",
+    "技术要点/加解密.md",
+    "技术要点/批处理.md",
+    "技术要点/动态注入bean.md",
+    "技术要点/文件上传下载.md",
+    "技术要点/套用模板生成文件.md",
+    "技术要点/奇技淫巧.md",
+    "技术要点/登录认证与权限管理.md",
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
     "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
     "未命名.canvas",
     "2023-06-24.md",
     "操作系统/并发：死锁与饥饿.md",
     "assets/img/philly-magic-garden.jpg.md",
-    "技术要点/登录认证与权限管理.md",
-    "技术要点/定时任务.md",
-    "技术要点/动态注入bean.md",
     "技术要点/多数据源切换.md",
-    "技术要点/加解密.md",
-    "技术要点/文件上传下载.md",
-    "技术要点/套用模板生成文件.md",
-    "技术要点/奇技淫巧.md",
-    "技术要点/批处理.md",
-    "Plan.md",
     "框架or中间件/Git/Git概念与配置.md",
     "框架or中间件/MQ/Kafka/img/零拷贝.png",
     "框架or中间件/MQ/Kafka/img/零拷贝.png.crdownload",
@@ -182,17 +188,12 @@
     "框架or中间件/Mybatis/Mybatis相关配置.md",
     "框架or中间件/Mybatis/Mybatis-Plus.md",
     "框架or中间件/Mysql/Mysql进阶.md",
-    "框架or中间件/Redis/Redis进阶.md",
-    "框架or中间件/Redis/Redis基础.md",
-    "框架or中间件/Spring/JdbcTemplate.md",
     "计划",
     "框架or中间件/MQ/Kafka/img/broker工作流程.png",
     "框架or中间件/MQ/Kafka/img/broker工作流程.png.crdownload",
     "框架or中间件/MQ/Kafka/img/kafka在zookeeper中的存储信息.png.crdownload",
     "框架or中间件/MQ/Kafka/img/kafka在zookeeper中的存储信息.png",
     "框架or中间件/MQ/Kafka/img/未命名绘图.png",
-    "框架or中间件/Redis/Redis进阶.docx",
-    "assets/img",
     "框架or中间件/MQ/Kafka/img/kafka事务的工作流程.png",
     "框架or中间件/MQ/Kafka/img/Kafka生产者发送消息流程.png"
   ]
