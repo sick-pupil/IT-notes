@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Python/Python基础.md",
+                "file": "框架or中间件/Mybatis/Mybatis相关配置.md",
                 "mode": "source",
                 "source": false
               }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Python/Python基础.md",
+                "file": "框架or中间件/Mybatis/Mybatis相关配置.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Python/Python基础.md",
+                "file": "框架or中间件/Mybatis/Mybatis相关配置.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Python/Python基础.md"
+                "file": "框架or中间件/Mybatis/Mybatis相关配置.md"
               }
             }
           }
@@ -134,8 +134,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 321.5,
-    "collapsed": true
+    "width": 321.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -147,30 +146,32 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "9e964c24066f1113",
+  "active": "00829a619d2be604",
   "lastOpenFiles": [
-    "Java/JVM/垃圾收集器与内存分配策略.md",
-    "Python/Python基础.md",
-    "Python/Scrapy应用.md",
-    "Python/img",
-    "Python.md",
-    "Python",
-    "技术要点/定时任务.md",
-    "Plan.md",
-    "技术要点/加解密.md",
-    "技术要点/批处理.md",
-    "技术要点/动态注入bean.md",
+    "框架or中间件/Mybatis/Mybatis-Plus.md",
+    "框架or中间件/Mybatis/Mybatis相关配置.md",
     "技术要点/文件上传下载.md",
     "技术要点/套用模板生成文件.md",
     "技术要点/奇技淫巧.md",
+    "技术要点/批处理.md",
+    "技术要点/加解密.md",
+    "技术要点/多数据源切换.md",
+    "技术要点/动态注入bean.md",
+    "技术要点/定时任务.md",
     "技术要点/登录认证与权限管理.md",
+    "Plan.md",
+    "Python/Scrapy应用.md",
+    "Python/Python基础.md",
+    "Java/JVM/垃圾收集器与内存分配策略.md",
+    "Python/img",
+    "Python.md",
+    "Python",
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
     "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
     "未命名.canvas",
     "2023-06-24.md",
     "操作系统/并发：死锁与饥饿.md",
     "assets/img/philly-magic-garden.jpg.md",
-    "技术要点/多数据源切换.md",
     "框架or中间件/Git/Git概念与配置.md",
     "框架or中间件/MQ/Kafka/img/零拷贝.png",
     "框架or中间件/MQ/Kafka/img/零拷贝.png.crdownload",
@@ -185,8 +186,6 @@
     "框架or中间件/MQ/Kafka/img/LEO与HW.png.crdownload",
     "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
     "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
-    "框架or中间件/Mybatis/Mybatis相关配置.md",
-    "框架or中间件/Mybatis/Mybatis-Plus.md",
     "框架or中间件/Mysql/Mysql进阶.md",
     "计划",
     "框架or中间件/MQ/Kafka/img/broker工作流程.png",
