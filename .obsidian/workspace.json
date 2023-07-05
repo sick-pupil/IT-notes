@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "框架or中间件/Mybatis/Mybatis相关配置.md",
+                "file": "Python/Scrapy应用.md",
                 "mode": "source",
                 "source": false
               }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/Mybatis/Mybatis相关配置.md",
+                "file": "Python/Scrapy应用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/Mybatis/Mybatis相关配置.md",
+                "file": "Python/Scrapy应用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/Mybatis/Mybatis相关配置.md"
+                "file": "Python/Scrapy应用.md"
               }
             }
           }
@@ -134,7 +134,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 321.5
+    "width": 321.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -148,8 +149,9 @@
   },
   "active": "00829a619d2be604",
   "lastOpenFiles": [
-    "框架or中间件/Mybatis/Mybatis-Plus.md",
+    "框架or中间件/Redis/Redis进阶.md",
     "框架or中间件/Mybatis/Mybatis相关配置.md",
+    "框架or中间件/Mybatis/Mybatis-Plus.md",
     "技术要点/文件上传下载.md",
     "技术要点/套用模板生成文件.md",
     "技术要点/奇技淫巧.md",
@@ -186,7 +188,6 @@
     "框架or中间件/MQ/Kafka/img/LEO与HW.png.crdownload",
     "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
     "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
-    "框架or中间件/Mysql/Mysql进阶.md",
     "计划",
     "框架or中间件/MQ/Kafka/img/broker工作流程.png",
     "框架or中间件/MQ/Kafka/img/broker工作流程.png.crdownload",
