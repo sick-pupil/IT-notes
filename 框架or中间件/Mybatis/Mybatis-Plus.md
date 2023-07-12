@@ -268,7 +268,34 @@ emplopyeeDao.delete(
 
 ```
 
-## 4. 分页拦截器
+## 4. 通用方法
+使用`IService<Model> ServiceImpl<? extends BaseMapper, Model> BaseMapper<Model>`拓展`Service`与`Mapper`层的增删查改方法
+```java
+public interface IBookService extends IService<Book> { }
+
+@Service
+public class BookServerImpl extends ServiceImpl<BookMapper, Book> implements IBookService{ }
+
+public interface BookMapper extends BaseMapper<Book> { 
+	@Select("SELECT * FROM `tb_area`") 
+	List<Book> selectList(); 
+}
+
+@Data 
+@EqualsAndHashCode(callSuper = false) 
+@Accessors(chain = true) 
+@TableName("tb_area") 
+public class Book extends Model<Book> implements Serializable { 
+	
+	@TableId(value = "area_id", type = IdType.AUTO) 
+	private Integer areaId; 
+	
+	private String areaName; 
+	private int priority; 
+}
+```
+
+## 5. 分页拦截器
 ```java
 //mybatis-plus 3.4.0版本之前用法
 @Configuration

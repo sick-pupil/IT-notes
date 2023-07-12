@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "技术要点/奇技淫巧.md",
+                "file": "框架or中间件/Mybatis/Mybatis-Plus.md",
                 "mode": "source",
                 "source": false
               }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "技术要点/奇技淫巧.md",
+                "file": "框架or中间件/Mybatis/Mybatis-Plus.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "技术要点/奇技淫巧.md",
+                "file": "框架or中间件/Mybatis/Mybatis-Plus.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "技术要点/奇技淫巧.md"
+                "file": "框架or中间件/Mybatis/Mybatis-Plus.md"
               }
             }
           }
@@ -134,8 +134,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 321.5,
-    "collapsed": true
+    "width": 321.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -147,18 +146,18 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "9e964c24066f1113",
+  "active": "00829a619d2be604",
   "lastOpenFiles": [
+    "框架or中间件/Mybatis/Mybatis相关配置.md",
+    "技术要点/奇技淫巧.md",
     "技术要点/批处理.md",
     "技术要点/登录认证与权限管理.md",
     "技术要点/定时任务.md",
     "技术要点/动态注入bean.md",
     "技术要点/多数据源切换.md",
-    "技术要点/奇技淫巧.md",
     "Plan.md",
     "Python/Scrapy应用.md",
     "框架or中间件/Redis/Redis进阶.md",
-    "框架or中间件/Mybatis/Mybatis相关配置.md",
     "框架or中间件/Mybatis/Mybatis-Plus.md",
     "技术要点/文件上传下载.md",
     "技术要点/套用模板生成文件.md",
