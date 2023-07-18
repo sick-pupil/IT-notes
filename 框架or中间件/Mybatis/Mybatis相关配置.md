@@ -188,7 +188,12 @@ public void testMybatis() {
 	insert into user values(null,#{username},#{password},#{age},#{sex},#{email})
 </insert>
 
-<!--使用resultMap映射表字段与bean属性-->
+<!-- 
+	mybatis中可以使用resultType 与 resultMap映射sql执行结果
+	resultType需要显式指定sql结果绑定的JavaBean且sql结果集字段名称需要与JavaBean中的属性名称一致；
+	而resultMap也需要显式绑定sql结果集与JavaBean，但sql结果集字段与JavaBean属性可以设置进行映射
+-->
+<!--使用resultMap映射表字段与bean属性 -->
 <resultMap id="userResultMap" type="com.mybatis.example.bean.user">
 	<id property="id" column="id" />
 	<result property="username" column="user_name" />
@@ -239,6 +244,24 @@ public void testMybatis() {
 		fetchType="eager" /> <!--当开启全局延迟加载后，可通过fetchType属性手动控制延迟加载效果->
 	<!--selectById(@Param("did") Integer did)-->
 </resultMap>
+
+<!-- 
+	select 
+		emp.emp_name, 
+		emp.age, 
+		emp.sex, 
+		emp.email, 
+		dept.dept_did,
+		dept.dept_name
+	from emp 
+	left join dept on emp.dept_id = dept.id 
+	
+	association 适用于一对一的关系
+	collection 适用于一对多的关系
+	结合emp与dept的select语句，可以看出：
+	如果emp与dept为一对一则使用 association；如果emp与dept为一对多则使用 collection 
+-->
+
 <!--4. 使用collection-->
 <resultMap id="empAndDeptResultMap" type="dept">
 	<id property="id" column="id" />

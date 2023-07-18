@@ -1288,6 +1288,33 @@ mybatis:
 		map-underscore-to-camel-case: true
 ```
 
+`mapper-locations`与`@Mapper`、`@MapperScan`、`@MapperScans`区别：
+1. `mapper-locations`：扫描给出路径下的`mapper.xml`，为后续`xml`与`mapper`接口的绑定提供`xml`信息条件
+	- 当`mapper`接口和`mapper.xml`命名相同且所在路径相同，则`mapper-locations`可以不需要配置；否则需要配置`mapper-locations`
+2. `@Mapper`：将`mapper`接口在编译期间接口实例化，放到`spring`容器中
+3. `@MapperScan`：指定要扫描的`mapper`接口类路径，来代替`@Mapper`注解
+	- `@MapperScan({"com.philos.*.mapper","org.philos.*.mapper"})`
+	- `@MapperScan({"com.kfit.demo","com.kfit.user"})`
+	- `@MapperScan("com.lz.water.monitor.mapper")`
+4. `@MapperScans`：指定要扫描的`mapper`接口类路径，来代替`@Mapper`注解
+
+```java
+@SpringBootApplication
+@MapperScan(basePackages = {"com.ssm.**.dao"}) 
+public class Demo02Application { 
+	public static void main(String[] args) { 
+		SpringApplication.run(Demo02Application.class, args); 
+	} 
+}
+```
+
+```java
+@Mapper
+public interface DisplayMapper {
+	...
+}
+```
+
 ## 9. Swagger接口文档生成
 ### 1. Swagger基本配置
 1. 添加依赖
