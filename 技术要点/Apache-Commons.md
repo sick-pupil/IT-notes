@@ -1,631 +1,4 @@
-## 1. Optional判空
-```java
-Optional.empty() //返回一个空的Optional
-
-optional.isEmpty() //判断Optional是否为空，为空则返回true
-
-Optional.of(obj) //返回一个非空的Optional，如果obj为空，则报错NullPointException
-
-Optional.ofNullable(obj) //返回Optional，不管obj是否为空
-
-optional.get() //返回Optional之前的obj值，如果不存在则报错NoSuchElementException
-
-optional.isPreSent() //optional存在值则返回true，否则为null返回false
-
-optional.ifPresent(arg -> {}) //optional存在值则调用其中的方法参数
-
-optional.orElse(obj) //optional存在值则返回，否则返回orElse中的obj
-
-optional.orElseGet(arg -> {}) //optional存在值则返回，否则调用orElseGet中的方法参数
-
-optional.orElseThrow(arg -> {}) //optional存在值则返回，否则调用orElseThrow中的方法参数抛出异常
-
-optional.map(arg -> {}) //根据方法参数中的返回值，返回一个对应的optional，即使用optional封装一遍属性
-
-optional.flatMap(arg -> {}) //根据方法参数中的返回值，返回一个对应的optional，和map不同的是flatMap返回的对象如果已经是optional类型的，则不会再用optional封装一遍
-
-optional.filter(arg -> {}) //方法参数返回true or false，如果返回true则返回一个带值的optional，否则返回一个空的optional
-```
-
-## 2. Stream集合操作
-### 1. 创建流
-```java
-//collection.stream()和collection.parallelStream()，集合实例调用实例方法获取stream
-List<String> list = new ArrayList<>();
-Stream<String> stream = list.stream(); //获取顺序流
-Stream<String> parallelStream = list.parallelStream(); //获取并行流
-
-//Arrays.stream()，数组调用Arrays.stream()静态方法获取stream
-Integer[] nums = new Integer[10];
-Stream<Integer> stream = Arrays.stream(nums);
-
-//调用Stream中的静态方法
-//Stream.of()
-Stream<Integer> ofStream = Stream.of(1,2,3,4,5,6);
-Stream<String> ofStream = Stream.of("a", "b", "c", "d", "e", "f");
-Stream<Bubble> ofStream = Stream.of(new Bubble(1), new Bubble(2), new Bubble(3), new Bubble(4), new Bubble(5), new Bubble(6));
-
-//Stream.iterate()，iterate中第一个参数可以理解为seed种子，seed被作为参数代入iterate方法中的第二个参数lambda中，可以看出是无限流，最后需要limit作限制
-Stream<Integer> iterateStream = Stream.iterate(0, (n) -> n + 2).limit(10);
-
-//Stream.generate()，可以理解为和Stream.iterate差不多，也是无限流，只是参数形式不太一样
-Stream<Double> generateStream = Stream.generate(Math::random).limit(2);
-
-//bufferedReader.lines()，将读取的所有行内容转为流
-BufferedReader reader = new BufferedReader(new FileReader("..."));
-Stream<String> linesStream = reader.lines();
-
-//pattern.splitAsStream()将字符串分隔成流
-Pattern pattern = Pattern.compile(";");
-Stream<String> splitStream = pattern.splitAsStream("a;b;c;d");
-```
-
-### 2. 流操作
-```java
-Stream<Integer> stream = Stream.of(1,2,3,4,5,6,7,8,9,10);
-
-//filter()，按照filter中的lambda参数过滤出符合条件的stream元素集合
-stream.filter(num -> num >= 5);
-
-//limit(n)，获取n个元素的stream元素集合
-stream.limit(2);
-
-//skip(n)，跳过n个元素，配合limit(n)能实现分页
-stream.skip(10);
-
-//distinct()，根据流中元素的hashCode()和equals()去除重复元素
-stream.distinct()
-
-//map()，接受一个lambda方法，该方法被应用到每个元素上，可以修改原本stream中的每个元素
-stream.map(i -> i + 2);
-
-//flatMap()，接受一个lambda方法，该方法被应用到每个元素上，并且必须返回stream，flatMap会把lambda得到的多个stream合并成一个大stream
-stream.flatMap(it -> it.getList().stream());
-
-//sorted()，自然排序，流中元素需实现Comparable接口
-stream.sorted()
-//sorted(Comparator com)，流中元素按照Comparator排序器排序
-stream.sorted((o1, o2) -> {return o1.getField() - o2.getField()})
-
-//全部元素符合条件才返回true
-allMatch
-//全部元素都不符合条件才返回true
-noneMatch
-//只要有一个元素符合条件才返回true
-anyMatch
-//返回流中第一个元素
-findFirst
-//返回流中任意元素
-findAny
-//流中元素总个数
-count
-//流中元素最大值
-max
-//流中元素最小值
-min
-```
-
-### 3. 流生成
-```java
-stream.collect()
-//stream流中的元素进行汇总，转成集合
-Collectors.toList()
-Collectors.toSet()
-Collectors.toCollection()
-Collectors.toMap()
-Collectors.collectingAndThen()
-Collectors.joining()
-Collectors.counting()
-Collectors.summarizingDouble() Collectors.summarizingLong() Collectors.summarizingInt()
-Collectors.averagingDouble() Collectors.averagingLong() Collectors.averagingInt()
-Collectors.summingDouble() Collectors.summingLong() Collectors.summingint()
-Collectors.maxBy() Collectors.minBy()
-Collectors.groupingBy()
-Collectors.partitioningBy()
-```
-
-## 3. Valid
-`Validation`是用于检查程序代码中参数的有效性的框架，作为`Spring`中的一个参数校验工具，集成在`Spring-Context`中
-- `@AssertFalse`：适用于`Boolean`，验证注解元素值为`false`
-- `@AssertTrue`：适用于`Boolean`，验证注解元素值为`true`
-- `@NotNull`：适用于任意类型，验证注解的元素值不是`null`
-- `@Null`：适用于任意类型，验证注解的元素值是`null`
-- `@Min(value=值)`：适用于`BigDecimal`、`BigInteger`、`byte`、`short`、`int`、`long`、`任意Number或存储数字的CharSequence`，验证注解的元素值大于等于`@Min`指定的`value`值
-- `@Max(value=值)`：适用于`BigDecimal`、`BigInteger`、`byte`、`short`、`int`、`long`、`任意Number或存储数字的CharSequence`，验证注解的元素值小于等于`@Max`指定的`value`值
-- `@DecimalMin(value=值)`：与`@Min`基本一致，但`value`可以填写`decimal`
-- `@DecimalMax(value=值)`：与`@Max`基本一致，但`value`可以填写`decimal`
-- `@Digits(integer=整数位数, fraction=小数位数)`：适用类型与`@Min`一致，但验证元素值的整数位数与小数位数
-- `@Size(min=下限, max=上限)`：适用于字符串、`Collection`、`Map`、数组，验证字符串或者集合的大小上下限
-- `@Past`：适用于`java.util.Date java.util.Calendar java.Time`类库的日期类型，验证注解的元素值（日期类型）比当前时间早
-- `@Future`：适用于`java.util.Date java.util.Calendar java.Time`类库的日期类型，验证注解的元素值（日期类型）比当前时间晚
-- `@NotBlank`：适用于`CharSequence`子类型，验证注解的元素值不为空（不为`null`、去除首位空格后长度为0），不同于`@NotEmpty`，`@NotBlank`只应用于字符串且在比较时会去除字符串的首位空格
-- `@Length(min=下限, max=上限)`：适用于`CharSequence`子类型，验证注解的元素值长度在`min`和`max`区间内
-- `@NotEmpty`：适用于`CharSequence`子类型、`Collection`、`Map`、数组，验证注解的元素值不为`null`且不为空（字符串长度不为0、集合大小不为0）
-- `@Range(min=最小值, max=最大值)`：适用于`BigDecimal, BigInteger, CharSequence, byte, short, int, long`等原子类型和包装类型，验证注解的元素值在最小值和最大值之间
-- `@Email(regexp=正则表达式,flag=标志的模式)`
-- `@Pattern(regexp=正则表达式,flag=标志的模式)`
-- `@Valid`：指定递归验证关联的对象；如用户对象中有个地址对象属性，如果想在验证用户对象时一起验证地址对象的话，在地址对象上加`@Valid`注解即可级联验证
-
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-validation</artifactId>
-</dependency>
-```
-
-```java
-/**
- * 用户类
- */
-@Setter
-@Getter
-@NoArgsConstructor
-public class User implements Serializable {
-
-   /**
-    * 主键id
-    */
-   private Integer id;
-
-   /**
-    * 用户名
-    */
-   @NotEmpty(message = "用户名不能为空！")
-   private String username;
-
-   /**
-    * 密码
-    */
-   @Size(min = 8, message = "密码长度不能小于8！")
-   @NotEmpty(message = "密码不能为空！")
-   private String password;
-
-   /**
-    * 邮箱
-    */
-   @Email(message = "邮箱格式错误！")
-   private String email;
-
-   /**
-    * 年龄
-    */
-   @Min(value = 18, message = "年龄不能小于18！")
-   @Max(value = 150, message = "年龄不能小于150！")
-   private int age;
-
-}
-
-@PostMapping("/add")
-public String add(@RequestBody @Valid User user, BindingResult errors) {
-   if (errors.hasErrors()) {
-      return errors.getFieldError().getDefaultMessage();
-   }
-   userService.add(user);
-   return "添加成功！";
-}
-```
-
-`Controller`方法参数中多了一个`BindingResult`类型的参数，该对象存放`validation`校验的错误信息，一般通过`hasErrors`方法判断是否有错误，通过`errors.getFieldError().getDefaultMessage()`获取错误信息
-
-同为一个需要校验的类或者对象，可能在一个业务场景需要做A类型的校验，而在另一个业务场景需要做B类型的校验（`User`类，在`userAdd`接口需要`password`不为空，而在`userUpdate`接口则不需要填写`password`）
-
-```java
-package com.example.validationtest.param;
-
-/**
- * 校验规则类
- */
-public class ValidationRules {
-
-   /**
-    * 注册（添加）用户规则
-    */
-   public interface UserAdd {
-
-   }
-
-   /**
-    * 更新（修改）用户规则
-    */
-   public interface UserUpdate {
-
-   }
-
-}
-
-
-package com.example.validationtest.dataobject;
-
-import com.example.validationtest.param.ValidationRules;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import javax.validation.constraints.*;
-import java.io.Serializable;
-
-/**
- * 用户类
- */
-@Setter
-@Getter
-@NoArgsConstructor
-public class User implements Serializable {
-
-   /**
-    * 主键id，将其设定分组为ValidationRules.UserUpdate，表示用户信息修改时校验该规则
-    */
-   @NotNull(groups = ValidationRules.UserUpdate.class, message = "用户id不能为空！")
-   private Integer id;
-
-   /**
-    * 用户名，将其设定分组为ValidationRules.UserAdd，表示添加用户时校验该规则
-    */
-   @NotEmpty(groups = ValidationRules.UserAdd.class, message = "用户名不能为空！")
-   private String username;
-
-   /**
-    * 密码，将长度校验规则同时加入到ValidationRules.UserAdd和ValidationRules.UserUpdate组，表示添加用户和用户信息修改时都要校验这个规则，空值校验只有添加时校验
-    */
-   @Size(groups = {ValidationRules.UserAdd.class, ValidationRules.UserUpdate.class}, 
-	   min = 8, message = "密码长度不能小于8！")
-   @NotEmpty(groups = ValidationRules.UserAdd.class, message = "密码不能为空！")
-   private String password;
-
-   // 下面都是一回事
-
-   /**
-    * 邮箱
-    */
-   @Email(groups = {ValidationRules.UserAdd.class, ValidationRules.UserUpdate.class}, 
-	   message = "邮箱格式错误！")
-   private String email;
-
-   /**
-    * 年龄
-    */
-   @Min(groups = {ValidationRules.UserAdd.class, ValidationRules.UserUpdate.class}, 
-	   value = 18, message = "年龄不能小于18！")
-   @Max(groups = {ValidationRules.UserAdd.class, ValidationRules.UserUpdate.class}, 
-	   value = 150, message = "年龄不能小于150！")
-   private int age;
-
-}
-
-
-package com.example.validationtest.api;
-
-import com.example.validationtest.dataobject.User;
-import com.example.validationtest.param.ValidationRules;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-/**
- * 测试校验（这里不做实际的用户添加删除工作，只是测试validation校验）
- */
-@RestController
-@RequestMapping("/api/user")
-public class UserAPI {
-
-   /**
-    * 模拟添加用户，这里设置校验规则为ValidationRules.UserAdd
-    */
-   @PostMapping("/add")
-   public String add(@RequestBody @Validated(ValidationRules.UserAdd.class) User user, 
-	   BindingResult errors) {
-      if (errors.hasErrors()) {
-         return errors.getFieldError().getDefaultMessage();
-      }
-      return "添加成功！";
-   }
-
-   /**
-    * 模拟修改用户，这里设置校验规则为ValidationRules.UserUpdate
-    */
-   @PostMapping("/update")
-   public String update(@RequestBody @Validated(ValidationRules.UserUpdate.class) User user, 
-	   BindingResult errors) {
-      if (errors.hasErrors()) {
-         return errors.getFieldError().getDefaultMessage();
-      }
-      return "修改成功！";
-   }
-}
-```
-
-## 4. Hutool
-### 1. 日期时间
-#### 1. DateUtil
-```java
-//Date、Long、Calendar类型互相转换
-//当前时间
-Date date = DateUtil.date();
-//当前时间
-Date date2 = DateUtil.date(Calendar.getInstance());
-//当前时间
-Date date3 = DateUtil.date(System.currentTimeMillis());
-//当前时间字符串，格式：yyyy-MM-dd HH:mm:ss
-String now = DateUtil.now();
-//当前日期字符串，格式：yyyy-MM-dd
-String today= DateUtil.today();
-
-
-//格式化
-String dateStr = "2017-03-01";
-Date date = DateUtil.parse(dateStr);
-//结果 2017/03/01
-String format = DateUtil.format(date, "yyyy/MM/dd");
-//常用格式的格式化，结果：2017-03-01
-String formatDate = DateUtil.formatDate(date);
-//结果：2017-03-01 00:00:00
-String formatDateTime = DateUtil.formatDateTime(date);
-//结果：00:00:00
-String formatTime = DateUtil.formatTime(date);
-
-
-//日期时间部分获取
-Date date = DateUtil.date();
-//获得年的部分
-DateUtil.year(date);
-//获得月份，从0开始计数
-DateUtil.month(date);
-//获得月份枚举
-DateUtil.monthEnum(date);
-
-
-//开始结束日期时间
-String dateStr = "2017-03-01 22:33:23";
-Date date = DateUtil.parse(dateStr);
-//一天的开始，结果：2017-03-01 00:00:00
-Date beginOfDay = DateUtil.beginOfDay(date);
-//一天的结束，结果：2017-03-01 23:59:59
-Date endOfDay = DateUtil.endOfDay(date);
-
-
-//时间加减计算、偏移
-String dateStr = "2017-03-01 22:33:23";
-Date date = DateUtil.parse(dateStr);
-//结果：2017-03-03 22:33:23
-Date newDate = DateUtil.offset(date, DateField.DAY_OF_MONTH, 2);
-//常用偏移，结果：2017-03-04 22:33:23
-DateTime newDate2 = DateUtil.offsetDay(date, 3);
-//常用偏移，结果：2017-03-01 19:33:23
-DateTime newDate3 = DateUtil.offsetHour(date, -3);
-//昨天
-DateUtil.yesterday()
-//明天
-DateUtil.tomorrow()
-//上周
-DateUtil.lastWeek()
-//下周
-DateUtil.nextWeek()
-//上个月
-DateUtil.lastMonth()
-//下个月
-DateUtil.nextMonth()
-
-
-//日期时间差
-String dateStr1 = "2017-03-01 22:33:23";
-Date date1 = DateUtil.parse(dateStr1);
-String dateStr2 = "2017-04-01 23:33:23";
-Date date2 = DateUtil.parse(dateStr2);
-//相差一个月，31天
-long betweenDay = DateUtil.between(date1, date2, DateUnit.DAY);
-//Level.MINUTE表示精确到分
-String formatBetween = DateUtil.formatBetween(between, Level.MINUTE);
-//输出：31天1小时
-Console.log(formatBetween);
-```
-
-#### 2. DateTime
-```java
-Date date = new Date();
-//new方式创建
-DateTime time = new DateTime(date);
-Console.log(time);
-//of方式创建
-DateTime now = DateTime.now();
-DateTime dt = DateTime.of(date);
-
-
-//日期时间部分获取
-DateTime dateTime = new DateTime("2017-01-05 12:34:23", DatePattern.NORM_DATETIME_FORMAT);
-//年，结果：2017
-int year = dateTime.year();
-//季度（非季节），结果：Season.SPRING
-Season season = dateTime.seasonEnum();
-//月份，结果：Month.JANUARY
-Month month = dateTime.monthEnum();
-//日，结果：5
-int day = dateTime.dayOfMonth();
-
-
-//DateTime为可变对象，可设置为不可变对象
-DateTime dateTime = new DateTime("2017-01-05 12:34:23", DatePattern.NORM_DATETIME_FORMAT);
-//默认情况下DateTime为可变对象，此时offset == dateTime
-DateTime offset = dateTime.offset(DateField.YEAR, 0);
-//设置为不可变对象后变动将返回新对象，此时offset != dateTime
-dateTime.setMutable(false);
-offset = dateTime.offset(DateField.YEAR, 0);
-```
-
-### 2. 加密解密
-```java
-//hex 16进制加密解密
-String str = "我是一个字符串";
-String hex = HexUtil.encodeHexStr(str, CharsetUtil.CHARSET_UTF_8);
-//hex是：
-//e68891e698afe4b880e4b8aae5ad97e7aca6e4b8b2
-String decodedStr = HexUtil.decodeHexStr(hex);
-//解码后与str相同
-
-
-//base62
-String a = "伦家是一个非常长的字符串66";
-// 17vKU8W4JMG8dQF8lk9VNnkdMOeWn4rJMva6F0XsLrrT53iKBnqo
-String encode = Base62.encode(a);
-// 还原为a
-String decodeStr = Base62.decodeStr(encode);
-
-
-//base64
-String a = "伦家是一个非常长的字符串";
-//5Lym5a625piv5LiA5Liq6Z2e5bi46ZW/55qE5a2X56ym5Liy
-String encode = Base64.encode(a);
-// 还原为a
-String decodeStr = Base64.decodeStr(encode);
-
-
-//base32
-String a = "伦家是一个非常长的字符串";
-String encode = Base32.encode(a);
-Assert.assertEquals("4S6KNZNOW3TJRL7EXCAOJOFK5GOZ5ZNYXDUZLP7HTKCOLLMX46WKNZFYWI", encode);
-String decodeStr = Base32.decodeStr(encode);
-Assert.assertEquals(a, decodeStr);
-
-
-//AES
-String content = "test中文";
-//随机生成密钥
-byte[] key = SecureUtil.generateKey(SymmetricAlgorithm.AES.getValue()).getEncoded();
-//构建
-SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, key);
-//加密
-byte[] encrypt = aes.encrypt(content);
-//解密
-byte[] decrypt = aes.decrypt(encrypt);
-//加密为16进制表示
-String encryptHex = aes.encryptHex(content);
-//解密为字符串
-String decryptStr = aes.decryptStr(encryptHex, CharsetUtil.CHARSET_UTF_8);
-
-
-//DESede
-String content = "test中文";
-byte[] key = SecureUtil.generateKey(SymmetricAlgorithm.DESede.getValue()).getEncoded();
-SymmetricCrypto des = new SymmetricCrypto(SymmetricAlgorithm.DESede, key);
-//加密
-byte[] encrypt = des.encrypt(content);
-//解密
-byte[] decrypt = des.decrypt(encrypt);
-//加密为16进制字符串（Hex表示）
-String encryptHex = des.encryptHex(content);
-//解密为字符串
-String decryptStr = des.decryptStr(encryptHex);
-
-
-//RSA
-RSA rsa = new RSA();
-//获得私钥
-rsa.getPrivateKey();
-rsa.getPrivateKeyBase64();
-//获得公钥
-rsa.getPublicKey();
-rsa.getPublicKeyBase64();
-//公钥加密，私钥解密
-byte[] encrypt = rsa.encrypt(StrUtil.bytes("我是一段测试aaaa", CharsetUtil.CHARSET_UTF_8), KeyType.PublicKey);
-byte[] decrypt = rsa.decrypt(encrypt, KeyType.PrivateKey);
-//私钥加密，公钥解密
-byte[] encrypt2 = rsa.encrypt(StrUtil.bytes("我是一段测试aaaa", CharsetUtil.CHARSET_UTF_8), KeyType.PrivateKey);
-byte[] decrypt2 = rsa.decrypt(encrypt2, KeyType.PublicKey);
-```
-
-### 3. HTTP
-```java
-//GET
-// 最简单的HTTP请求，可以自动通过header等信息判断编码，不区分HTTP和HTTPS
-String result1= HttpUtil.get("https://www.baidu.com");
-// 当无法识别页面编码的时候，可以自定义请求页面的编码
-String result2= HttpUtil.get("https://www.baidu.com", CharsetUtil.CHARSET_UTF_8);
-//可以单独传入http参数，这样参数会自动做URL编码，拼接在URL中
-HashMap<String, Object> paramMap = new HashMap<>();
-paramMap.put("city", "北京");
-String result3= HttpUtil.get("https://www.baidu.com", paramMap);
-
-
-//POST
-HashMap<String, Object> paramMap = new HashMap<>();
-paramMap.put("city", "北京");
-String result= HttpUtil.post("https://www.baidu.com", paramMap);
-
-
-//文件上传
-HashMap<String, Object> paramMap = new HashMap<>();
-//文件上传只需将参数中的键指定（默认file），值设为文件对象即可，对于使用者来说，文件上传与普通表单提交并无区别
-paramMap.put("file", FileUtil.file("D:\\face.jpg"));
-String result= HttpUtil.post("https://www.baidu.com", paramMap);
-
-
-//文件下载
-String fileUrl = "http://mirrors.sohu.com/centos/8.4.2105/isos/x86_64/CentOS-8.4.2105-x86_64-dvd1.iso";
-//将文件下载后保存在E盘，返回结果为下载文件大小
-long size = HttpUtil.downloadFile(fileUrl, FileUtil.file("e:/"));
-System.out.println("Download size: " + size);
-
-
-String result2 = HttpRequest.post(url)
-    .header(Header.USER_AGENT, "Hutool http")//头信息，多个头信息多次调用此方法即可
-    .form(paramMap)//表单内容
-    .timeout(20000)//超时，毫秒
-    .execute().body();
-Console.log(result2);
-
-String json = ...;
-String result2 = HttpRequest.post(url)
-    .body(json)
-    .execute().body();
-
-HttpResponse res = HttpRequest.post(url)..execute();
-Console.log(res.getStatus());
-
-HttpResponse res = HttpRequest.post(url)..execute();
-//预定义的头信息
-Console.log(res.header(Header.CONTENT_ENCODING));
-//自定义头信息
-Console.log(res.header("Content-Disposition"));
-
-
-```
-
-### 4. 命令行
-```java
-String str = RuntimeUtil.execForStr("ipconfig");
-List<String> strList = RuntimeUtil.execForStr("ipconfig");
-```
-
-### 5. ID
-```java
-//UUID
-//生成的UUID是带-的字符串，类似于：a5c8a5e8-df2b-4706-bea4-08d0939410e3
-String uuid = IdUtil.randomUUID();
-//生成的是不带-的字符串，类似于：b17f24ff026d40949c85a24f4f375d42
-String simpleUUID = IdUtil.simpleUUID();
-
-
-//ObjectId
-//生成类似：5b9e306a4df4f8c54a39fb0c
-String id = ObjectId.next();
-//方法2：从Hutool-4.1.14开始提供
-String id2 = IdUtil.objectId();
-
-
-//Snowflake
-//参数1为终端ID
-//参数2为数据中心ID
-Snowflake snowflake = IdUtil.getSnowflake(1, 1);
-long id = snowflake.nextId();
-//简单使用
-long id = IdUtil.getSnowflakeNextId();
-String id = snowflake.getSnowflakeNextIdStr();
-```
-
-## 5. Apache-Commons
-### 1. Lang
+## 1. Lang
 <img src="D:\Project\IT-notes\技术要点\img\apache-commons-lang.png" style="width:700px;height:350px;" />
 
 ```xml
@@ -636,22 +9,22 @@ String id = snowflake.getSnowflakeNextIdStr();
 </dependency>
 ```
 
-#### 1. 日期时间
-##### 1. 字符串转日期
+### 1. 日期时间
+#### 1. 字符串转日期
 ```java
 final String strDate = "2021-07-04 11:11:11";
 final String pattern = "yyyy-MM-dd HH:mm:ss";
 Date date2 = DateUtils.parseDate(strDate, pattern);
 ```
 
-##### 2. 日期转字符串
+#### 2. 日期转字符串
 ```java
 final Date date = new Date();
 final String pattern = "yyyy年MM月dd日";
 String strDate = DateFormatUtils.format(date, pattern);
 ```
 
-##### 3. 日期计算
+#### 3. 日期计算
 ```java
 final Date date = new Date();
 Date newDate1 = DateUtils.addDays(date, 5); // 加5天
@@ -660,8 +33,8 @@ Date newDate3 = DateUtils.truncate(date, Calendar.DATE); // 过滤时分秒
 boolean isSameDay = DateUtils.isSameDay(newDate1, newDate2); // 判断是否是同一天
 ```
 
-#### 2. 字符串
-##### 1. 判空
+### 2. 字符串
+#### 1. 判空
 ```java
 //判空
 boolean isEmpty = StringUtils.isEmpty(str);
@@ -675,7 +48,7 @@ boolean isAnyEmpty = StringUtils.isAnyEmpty(str1, str2, str3);
 boolean isAllEmpty = StringUtils.isAllEmpty(str1, str2, str3);
 ```
 
-##### 2. 去空格
+#### 2. 去空格
 ```java
 //去除两侧空格并返回新字符串
 String newStr = StringUtils.trim();
@@ -691,7 +64,7 @@ newStr = StringUtils.stripStart(str, "abc");
 newStr = StringUtils.stripEnd(str, "abc");
 ```
 
-##### 3. 分割
+#### 3. 分割
 ```java
 //默认指定空格为分隔符
 StringUtils.split(str);
@@ -699,7 +72,7 @@ StringUtils.split(str);
 StringUtils.split(str, ",");
 ```
 
-##### 4. 取子字符串
+#### 4. 取子字符串
 ```java
 //获得"aa.bb.cc"字符串中最后一个'.'之前的字符串
 StringUtils.substringBeforeLast("aa.bb.cc", "."); //aa.bb
@@ -714,7 +87,7 @@ StringUtils.substringBetween("ab.cc.txt", "."); //cc
 StringUtils.substringBetween("a(bb)c", "(", ")"); //bb
 ```
 
-##### 5. 其他
+#### 5. 其他
 ```java
 // 首字母大写
 StringUtils.capitalize("test"); // Test
@@ -737,7 +110,7 @@ RandomStringUtils.randomAlphanumeric(5);
 RandomStringUtils.randomNumeric(5);
 ```
 
-#### 3. 反射
+### 3. 反射
 ```java
 //读写属性
 String value2 = (String) FieldUtils.readDeclaredField(reflectDemo, "abc", true); //123
@@ -792,7 +165,7 @@ public void invokeDemo() throws Exception {
 }
 ```
 
-#### 4. 系统
+### 4. 系统
 ```java
 // 判断操作系统类型
 boolean isWin = SystemUtils.IS_OS_WINDOWS;
@@ -818,7 +191,7 @@ File userDir = SystemUtils.getUserDir();// 项目所在路径
 File tmpDir = SystemUtils.getJavaIoTmpDir();
 ```
 
-### 2. IO
+## 2. IO
 <img src="D:\Project\IT-notes\技术要点\img\apache-commons-io.png" style="width:700px;height:250px;" />
 
 ```xml
@@ -829,7 +202,7 @@ File tmpDir = SystemUtils.getJavaIoTmpDir();
 </dependency>
 ```
 
-#### 1. 输入输出流
+### 1. 输入输出流
 ```java
 InputStream inputStream = new FileInputStream("test.txt");
 OutputStream outputStream = new FileOutputStream("test.txt");
@@ -937,7 +310,7 @@ private class MyObservableInputStream extends ObservableInputStream {
 //StringBuilderWriter: StringBuilder的Writer
 ```
 
-#### 2. 文件读写
+### 2. 文件读写
 **FileUtils、FilenameUtils、PathUtils**
 ```java
 File readFile = new File("test.txt");
@@ -957,7 +330,7 @@ FileUtils.writeByteArrayToFile(writeFile, bytes);
 FileUtils.writeLines(writeFile, lines, "UTF-8");
 ```
 
-#### 3. 文件移动复制
+### 3. 文件移动复制
 ```java
 File srcFile = new File("src.txt");
 File destFile = new File("dest.txt");
@@ -978,7 +351,7 @@ FileUtils.copyURLToFile(new URL("http://xx"), destFile);
 FileUtils.copyInputStreamToFile(new FileInputStream("test.txt"), destFile);
 ```
 
-#### 4. 文件名
+### 4. 文件名
 ```java
 // 获取名称，后缀等
 String name = "/home/xxx/test.txt";
@@ -988,7 +361,7 @@ FilenameUtils.getExtension(name); // "txt"
 FilenameUtils.getPath(name); // "/home/xxx/"
 ```
 
-#### 5. Path
+### 5. Path
 ```java
 // 获取当前路径
 Path path = PathUtils.current();
@@ -1008,7 +381,7 @@ counters.getDirectoryCounter(); // 目录个数
 counters.getFileCounter(); // 文件个数
 ```
 
-#### 6. 文件排序器
+### 6. 文件排序器
 ```java
 List<File> files = Arrays.asList(new File[]{
         new File("/foo/def"),
@@ -1026,7 +399,7 @@ Comparator dirAndNameComp = new CompositeFileComparator(
 Collections.sort(files, dirAndNameComp); // ["/foo/abc", "/foo/def", "/foo/hh.txt", "/foo/test.txt"]
 ```
 
-#### 7. 文件监听器
+### 7. 文件监听器
 ```java
 public static void main(String[] args) throws Exception {
     // 监听目录下文件变化。可通过参数控制监听某些文件，默认监听目录所有文件
@@ -1054,7 +427,7 @@ private class myListener extends FileAlterationListenerAdaptor {
 }
 ```
 
-#### 8. 其他
+### 8. 其他
 ```java
 File file = new File("test.txt");
 File dir = new File("/test");
@@ -1072,7 +445,7 @@ Collection<File> files = FileUtils.listFiles(dir, null, true);
 FileUtils.getTempDirectory();
 ```
 
-### 3. Codec
+## 3. Codec
 <img src="D:\Project\IT-notes\技术要点\img\apache-commons-codec.png" style="width:700px;height:200px;" />
 
 ```xml
@@ -1083,7 +456,7 @@ FileUtils.getTempDirectory();
 </dependency>
 ```
 
-#### 1. Hex
+### 1. Hex
 ```java
 // byte数组转为16进制字符串
 String hex = Hex.encodeHexString("123".getBytes());
@@ -1093,7 +466,7 @@ byte[] src = Hex.decodeHex(hex);
 System.out.println(new String(src));
 ```
 
-#### 2. Base64/Base32/Base16
+### 2. Base64/Base32/Base16
 ```java
 // base64编码
 String base64 = Base64.encodeBase64String("测试".getBytes());
@@ -1130,7 +503,7 @@ IOUtils.write(data, dbos, "UTF-8");
 String dec2 = dbos.toString(); // 123
 ```
 
-#### 3. URL
+### 3. URL
 ```java
 URLCodec urlCodec = new URLCodec();
 // url编码
@@ -1141,7 +514,7 @@ String decUrl = urlCodec.decode(encUrl);
 System.out.println(decUrl);
 ```
 
-#### 4. MD/SHA/HMAC
+### 4. MD/SHA/HMAC
 ```java
 String md5 = DigestUtils.md5Hex("测试");
 
@@ -1163,7 +536,7 @@ String hmacSha384 = new HmacUtils(HmacAlgorithms.HMAC_SHA_384, key).hmacHex(valu
 String hmacSha512 = new HmacUtils(HmacAlgorithms.HMAC_SHA_512, key).hmacHex(valueToDigest);
 ```
 
-### 4. Compress
+## 4. Compress
 <img src="D:\Project\IT-notes\技术要点\img\apache-commons-compress.png" style="width:700px;height:200px;" />
 
 ```xml
@@ -1174,7 +547,7 @@ String hmacSha512 = new HmacUtils(HmacAlgorithms.HMAC_SHA_512, key).hmacHex(valu
 </dependency>
 ```
 
-#### 1. 压缩
+### 1. 压缩
 - `.gz`：`GzipCompressorOutputStream、GzipCompressorInputStream`
 - `.bz2`：`BZip2CompressorOutputStream、BZip2CompressorInputStream`
 - `.xz`：`XZCompressorOutputStream、XZCompressorInputStream`
@@ -1228,7 +601,7 @@ try (BZip2CompressorInputStream bzis = new BZip2CompressorInputStream(is)) {
 }
 ```
 
-#### 2. 归档
+### 2. 归档
 - `.tar`：`TarArchiveOutputStream、TarArchiveInputStream`
 - `.zip`：`ZipArchiveOutputStream、ZipArchiveInputStream`
 - `.jar`：`JarArchiveOutputStream、JarArchiveInputStream`
@@ -1348,7 +721,7 @@ public void un7z() throws IOException {
 }
 ```
 
-#### 3. 修改归档
+### 3. 修改归档
 ```java
 String tarFile = "/test.tar";
 InputStream is = new FileInputStream(tarFile);
@@ -1372,7 +745,7 @@ try (TarArchiveInputStream tais = new TarArchiveInputStream(is);
 }
 ```
 
-#### 4. 其他
+### 4. 其他
 ```java
 //动态获取流
 // 使用factory动态获取归档流
@@ -1417,7 +790,7 @@ try (ArchiveInputStream tgis = new TarArchiveInputStream(gis)) {
 }
 ```
 
-### 5. Exec
+## 5. Exec
 ```xml
 <dependency>
     <groupId>org.apache.commons</groupId>
@@ -1426,7 +799,7 @@ try (ArchiveInputStream tgis = new TarArchiveInputStream(gis)) {
 </dependency>
 ```
 
-#### 1. 基本调用
+### 1. 基本调用
 ```java
 //JDK原生写法
 //不使用工具类的写法
@@ -1486,7 +859,7 @@ System.out.println(suc);
 System.out.println(err);
 ```
 
-#### 2. 异步调用
+### 2. 异步调用
 ```java
 //JDK原生命令行异步调用写法
 public class RuntimeAsyncDemo {
@@ -1590,7 +963,7 @@ public void execAsync() throws IOException, InterruptedException {
 }
 ```
 
-#### 3. 看门狗
+### 3. 看门狗
 ```java
 String command = "ping 192.168.1.10";
 ByteArrayOutputStream susStream = new ByteArrayOutputStream();
@@ -1619,7 +992,7 @@ try {
 //可以通过killedProcess()查看监控的进程是否被杀死
 ```
 
-### 6. Net
+## 6. Net
 ```xml
 <dependency>
     <groupId>commons-net</groupId>
@@ -1628,7 +1001,7 @@ try {
 </dependency>
 ```
 
-#### 1. commons-net支持协议
+### 1. commons-net支持协议
 **FTP/FTPS**：FTP（File Transfer Protocol，文件传输协议）是 TCP/IP 协议组中的协议之一。FTP协议包括两个组成部分，其一为FTP服务器，其二为FTP客户端。其中FTP服务器用来存储文件，用户可以使用FTP客户端通过FTP协议访问位于FTP服务器上的资源。在开发网站的时候，通常利用FTP协议把网页或程序传到Web服务器上。此外，由于FTP传输效率非常高，在网络上传输大的文件时，一般也采用该协议。实现该协议的类是**FTPClient/FTPSClient**
 
 **FTP over HTTP** (experimental)：以http协议实现FTP的功能。由于FTP工作在被动模式时不仅需要将21作为FTP的控制（命令）端口，还要将20作为FTP的数据端口，因此在配置防火墙时比较麻烦，不如用http协议传输文件。因此可以利用原有的网站结合Alias的方法加目录访问控制来实现。实现该协议的类是**FTPHTTPClient**
@@ -1659,7 +1032,7 @@ try {
 
 **NTP/SNTP**：NTP服务器【Network Time Protocol（NTP）】是用来使计算机时间同步化的一种协议，它可以使计算机对其服务器或时钟源（如石英钟，GPS等等）做同步化。实现该协议的类是**NTPUDPClient**
 
-### 7. Collections
+## 7. Collections
 ```xml
 <dependency>
     <groupId>org.apache.commons</groupId>
@@ -1668,7 +1041,7 @@ try {
 </dependency>
 ```
 
-#### 1. 工具类
+### 1. 工具类
 ```java
 //CollectionUtils拓展
 String str = null;
@@ -1707,7 +1080,7 @@ ListUtils.emptyIfNull(list1);
 ListUtils.hashCodeForList(list1);
 ```
 
-#### 2. List拓展
+### 2. List拓展
 ```java
 //FixedSizeList 用于装饰另一个 List 以阻止修改其大小。不支持添加、删除、清除等操作。set 方法是允许的（因为它不会改变列表大小）
 List<String> sourceList = new ArrayList<>();
@@ -1767,7 +1140,7 @@ set.add("哈哈");
 println(set); // [aa,11,哈哈]
 ```
 
-#### 3. Map拓展
+### 3. Map拓展
 ```java
 //MultiValuedMap 和正常的 Map 有点区别，同一个 key 允许存放多个 value，这些 value 会放到一个 List 中
 //这个功能如果用 Java 的 Map 我们需要构造一个 Map<String, List<String>> 加个各种操作来实现
@@ -1864,7 +1237,7 @@ println(iMap); // {狗=dog, 猫=cat, 鱼=fish}
 println(map); // {cat=猫, dog=狗, fish=鱼}
 ```
 
-### 8. HTTPClient
+## 8. HTTPClient
 ```xml
 <dependency>
     <groupId>commons-httpclient</groupId>
@@ -1889,7 +1262,7 @@ println(map); // {cat=猫, dog=狗, fish=鱼}
 </dependency>
 ```
 
-#### 1. HttpClient3
+### 1. HttpClient3
 ```java
 // httpClient对象是线程安全的，可以单例使用，提升性能
 HttpClient httpClient = new HttpClient();
@@ -1921,7 +1294,7 @@ try {
 }
 ```
 
-#### 2. HttpClient4
+### 2. HttpClient4
 ```java
 // httpClient对象是线程安全的，可以单例使用，提升性能
 CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -1949,7 +1322,7 @@ try (CloseableHttpResponse res = httpClient.execute(httpGet)) {
 }
 ```
 
-#### 3. HttpClient5
+### 3. HttpClient5
 ```java
 // httpClient对象是线程安全的，可以单例使用，提升性能
 CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -2017,7 +1390,7 @@ httpClient.execute(request, new FutureCallback<SimpleHttpResponse>() {
 // ... ... 做其他业务处理
 ```
 
-### 9. Pool
+## 9. Pool
 ```xml
 <dependency>
     <groupId>org.apache.commons</groupId>
@@ -2025,9 +1398,3 @@ httpClient.execute(request, new FutureCallback<SimpleHttpResponse>() {
     <version>2.11.1</version>
 </dependency>
 ```
-
-## 6. EasyExcel
-
-
-## 7. Captcha
-
