@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "eb2fbf8775caa478",
+        "id": "05df739df6ccd568",
         "type": "tabs",
         "children": [
           {
-            "id": "00829a619d2be604",
+            "id": "16d9e45835729906",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "技术要点/Stream集合.md",
+                "file": "Plan.md",
                 "mode": "source",
                 "source": false
               }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "技术要点/Stream集合.md",
+                "file": "Plan.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "技术要点/Stream集合.md",
+                "file": "Plan.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "技术要点/Stream集合.md"
+                "file": "Plan.md"
               }
             }
           }
@@ -147,41 +147,41 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "00829a619d2be604",
+  "active": "16d9e45835729906",
   "lastOpenFiles": [
-    "技术要点/Hutool.md",
-    "技术要点/EasyExcel.md",
-    "技术要点/Captcha.md",
-    "技术要点/Apache-Commons.md",
-    "技术要点/文件上传下载.md",
-    "技术要点/套用模板生成文件.md",
+    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+    "Plan.md",
     "技术要点/加解密.md",
     "技术要点/多数据源切换.md",
     "技术要点/动态注入bean.md",
-    "技术要点/Validation.md",
-    "技术要点/Stream集合.md",
-    "技术要点/Optional判空.md",
-    "技术要点/批处理.md",
+    "Python/Scrapy应用.md",
+    "技术要点/套用模板生成文件.md",
     "技术要点/定时任务.md",
+    "技术要点/批处理.md",
+    "Python/Python基础.md",
+    "技术要点/Apache-Commons.md",
+    "技术要点/文件上传下载.md",
+    "技术要点/Captcha.md",
+    "技术要点/EasyExcel.md",
+    "技术要点/Hutool.md",
+    "技术要点/Optional判空.md",
+    "技术要点/Stream集合.md",
+    "技术要点/Validation.md",
+    "Java/并发/并发容器与框架.md",
+    "Java/并发/线程池.md",
+    "Java/并发/并发工具类.md",
+    "Java/并发/内存模型JMM.md",
+    "Java/并发/锁.md",
     "技术要点/登录认证与权限管理.md",
-    "技术要点/奇技淫巧.md",
+    "Java/并发/Executor框架.md",
+    "Java/并发/并发基础知识.md",
     "技术要点/img/apache-commons-lang.png",
     "技术要点/img/apache-commons-io.png",
     "技术要点/img/apache-commons-compress.png",
     "技术要点/img/apache-commons-codec.png",
     "git",
-    "Python/Scrapy应用.md",
-    "Python/Python基础.md",
-    "框架or中间件/Mybatis/Mybatis-Plus.md",
-    "框架or中间件/Mybatis/Mybatis相关配置.md",
-    "Plan.md",
-    "框架or中间件/Redis/Redis进阶.md",
-    "Java/JVM/垃圾收集器与内存分配策略.md",
     "Python/img",
-    "Python.md",
     "Python",
-    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
-    "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
     "未命名.canvas",
     "框架or中间件/MQ/Kafka/img/零拷贝.png",
     "框架or中间件/MQ/Kafka/img/零拷贝.png.crdownload",
