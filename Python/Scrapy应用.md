@@ -194,13 +194,358 @@ print("done!")
 ```
 ## 3. Beautiful Soup
 
+| 解析器 | 使用方法 | 优势 | 劣势 |
+| ----- | ----- | ----- | ----- | ----- |
+| Python标准库 | BeautifulSoup(markup, 'html.parser') | python内置的标准库，执行速度适中 | Python3.2.2之前的版本容错能力差 |
+| lxml HTML解析器 | BeautifulSoup(markup, 'lxml') | 速度快、文档容错能力强 | 需要安装C语言库 |
+| lxml XML解析器 | BeautifulSoup(markup 'xml') | 速度快，唯一支持XML的解析器 | 需要安装C语言库 |
+| html5lib | BeautifulSoup(markup, 'html5lib') | 最好的容错性、以浏览器的方式解析文档、生成HTML5格式的文档 | 速度慢，不依赖外部拓展 |
 
+```python
+from bs4 import BeautifulSoup
+# 选择解析器
+soup = BeautifulSoup(html_doc, 'lxml')
+
+# 获取html格式化输出
+print(soup.prettify())
+# 选择title节点
+print(soup.title)
+# 选择head节点
+print(soup.head)
+# 选择p节点
+print(soup.p)
+# 节点类型 <class 'bs4.element.Tag'>
+print(type(soup.title) type(soup.head) type(soup.p))
+# 节点名称
+print(soup.title.name)
+# 节点内容
+print(soup.title.string)
+print(soup.title.text)
+
+# 节点属性
+print(soup.p.attrs)
+print(soup.p.attrs['name'])
+
+# 直接子节点
+soup.contents[0].name
+soup.contents[1].name
+# 多个子孙节点
+for child in head_tag.descendants:
+	print(child)
+# 父节点
+print(soup.a.parent)
+# 父爷节点
+print(soup.a.parents)
+for i, parent in enumerate(soup.a.parents):
+    print(i, parent)
+# 兄弟节点
+print(soup.a.next_sibling)
+print(list(soup.a.next_siblings))
+print(soup.a.previous_sibling)
+print(list(soup.a.previous_siblings))
+
+# 方法选择
+# name 根据节点名称查找
+# attrs 根据节点属性查找
+find_all(name, attrs, recursive, text, **kwargs)
+# 类似方法还有find查找单个节点
+# find_parents查找多个父爷节点
+# find_parent查找单个父节点
+# find_next_siblings find_previous_siblings查找所有兄弟节点
+# find_next_sibling find_previous_sibling查找单个兄弟节点
+
+print(soup.find_all('a'))
+for a in soup.find_all('a'):
+    print(a.find_all('span'))
+    print(a.string)
+
+print(soup.find_all(attrs={'id': 'link1'}))
+print(soup.find_all(attrs={'name': 'Dormouse'}))
+print(soup.find_all(class_ = 'sister'))
+print(soup.find_all(id = 'link2'))
+
+print(soup.find(name='a'))
+
+# css选择器
+print(soup.select('.panel .panel-heading')) # 获取class为panel-heading的节点
+print(soup.select('ul li')) # 获取ul下的li节点
+print(soup.select('#list-2 li')) # 获取id为list-2下的li节点
+print(soup.select('ul'))    # 获取所有的ul节点
+for ul in soup.select('ul'):
+    print(ul.select('li'))
+
+# 获取文本
+for li in soup.select('li'):
+    print('String:', li.string)
+    print('get text:', li.get_text())
+```
 ## 4. Xpath
+```python
+from lxml import etree
+doc='''
+	<div>
+		<ul>
+			 <li class="item-0"><a href="link1.html">first item</a></li>
+			 <li class="item-1"><a href="link2.html">second item</a></li>
+			 <li class="item-inactive"><a href="link3.html">third item</a></li>
+			 <li class="item-1"><a href="link4.html">fourth item</a></li>
+			 <li class="item-0"><a href="link5.html">fifth item</a> # 注意，此处缺少一个 </li> 闭合标签
+		 </ul>
+	 </div>
+	'''
+html = etree.HTML(doc)
+result = etree.tostring(html)
+print(str(result,'utf-8'))
 
+#pretty_print=True 会格式化输出
+result = etree.tostring(html, pretty_print=True)
+print(result)
+```
 
+### 1. 定位语法
+路径表达式
+```
+    /   根节点，节点分隔符，
+    //  任意位置
+    .   当前节点
+    ..  父级节点
+    @   属性
+```
+
+通配符
+```
+    *   任意元素
+    @*  任意属性
+    node()  任意子节点（元素，属性，内容)
+```
+
+谓语
+```
+    //a[n] n为大于零的整数，代表子元素排在第n个位置的<a>元素
+    //a[last()]   last()  代表子元素排在最后个位置的<a>元素
+    //a[last()-]  和上面同理，代表倒数第二个
+    //a[position()<3] 位置序号小于3，也就是前两个，这里我们可以看出xpath中的序列是从1开始
+    //a[@href]    拥有href的<a>元素
+    //a[@href='www.baidu.com']    href属性值为'www.baidu.com'的<a>元素
+    //book[@price>2]   price值大于2的<book>元素
+```
+
+多个路径
+```
+//book/title | //book/price
+```
+
+语法案例
+```python
+from lxml import etree
+
+if __name__ == '__main__':
+    doc='''
+        <div>
+            <ul>
+                 <li class="item-0"><a href="link1.html">first item</a></li>
+                 <li class="item-1"><a href="link2.html">second item</a></li>
+                 <li class="item-inactive"><a href="link3.html">third item</a></li>
+                 <li class="item-1"><a href="link4.html">fourth item</a></li>
+                 <li class="item-0"><a href="link5.html">fifth item</a> # 注意，此处缺少一个 </li> 闭合标签
+             </ul>
+         </div>
+        '''
+
+    html = etree.HTML(doc)
+    print(html.xpath("//li"))
+    print(html.xpath("//p")) 
+	
+	print(etree.tostring(html.xpath("//li[@class='item-inactive']")[0]))
+	print(html.xpath("//li[@class='item-inactive']")[0].text)
+	print(html.xpath("//li[@class='item-inactive']/a")[0].text)
+	print(html.xpath("//li[@class='item-inactive']/a/text()"))
+	print(html.xpath("//li[@class='item-inactive']/.."))
+	print(html.xpath("//li[@class='item-inactive']/../li[@class='item-0']"))
+```
+
+### 2. 函数使用
+contains
+```python
+from lxml import etree
+if __name__ == '__main__':
+    doc='''
+        <div>
+            <ul>
+                 <p class="item-0 active"><a href="link1.html">first item</a></p>
+                 <li class="item-1"><a href="link2.html">second item</a></li>
+                 <li class="item-inactive"><a href="link3.html">third item</a></li>
+                 <li class="item-1"><a href="link4.html">fourth item</a></li>
+                 <li class="item-0"><a href="link5.html">fifth item</a> # 注意，此处缺少一个 </li> 闭合标签
+             </ul>
+         </div>
+        '''
+	
+    html = etree.HTML(doc)
+    print(html.xpath("//*[contains(@class,'item')]"))
+```
+
+starts-with
+```python
+from lxml import etree
+if __name__ == '__main__':
+    doc='''
+        <div>
+            <ul class='ul items'>
+                 <p class="item-0 active"><a href="link1.html">first item</a></p>
+                 <li class="item-1"><a href="link2.html">second item</a></li>
+                 <li class="item-inactive"><a href="link3.html">third item</a></li>
+                 <li class="item-1"><a href="link4.html">fourth item</a></li>
+                 <li class="item-0"><a href="link5.html">fifth item</a> # 注意，此处缺少一个 </li> 闭合标签
+             </ul>
+         </div>
+        '''
+	
+    html = etree.HTML(doc)
+    print(html.xpath("//*[contains(@class,'item')]"))
+    print(html.xpath("//*[starts-with(@class,'ul')]"))
+```
+
+text
+```python
+#最后一个li被限定了
+print(html.xpath("//li[last()]/a/text()"))
+#会得到所有的`<a>`元素的内容，因为每个<a>标签都是各自父元素的最后一个元素。
+#本来每个li就只有一个<a>子元素，所以都是最后一个
+print(html.xpath("//li/a[last()]/text()"))
+
+print(html.xpath("//li/a[contains(text(),'third')]"))
+```
+
+last
+```python
+print(html.xpath("//li[position()=2]/a/text()"))
+#结果为['third item']
+```
+
+node
+```python
+# 返回所有子节点
+print(html.xpath("//ul/li[@class='item-inactive']/node()"))
+print(html.xpath("//ul/node()"))
+```
+
+获取内容
+```python
+from lxml import etree
+if __name__ == '__main__':
+    doc='''
+        <div>
+            <ul class='ul items'>
+                 <li class="item-0 active"><a href="link1.html">first item</a></li>
+                 <li class="item-1"><a href="link2.html">second item</a></li>
+                 <li class="item-inactive"><a href="link3.html">third item</a></li>
+                 <li class="item-1"><a href="link4.html">fourth item</a></li>
+                 <li class="item-0"><a href="link5.html">fifth item</a> # 注意，此处缺少一个 </li> 闭合标签
+             </ul>
+         </div>
+        '''
+    html = etree.XML(doc)
+    print(html.xpath("//a/text()"))
+    print(html.xpath("//a")[0].text)
+    print(html.xpath("//ul")[0].text)
+    print(len(html.xpath("//ul")[0].text))
+    print(html.xpath("//ul/text()"))
+```
+
+获取属性
+```python
+print(html.xpath("//a/@href"))
+print(html.xpath("//li/@class"))
+```
 ## 5. Pyquery
+url初始化
+```python
+html = '''
+<div>
+    <ul>
+         <li class="item-0">first item</li>
+         <li class="item-1"><a href="link2.html">second item</a></li>
+         <li class="item-0 active"><a href="link3.html"><span class="bold">third item</span></a></li>
+         <li class="item-1 active"><a href="link4.html">fourth item</a></li>
+         <li class="item-0"><a href="link5.html">fifth item</a></li>
+     </ul>
+</div>
+'''
+from pyquery import PyQuery as pq
+doc = pq(html)
+print(doc)
+print(type(doc))
+print(doc('li'))
+```
 
+css选择器
+```python
+doc = pq(url="http://www.baidu.com",encoding='utf-8')
+print(doc('head'))
 
+from pyquery import PyQuery as pq
+doc = pq(html)
+print(doc('#container .list li'))
+```
+
+查找元素
+```python
+from pyquery import PyQuery as pq
+doc = pq(html)
+items = doc('.list')
+print(type(items))
+print(items)
+lis = items.find('li')
+print(type(lis))
+print(lis)
+
+li2 = items.children('.active')
+print(li2)
+```
+
+父元素
+```python
+items = doc('.list')
+container = items.parent()
+parents = items.parents()
+print(type(container))
+print(container)
+```
+
+兄弟元素
+```python
+li = doc('.list .item-0.active')
+print(li.siblings())
+```
+
+单个元素
+```python
+lis = doc('li').items()
+print(type(lis))
+for li in lis:
+    print(type(li))
+    print(li)
+```
+
+获取属性
+```python
+from pyquery import PyQuery as pq
+doc = pq(html)
+a = doc('.item-0.active a')
+print(a)
+print(a.attr('href'))
+print(a.attr.href)
+```
+
+获取文本
+```python
+from pyquery import PyQuery as pq
+doc = pq(html)
+a = doc('.item-0.active a')
+print(a)
+print(a.text())
+```
 ## 6. 多线程与协程
 
 
