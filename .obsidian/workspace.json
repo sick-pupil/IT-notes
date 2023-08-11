@@ -146,11 +146,13 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "514d05a6daf28e60",
+  "active": "9e964c24066f1113",
   "lastOpenFiles": [
+    "框架or中间件/MyCat2/Mycat2概念与应用.md",
+    "框架or中间件/Mysql/Mysql进阶.md",
+    "Python/Scrapy应用.md",
     "Python/Python基础.md",
     "技术要点/Apache-Commons.md",
-    "Python/Scrapy应用.md",
     "Java/并发/异步.md",
     "Java/并发/并发工具类.md",
     "Java/并发/原子操作类.md",
@@ -172,8 +174,6 @@
     "技术要点/Optional判空.md",
     "技术要点/Stream集合.md",
     "技术要点/Hutool.md",
-    "技术要点/EasyExcel.md",
-    "技术要点/Captcha.md",
     "技术要点/img/数字签名.jpg",
     "技术要点/img/数字签名.jpg.crdownload",
     "技术要点/img/apache-commons-lang.png",
