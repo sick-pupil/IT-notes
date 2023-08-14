@@ -134,7 +134,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 321.5
+    "width": 321.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -146,12 +147,12 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "9e964c24066f1113",
+  "active": "514d05a6daf28e60",
   "lastOpenFiles": [
+    "Python/Python基础.md",
+    "Python/Scrapy应用.md",
     "框架or中间件/MyCat2/Mycat2概念与应用.md",
     "框架or中间件/Mysql/Mysql进阶.md",
-    "Python/Scrapy应用.md",
-    "Python/Python基础.md",
     "技术要点/Apache-Commons.md",
     "Java/并发/异步.md",
     "Java/并发/并发工具类.md",

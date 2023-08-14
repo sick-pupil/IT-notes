@@ -714,3 +714,601 @@ finally:
     browser.close()
 ```
 ## 8. Scrapy
+### 1. 起步
+```shell
+scrapy startproject tutorial # 创建一个名为tutorial的爬虫项目
+```
+
+目录内容
+```text
+tutorial/
+    scrapy.cfg            # deploy configuration file
+
+    tutorial/             # project's Python module, you'll import your code from here
+        __init__.py
+
+        items.py          # project items definition file
+
+        middlewares.py    # project middlewares file
+
+        pipelines.py      # project pipelines file
+
+        settings.py       # project settings file
+
+        spiders/          # a directory where you'll later put your spiders
+            __init__.py
+```
+
+在`spiders`目录中添加自定义`spider quotes_spider.py`
+```python
+import scrapy
+
+class QuotesSpider(scrapy.Spider):
+    name = "quotes" # 自定义爬虫名称，作为spider的标识
+
+	# 自定义请求方法，返回request，爬虫从这些初始请求中生成后续请求
+    def start_requests(self):
+	    # 定义请求地址
+        urls = [
+            'http://quotes.toscrape.com/page/1/',
+            'http://quotes.toscrape.com/page/2/',
+        ]
+        # 发起请求并定义回调，回调处理响应
+		# 不写该段代码只定义urls也可行，scrapy会默认访问urls中的地址，并把名为parse的方法作为默认回调方法
+        for url in urls:
+            yield scrapy.Request(url=url, callback=self.parse)
+
+	# 自定义回调，解析响应
+    def parse(self, response):
+        page = response.url.split("/")[-2]
+        filename = f'quotes-{page}.html'
+        with open(filename, 'wb') as f:
+            f.write(response.body)
+        self.log(f'Saved file {filename}')
+```
+
+运行爬虫
+```shell
+scrapy crawl quotes
+```
+
+### 2. Scrapy Shell
+使用`scrapy shell`直接访问给出的`url`后通过代码访问网页中的`html`元素
+
+```shell
+scrapy shell "http://quotes.toscrape.com/page/1"
+```
+
+#### 1. css选择器
+```shell
+# css选择器
+>>> response.css('title')
+[<Selector query='descendant-or-self::title' data='<title>Quotes to Scrape</title>'>]
+>>> response.css('title::text').getall()
+['Quotes to Scrape']
+>>> response.css('title').getall()
+['<title>Quotes to Scrape</title>']
+>>> response.css('title::text').get()
+'Quotes to Scrape'
+>>> response.css('title::text')[0].get()
+'Quotes to Scrape'
+
+# 选择class为quote的所有div节点
+>>> response.css("div.quote")
+[<Selector xpath="descendant-or-self::div[@class and contains(concat(' ', normalize-space(@class), ' '), ' quote ')]" data='<div class="quote" itemscope itemtype...'>,
+ <Selector xpath="descendant-or-self::div[@class and contains(concat(' ', normalize-space(@class), ' '), ' quote ')]" data='<div class="quote" itemscope itemtype...'>,
+ ...]
+
+>>> quote = response.css("div.quote")[0] # 选择class为quote的第一个div节点
+>>> text = quote.css("span.text::text").get() # 选择class为text的span节点文本中的第一个
+>>> tags = quote.css("div.tags a.tag::text").getall() # 选择class为tags的div节点文本中的所有class为tag的a节点中的文本
+```
+#### 2. re选择器
+```shell
+# re选择器
+>>> response.css('title::text').re(r'Quotes.*')
+['Quotes to Scrape']
+>>> response.css('title::text').re(r'Q\w+')
+['Quotes']
+>>> response.css('title::text').re(r'(\w+) to (\w+)')
+['Quotes', 'Scrape']
+```
+#### 3. xpath选择器
+```shell
+# xpath选择器
+>>> response.xpath('//title')
+[<Selector xpath='//title' data='<title>Quotes to Scrape</title>'>]
+>>> response.xpath('//title/text()').get()
+'Quotes to Scrape'
+```
+
+### 3. 导出存储
+```shell
+scrapy crawl quotes -O quotes.json # -O覆盖现有任何文件
+scrapy crawl quotes -o quotes.jl # -o追加内容至文件中
+```
+
+### 4. 获取属性
+```python
+response.css('li.next a::attr(href)').get()
+response.css('li.next a').attrib['href']
+```
+
+### 5. 递归请求
+```python
+import scrapy
+
+class QuotesSpider(scrapy.Spider):
+    name = "quotes"
+    start_urls = [
+        'http://quotes.toscrape.com/page/1/',
+    ]
+
+    def parse(self, response):
+        for quote in response.css('div.quote'):
+            yield {
+                'text': quote.css('span.text::text').get(),
+                'author': quote.css('small.author::text').get(),
+                'tags': quote.css('div.tags a.tag::text').getall(),
+            }
+
+        next_page = response.css('li.next a::attr(href)').get()
+        if next_page is not None:
+	        # response.urljoin(next_page_url) 相当于 把start_urls中的url与next_page_url中的url进行拼接
+            next_page = response.urljoin(next_page)
+            yield scrapy.Request(next_page, callback=self.parse)
+```
+
+```python
+import scrapy
+
+class QuotesSpider(scrapy.Spider):
+    name = "quotes"
+    start_urls = [
+        'http://quotes.toscrape.com/page/1/',
+    ]
+
+    def parse(self, response):
+        for quote in response.css('div.quote'):
+            yield {
+                'text': quote.css('span.text::text').get(),
+                'author': quote.css('span small::text').get(),
+                'tags': quote.css('div.tags a.tag::text').getall(),
+            }
+
+        next_page = response.css('li.next a::attr(href)').get()
+        if next_page is not None:
+	        # 将残缺的url进行拼接，并生成新的scrapy.Request
+            yield response.follow(next_page, callback=self.parse)
+```
+
+```python
+for href in response.css('ul.pager a::attr(href)'):
+    yield response.follow(href, callback=self.parse)
+
+for a in response.css('ul.pager a'):
+    yield response.follow(a, callback=self.parse)
+
+# 循环遍历所有ul.pager a中的url并生成scrapy.Request
+yield from response.follow_all(css='ul.pager a', callback=self.parse)
+```
+
+例
+```python
+import scrapy
+
+class AuthorSpider(scrapy.Spider):
+    name = 'author'
+
+    start_urls = ['http://quotes.toscrape.com/']
+
+    def parse(self, response):
+        author_page_links = response.css('.author + a')
+        yield from response.follow_all(author_page_links, self.parse_author)
+
+        pagination_links = response.css('li.next a')
+        yield from response.follow_all(pagination_links, self.parse)
+
+    def parse_author(self, response):
+        def extract_with_css(query):
+            return response.css(query).get(default='').strip()
+
+        yield {
+            'name': extract_with_css('h3.author-title::text'),
+            'birthdate': extract_with_css('.author-born-date::text'),
+            'bio': extract_with_css('.author-description::text'),
+        }
+```
+
+### 6. 入参
+使用`-a`传参
+```shell
+scrapy crawl quotes -O quotes-humor.json -a tag=humor
+```
+
+```python
+import scrapy
+
+class QuotesSpider(scrapy.Spider):
+    name = "quotes"
+
+    def start_requests(self):
+        url = 'http://quotes.toscrape.com/'
+        tag = getattr(self, 'tag', None)
+        if tag is not None:
+            url = url + 'tag/' + tag
+        yield scrapy.Request(url, self.parse)
+
+    def parse(self, response):
+        for quote in response.css('div.quote'):
+            yield {
+                'text': quote.css('span.text::text').get(),
+                'author': quote.css('small.author::text').get(),
+            }
+
+        next_page = response.css('li.next a::attr(href)').get()
+        if next_page is not None:
+            yield response.follow(next_page, self.parse)
+```
+
+### 7. 命令行
+```shell
+scrapy --help
+Scrapy 2.10.0 - active project: tutorial
+
+Usage:
+  scrapy <command> [options] [args]
+
+Available commands:
+  bench         Run quick benchmark test
+  check         Check spider contracts
+  crawl         Run a spider
+  edit          Edit spider
+  fetch         Fetch a URL using the Scrapy downloader
+  genspider     Generate new spider using pre-defined templates
+  list          List available spiders
+  parse         Parse URL (using its spider) and print the results
+  runspider     Run a self-contained spider (without creating a project)
+  settings      Get settings values
+  shell         Interactive scraping console
+  startproject  Create new project
+  version       Print Scrapy version
+  view          Open URL in browser, as seen by Scrapy
+```
+
+- `scrapy startproject <projectName> [projectDir]`：创建项目，`scrapy startproject --help`查看
+- `scrapy settings`：获取或写设置，`scrapy settings --help`查看
+- `scrapy runspider <file.py>`：不创建项目的情况下直接运行单个`python`文件的`spider`，`scrapy runspider --help`查看
+- `scrapy shell <url>`：`url`可为空、本地文件路径、网络资源文件，获取`url`对应的`html`对象，`scrapy shell --help`查看
+- `scrapy fetch <url>`：访问`url`并将结果输出，`scrapy fetch --help`查看
+- `scrapy crawl <spiderName>`：运行名称为`spiderName`的爬虫项目
+
+### 8. Spider父类常用类属性
+- `name`：标识了每一个`spider`的名字，必须定义且唯一
+- `start_url`：包含初始请求页面url的列表，必须定义。`start_requests()`方法会引用该属性，发出初始的`Request`
+- `custom_settings`：是一个字典，每一条键值对表示一个配置，可用于覆写`SETTINGS`（`Scrapy`的全局配置模块，位于`settings.py`文件中）
+- `alowed_domains`：是一个字符串列表。规定了允许爬取的网站域名，非域名下的网页将被自动过滤
+- `crawler`：可以通过它访问`Scrapy`的一些组件（例如：`extensions, middlewares, settings`）
+- `settings`：包含运行中时的`Spider`的配置。这和我们使用`spider.crawler.settings`访问是一样的
+- `logger`：是一个`Logger`对象。根据`Spider`的`name`创建的，它记录了事件日志
+
+常用爬虫`Spider`父类
+- `CrawlSpider`
+- `XmlFeedSpider`
+- `CSVFeedSpider`
+- `SitemapSpider`
+
+### 9. 选择器
+选择器即为`css`与`xpath`两种选择器
+
+### 10. Item
+爬虫的主要目标就是需要从非结构化的数据源中提取出结构化的数据，那么Items在其中就起到关键的作用。一般情况下，我们提取到数据都是放在一个字典中，虽然字典好用，但是缺少结构性的东西，比如说容易打错字段名称，从而容易出错
+
+比方说在这个`Scrapy`爬虫项目中，定义了一个`Item`类，这个`Item`里边包含了`name、age、year`等字段，这样可以把爬取过来的内容通过`Item`类进行实例化，这样就不容易出错了
+
+- `dictionaries`：词典
+- `item objects`：`Item`对象
+```python
+from scrapy.item import Item, Field
+
+class UserItem(Item):
+name = Field()
+age = Field()
+```
+- `dataclass objects`：数据类对象
+```python
+from dataclasses import dataclass
+
+@dataclass
+class UserItem:
+one_field: str
+another_field: int
+```
+- `attrs objects`：属性对象
+```python
+import attr
+
+@attr.sclass CustomItem:
+one_field = attr.ib()
+another_field = attr.ib()
+```
+
+例
+```python
+from logging import log
+from scrapy.spiders import CSVFeedSpider
+from ..items import ExampleItem
+
+class CsvfeedspiderSpider(CSVFeedSpider):
+    name = 'CSVFeedSpider'
+    allowed_domains = ['7huolianmeng.com']
+    start_urls = ['http://www.7huolianmeng.com/feed.csv']
+    headers = ['序号', '文章标题', '创作时间', '来源']
+    delimiter = ','
+
+
+    def adapt_response(self, response):
+        return response.body.decode('gb18030')
+
+
+    def parse_row(self, response, row):     
+        i = ExampleItem()
+        i['sort'] = row['序号']
+        i['title'] = row['文章标题']
+        i['date'] = row['创作时间']
+        i['source'] = row['来源']
+        self.log(i)
+
+
+import scrapy
+
+class ExampleItem(scrapy.Item):
+    title=scrapy.Field()
+    date=scrapy.Field()
+    source=scrapy.Field()
+    sort=scrapy.Field()
+```
+
+```python
+from logging import log
+from scrapy.spiders import CSVFeedSpider
+from ..items import ExampleItem
+
+class CsvfeedspiderSpider(CSVFeedSpider):
+    name = 'CSVFeedSpider'
+    allowed_domains = ['7huolianmeng.com']
+    start_urls = ['http://www.7huolianmeng.com/feed.csv']
+    headers = ['序号', '文章标题', '创作时间', '来源']
+    delimiter = ','
+
+
+    def adapt_response(self, response):
+        return response.body.decode('gb18030')
+
+    def parse_row(self, response, row):
+        i = ExampleItem(title=row['文章标题'],date= row['创作时间'],source=row['来源'],sort=row['序号'])
+        self.log(i)
+
+
+from dataclasses import dataclass
+
+@dataclass
+class ExampleItem:
+    title:str
+    date:str
+    source:str
+    sort:str
+```
+
+```python
+from logging import log
+from scrapy.spiders import CSVFeedSpider
+from ..items import ExampleItem
+
+class CsvfeedspiderSpider(CSVFeedSpider):
+    name = 'CSVFeedSpider'
+    allowed_domains = ['7huolianmeng.com']
+    start_urls = ['http://www.7huolianmeng.com/feed.csv']
+    headers = ['序号', '文章标题', '创作时间', '来源']
+    delimiter = ','
+    
+    def adapt_response(self, response):
+        return response.body.decode('gb18030')
+
+    def parse_row(self, response, row):     
+        i = ExampleItem(title=row['文章标题'],date=row['创作时间'],sort=row['序号'],source=row['来源'])
+        self.log(i)
+
+
+import attr
+
+@attr.s
+class ExampleItem():
+    title=attr.ib()
+    date=attr.ib()
+    source=attr.ib()
+    sort=attr.ib()
+```
+
+### 11. ItemLoader
+简单来说，`Items`只负责填充`Item`，而具体是怎么填充的，使用哪种机制或者手段去填充的，是由`Item`加载器负责的，即`Item Loaders`
+简单来说，`Items`负责数据装载的容器，而`Item Loaders`负责装载容器的机制或者是规则
+
+```python
+import scrapy
+from ..items import Article
+from scrapy.loader import ItemLoader
+
+class mySpider(scrapy.Spider):
+    name="mySpider"
+    start_urls = [
+        "http://www.zhihu.com/people/10xiansheng/posts?page=1"
+    ]
+
+    def parse(self, response):
+	    # 加载Item，生成Item对应ItemLoader
+        l = ItemLoader(item=Article(), response=response)
+        # 向Item对应属性设置值，填充item
+        l.add_css('title', '.ListShortcut .List-item .ArticleItem .ContentItem-title a::text')
+        l.add_css('content','.ListShortcut .List-item .RichContent .RichContent-inner .RichText::text')
+        # l.add_xpath('name', '//div[@class="product_name"]')
+		# l.add_xpath('name', '//div[@class="product_title"]')
+		# l.add_xpath('price', '//p[@id="price"]')
+		# l.add_css('stock', 'p#stock]')
+		# 添加值示例.可以直接设置值
+		# l.add_value('last_updated', 'today')
+        self.log(l.load_item())
+```
+
+### 12. Pipeline管道
+`Item`管道的主要责任是负责处理有爬虫从网页中抽取的`Item`，他的主要任务是清洗、验证和存储数据。当页面被蜘蛛解析后，将被发送到`Item`管道，并经过几个特定的次序处理数据。每个`Item`管道的组件都是有一个简单的方法组成的`Python`类。获取了Item并执行方法，同时还需要确定是否需要在`Item`管道中继续执行下一步或是直接丢弃掉不处理
+简而言之，就是通过`spider`爬取的数据都会通过这个`pipeline`处理，可以在`pipeline`中不进行操作或者执行相关对数据的操作
+
+`pipeline`核心方法：
+- `open_spider(self, spider)`：在`Spider`开启的时候被自动调用的。在这里我们可以做一些初始化操作，如开启数据库连接等。其中，参数spider就是被开启的`Spider`对象
+- `close_spider(self, spider)`：在`Spider`关闭的时候自动调用的。在这里我们可以做一些收尾工作，如关闭数据库连接等。其中，参数`spider`就是被关闭的Spider对象
+- `from_crawler(cls, crawler)`：用于获取`settings`配置文件中的信息，需要注意的这个是一个类方法
+- `process_item(self, item, spider)`：必须返回一个具有数据的`dict`,或者`item`对象，或者抛出`DropItem`异常，被丢弃的`item`将不会被之后的`pipeline`组件所处理
+
+```python
+#配置MongoDB数据库的连接信息
+MONGO_URL = '192.168.8.30'
+MONGO_PORT = 27017
+MONGO_DB = 'news'
+
+ITEM_PIPELINES = {
+    'myproject.pipelines.PricePipeline': 300,
+    'myproject.pipelines.JsonWriterPipeline': 800,
+}
+```
+
+```python
+import pymongo
+ 
+class MongoDBPipeline(object):
+    """
+    1、连接数据库操作
+    """
+    def __init__(self,mongourl,mongoport,mongodb):
+        '''
+        初始化mongodb数据的url、端口号、数据库名称
+        :param mongourl:
+        :param mongoport:
+        :param mongodb:
+        '''
+        self.mongourl = mongourl
+        self.mongoport = mongoport
+        self.mongodb = mongodb
+ 
+    @classmethod
+    def from_crawler(cls,crawler):
+        """
+        1、读取settings里面的mongodb数据的url、port、DB。
+        :param crawler:
+        :return:
+        """
+        return cls(
+            mongourl = crawler.settings.get("MONGO_URL"),
+            mongoport = crawler.settings.get("MONGO_PORT"),
+            mongodb = crawler.settings.get("MONGO_DB")
+        )
+ 
+    def open_spider(self,spider):
+        '''
+        1、连接mongodb数据
+        :param spider:
+        :return:
+        '''
+        self.client = pymongo.MongoClient(self.mongourl,self.mongoport)
+        self.db = self.client[self.mongodb]
+ 
+    def process_item(self,item,spider):
+        '''
+        1、将数据写入数据库
+        :param item:
+        :param spider:
+        :return:
+        '''
+        name = item.__class__.__name__
+        # self.db[name].insert(dict(item))
+        self.db['user'].update({'url_token':item['url_token']},{'$set':item},True)
+        return item
+ 
+    def close_spider(self,spider):
+        '''
+        1、关闭数据库连接
+        :param spider:
+        :return:
+        '''
+        self.client.close()
+```
+
+### 13. 导出文件
+- `FEED_URI`：指定输出文件
+- `FEED_FORMAT`：指定数据格式，`JsonItemExporter`读取整块`Item`对象进入内存、`JsonLinesItemExport`分片读取整块`Item`对象进入内存、`CsvItemExporter`输出`CSV`格式、`XmlItemExporter`输出`XML`格式
+- `FEED_STORAGES`：额外存储方式，即指定对应存储形式的实现类
+- `FEED_STORAGES_BASE`：基础存储方式，即指定对应存储形式的实现类
+```json
+{
+    '': 'scrapy.extensions.feedexport.FileFeedStorage',
+    'file': 'scrapy.extensions.feedexport.FileFeedStorage',
+    'stdout': 'scrapy.extensions.feedexport.StdoutFeedStorage',
+    's3': 'scrapy.extensions.feedexport.S3FeedStorage',
+    'ftp': 'scrapy.extensions.feedexport.FTPFeedStorage',
+}
+```
+- `FEED_EXPORTERS`：额外输出方式，即指定对应文件输出格式的实现类
+- `FEED_EXPORTERS_BASE`：基础输出方式，即指定对应文件输出格式的实现类
+```json
+{
+    'json': 'scrapy.exporters.JsonItemExporter',
+    'jsonlines': 'scrapy.exporters.JsonLinesItemExporter',
+    'jl': 'scrapy.exporters.JsonLinesItemExporter',
+    'csv': 'scrapy.exporters.CsvItemExporter',
+    'xml': 'scrapy.exporters.XmlItemExporter',
+    'marshal': 'scrapy.exporters.MarshalItemExporter',
+    'pickle': 'scrapy.exporters.PickleItemExporter',
+}
+```
+- `FEED_EXPORT_ENCODING`：文件编码格式，默认`None`，一般设置为`utf-8`
+- `FEED_EXPORT_FIELDS`：指定数据输出项及顺序，例`FEED_EXPORT_FIELDS = ["foo", "bar", "baz"]`
+- `FEED_EXPORT_INDENT`：默认值为0，单值为0或负数时将在新一行输出数据，设置大于0则为每一级的数据添加等量倍的空格缩进
+
+例
+```python
+# -*- coding: utf-8 -*-
+import scrapy
+
+
+class QuotesItem(scrapy.Item):
+    text = scrapy.Field()
+    author = scrapy.Field()
+
+
+class QuotesSpider(scrapy.Spider):
+    name = "quotes"
+    allowed_domains = ['toscrape.com']
+    custom_settings = {
+        'FEED_EXPORT_ENCODING': 'utf-8',
+        'FEED_URI': 'quotes.jsonlines',
+    }
+
+    def __init__(self, category=None, *args, **kwargs):
+        super(QuotesSpider, self).__init__(*args, **kwargs)
+        self.start_urls = ['http://quotes.toscrape.com/tag/%s/' % category, ]
+
+    def parse(self, response):
+        quote_block = response.css('div.quote')
+        for quote in quote_block:
+            text = quote.css('span.text::text').extract_first()
+            author = quote.xpath('span/small/text()').extract_first()
+            # item = dict(text=text, author=author)
+            item = QuotesItem()
+            item['text'] = text
+            item['author'] = author
+            yield item
+
+        next_page = response.css('li.next a::attr("href")').extract_first()
+        if next_page is not None:
+            yield response.follow(next_page, self.parse)
+```
