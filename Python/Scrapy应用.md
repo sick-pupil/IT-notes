@@ -714,6 +714,8 @@ finally:
     browser.close()
 ```
 ## 8. Scrapy
+<img src="D:\Project\IT-notes\Python\img\Scrapy整体架构.png" style="width:700px;height:400px;" />
+
 ### 1. 起步
 ```shell
 scrapy startproject tutorial # 创建一个名为tutorial的爬虫项目
@@ -1243,7 +1245,160 @@ class MongoDBPipeline(object):
         self.client.close()
 ```
 
-### 13. 导出文件
+### 13. Middleware
+`Scrapy`默认下载器：
+```json
+{
+    'scrapy.downloadermiddlewares.robotstxt.RobotsTxtMiddleware': 100,
+    'scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware': 300,
+    'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware': 350,
+    'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware': 400,
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': 500,
+    'scrapy.downloadermiddlewares.retry.RetryMiddleware': 550,
+    'scrapy.downloadermiddlewares.ajaxcrawl.AjaxCrawlMiddleware': 560,
+    'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware': 580,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 590,
+    'scrapy.downloadermiddlewares.redirect.RedirectMiddleware': 600,
+    'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': 700,
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 750,
+    'scrapy.downloadermiddlewares.stats.DownloaderStats': 850,
+    'scrapy.downloadermiddlewares.httpcache.HttpCacheMiddleware': 900,
+}
+```
+#### 1. Downloader Middeware
+`Download Middleware`用于处理`request`与`response`的钩子框架，可以全局修改比如：代理IP、header等参数
+
+可以在`settings.py`中设置激活该中间件：
+```python
+DOWNLOADERmIDDLEWARES = {
+    'myproject.middlewares.Custom_A_DownloaderMiddleware': 543,
+    'myproject.middlewares.Custom_B_DownloaderMiddleware': 643,
+    'myproject.middlewares.Custom_B_DownloaderMiddleware': None,
+}
+```
+
+- 数字越小，越靠近`engine`，越优先处理`process_request()`，越后执行`process_response()`
+- 数字越大，越靠近下载器，越优先处理`process_response()`，越后执行`process_request()`
+- 设置为`None`则为不激活、关闭的状态
+
+*有时我们需要编写自己的一些下载器中间件，如使用代理，更换user-agent等，对于请求的中间件实现 `process_request(_request_, _spider_)`；对于处理回复中间件实现`process_response(_request_, _response_, _spider_)`；以及异常处理实现 `process_exception(_request_, _exception_, _spider_)`*
+
+**更改user-agent**
+```python
+from faker import Faker
+
+class UserAgent_Middleware():
+    def process_request(self, request, spider):
+        f = Faker()
+        agent = f.firefox()
+        request.headers['User-Agent'] = agent
+```
+
+**代理ip**
+```python
+headers = {
+    'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36',
+    # 'Connection': 'close'
+}
+
+class Proxy_Middleware():
+
+    def __init__(self):
+        self.s = requests.session()
+
+    def process_request(self, request, spider):
+
+        try:
+            xdaili_url = spider.settings.get('XDAILI_URL')
+
+            r = self.s.get(xdaili_url, headers= headers)
+            proxy_ip_port = r.text
+            request.meta['proxy'] = 'http://' + proxy_ip_port
+        except requests.exceptions.RequestException:
+            print('***get xdaili fail!')
+            spider.logger.error('***get xdaili fail!')
+
+    def process_response(self, request, response, spider):
+        if response.status != 200:
+            try:
+                xdaili_url = spider.settings.get('XDAILI_URL')
+
+                r = self.s.get(xdaili_url, headers= headers)
+                proxy_ip_port = r.text
+                request.meta['proxy'] = 'http://' + proxy_ip_port
+            except requests.exceptions.RequestException:
+                print('***get xdaili fail!')
+                spider.logger.error('***get xdaili fail!')
+
+            return request
+        return response
+
+    def process_exception(self, request, exception, spider):
+
+        try:
+            xdaili_url = spider.settings.get('XDAILI_URL')
+
+            r = self.s.get(xdaili_url, headers= headers)
+            proxy_ip_port = r.text
+            request.meta['proxy'] = 'http://' + proxy_ip_port
+        except requests.exceptions.RequestException:
+            print('***get xdaili fail!')
+            spider.logger.error('***get xdaili fail!')
+
+        return request
+```
+#### 2. Spider Middleware
+`Spider`中间件用于处理`response`及`spider`生成的`item`和`request`
+- 数字越小越靠近引擎，`process_spider_input()`越优先处理，`process_spider_output()`越后处理
+- 数字越大越靠近`spider`，`process_spider_output()`越优先处理，`process_spider_input()`越后处理
+- 关闭、不激活则使用`None`
+
+- `process_spider_input(_response_, _spider_)`当`response`通过`spider`中间件时，这个方法被调用，返回`None`
+- `process_spider_output(_response_, _result_, _spider_)`当`spider`处理`response`后返回`result`时，这个方法被调用，必须返回`Request`或`Item`对象的可迭代对象，一般返回`result`
+- `process_spider_exception(_response_, _exception_, _spider_)`当`spider`中间件抛出异常时，这个方法被调用，返回`None`或可迭代对象的`Request`、`dict`、`Item`
+#### 3. Retry Middleware
+```python
+from scrapy.downloadermiddlewares.retry import RetryMiddleware
+from scrapy.utils.response import response_status_message
+
+class My_RetryMiddleware(RetryMiddleware):
+
+    def process_response(self, request, response, spider):
+        if request.meta.get('dont_retry', False):
+            return response
+
+        if response.status in self.retry_http_codes:
+            reason = response_status_message(response.status)
+            try:
+                xdaili_url = spider.settings.get('XDAILI_URL')
+
+                r = requests.get(xdaili_url)
+                proxy_ip_port = r.text
+                request.meta['proxy'] = 'https://' + proxy_ip_port
+            except requests.exceptions.RequestException:
+                print('获取讯代理ip失败！')
+                spider.logger.error('获取讯代理ip失败！')
+
+            return self._retry(request, reason, spider) or response
+        return response
+
+
+    def process_exception(self, request, exception, spider):
+        if isinstance(exception, self.EXCEPTIONS_TO_RETRY) and not request.meta.get('dont_retry', False):
+            try:
+                xdaili_url = spider.settings.get('XDAILI_URL')
+
+                r = requests.get(xdaili_url)
+                proxy_ip_port = r.text
+                request.meta['proxy'] = 'https://' + proxy_ip_port
+            except requests.exceptions.RequestException:
+                print('获取讯代理ip失败！')
+                spider.logger.error('获取讯代理ip失败！')
+
+            return self._retry(request, exception, spider)
+```
+
+### 14. 导出文件
 - `FEED_URI`：指定输出文件
 - `FEED_FORMAT`：指定数据格式，`JsonItemExporter`读取整块`Item`对象进入内存、`JsonLinesItemExport`分片读取整块`Item`对象进入内存、`CsvItemExporter`输出`CSV`格式、`XmlItemExporter`输出`XML`格式
 - `FEED_STORAGES`：额外存储方式，即指定对应存储形式的实现类

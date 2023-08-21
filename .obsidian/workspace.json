@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "76ac2dfe3998bb6c",
+        "id": "70f097b30f858f5c",
         "type": "tabs",
         "children": [
           {
-            "id": "514d05a6daf28e60",
+            "id": "1d16bba18aa30718",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Plan.md",
+                "file": "Python/Scrapy应用.md",
                 "mode": "source",
                 "source": false
               }
@@ -69,7 +69,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 254.5
+    "width": 254.5,
+    "collapsed": true
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -96,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Plan.md",
+                "file": "Python/Scrapy应用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Plan.md",
+                "file": "Python/Scrapy应用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Plan.md"
+                "file": "Python/Scrapy应用.md"
               }
             }
           }
@@ -147,10 +148,19 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "514d05a6daf28e60",
+  "active": "1d16bba18aa30718",
   "lastOpenFiles": [
+    "框架or中间件/Docker/Docker概念与应用.md",
     "Python/Scrapy应用.md",
+    "Python/img/Scrapy整体架构.png",
+    "Python/img/Scrapy整体架构.png.crdownload",
+    "Python/img",
+    "Python/新建文件夹",
     "Python/Python基础.md",
+    "框架or中间件/Git/Git概念与配置.md",
+    "框架or中间件/Redis/Redis基础.md",
+    "框架or中间件/Redis/Redis进阶.md",
+    "Plan.md",
     "框架or中间件/MyCat2/Mycat2概念与应用.md",
     "框架or中间件/Mysql/Mysql进阶.md",
     "技术要点/Apache-Commons.md",
@@ -169,12 +179,6 @@
     "技术要点/加解密.md",
     "技术要点/多数据源切换.md",
     "技术要点/动态注册bean.md",
-    "技术要点/定时任务.md",
-    "技术要点/登录认证与权限管理.md",
-    "技术要点/Validation.md",
-    "技术要点/Optional判空.md",
-    "技术要点/Stream集合.md",
-    "技术要点/Hutool.md",
     "技术要点/img/数字签名.jpg",
     "技术要点/img/数字签名.jpg.crdownload",
     "技术要点/img/apache-commons-lang.png",
@@ -182,7 +186,6 @@
     "技术要点/img/apache-commons-compress.png",
     "技术要点/img/apache-commons-codec.png",
     "git",
-    "Python/img",
     "Python",
     "未命名.canvas",
     "框架or中间件/MQ/Kafka/img/零拷贝.png",
@@ -192,9 +195,6 @@
     "框架or中间件/MQ/Kafka/img/kafka默认分区副本分配方式例2.png",
     "框架or中间件/MQ/Kafka/img/kafka默认分区副本分配方式例2.png.crdownload",
     "框架or中间件/MQ/Kafka/img/kafka默认分区副本分配方式例1.png",
-    "框架or中间件/MQ/Kafka/img/kafka默认分区副本分配方式例1.png.crdownload",
-    "框架or中间件/MQ/Kafka/img/LEO与HW.png",
-    "框架or中间件/MQ/Kafka/img/LEO与HW.png.crdownload",
-    "计划"
+    "框架or中间件/MQ/Kafka/img/kafka默认分区副本分配方式例1.png.crdownload"
   ]
 }
