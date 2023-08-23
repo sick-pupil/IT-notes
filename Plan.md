@@ -1,3 +1,6 @@
+### 小plan
+1. Java数据脱敏（自写切面注解 or 第三方工具框架）
+
 ### 大plan
 1. 八月份下旬shardingjdbc
 2. 九月份上旬springcloud alibaba(nacos sentinel seata)
