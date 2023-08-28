@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "技术要点/加解密.md",
+                "file": "Python/Scrapy应用.md",
                 "mode": "source",
                 "source": false
               }
@@ -69,7 +69,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 254.5
+    "width": 254.5,
+    "collapsed": true
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -96,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "技术要点/加解密.md",
+                "file": "Python/Scrapy应用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "技术要点/加解密.md",
+                "file": "Python/Scrapy应用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "技术要点/加解密.md"
+                "file": "Python/Scrapy应用.md"
               }
             }
           }
@@ -148,10 +149,10 @@
   },
   "active": "e661d13f55983f83",
   "lastOpenFiles": [
-    "Plan.md",
     "技术要点/加解密.md",
-    "Python/Python基础.md",
     "Python/Scrapy应用.md",
+    "Python/Python基础.md",
+    "Plan.md",
     "框架or中间件/Docker/Docker概念与应用.md",
     "Python/img/Scrapy整体架构.png",
     "Python/img/Scrapy整体架构.png.crdownload",

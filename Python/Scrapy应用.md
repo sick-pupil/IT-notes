@@ -548,7 +548,6 @@ print(a.text())
 ```
 ## 6. 多线程与协程
 
-
 ## 7. Selenium
 主要为`selenium webDriver`驱动浏览器
 
@@ -713,7 +712,511 @@ except NoSuchElementException:
 finally:
     browser.close()
 ```
-## 8. Scrapy
+## 8. Playwright
+`Playwright`存在同步异步两种调用浏览器的方式：
+- 同步
+```python
+from playwright.sync_api import sync_playwright
+
+with sync_playwright() as p:
+    browser = p.chromium.launch()
+    page = browser.new_page()
+    page.goto("http://playwright.dev")
+    page.wait_for_timeout(5000)
+    page.screenshot(path="example.png")
+    print(page.title())
+    browser.close()
+```
+- 异步
+```python
+import asyncio
+from playwright.async_api import async_playwright
+
+async def main():
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=False, slow_mo=50)
+        page = await browser.new_page()
+        await page.goto("http://playwright.dev")
+        print(await page.title())
+        await browser.close()
+
+asyncio.run(main())
+```
+- 提供对浏览器标签页的截图：`page.screenshot(path="example.png")`
+- 提供使用有头浏览器，减慢执行速度：`p.chrominum.launch(headless=False, slow_mo=50)`
+- `Playwright`默认为无头浏览器，可以设置`browser = p.chromium.launch(headless=False)`实现有头浏览器
+- `Playwright`会自动等待页面加载完后才执行操作，1. 会让页面元素加载到`Dom`，2. 元素可见，3. 元素稳定无动画加载，4. 元素对其他元素可见，5. 元素加载成功
+### 1. 交互
+同步语法与异步语法的区别只在于语句前面是否存在`await`
+
+定位元素：
+- `page.get_by_role`根据元素类型查找，`textbot`、`button`、`checkbox`、`radio`
+- `page.get_by_label`根据标签查找
+- `page.get_by_text`根据文字内容查找
+- `page.locator`自定义条件查找
+#### 1. 文字输入
+```python
+# Text input
+page.get_by_role("textbox").fill("Peter")
+
+# Date input
+page.get_by_label("Birth date").fill("2020-02-02")
+
+# Time input
+page.get_by_label("Appointment time").fill("13:15")
+
+# Local datetime input
+page.get_by_label("Local time").fill("2020-03-02T05:15")
+```
+#### 2. 单选多选
+```python
+# Check the checkbox
+page.get_by_label('I agree to the terms above').check()
+
+# Assert the checked state
+assert page.get_by_label('Subscribe to newsletter').is_checked() is True
+
+# Select the radio button
+page.get_by_label('XL').check()
+```
+
+```python
+# Single selection matching the value
+page.get_by_label('Choose a color').select_option('blue')
+
+# Single selection matching the label
+page.get_by_label('Choose a color').select_option(label='Blue')
+
+# Multiple selected items
+page.get_by_label('Choose multiple colors').select_option(['red', 'green', 'blue'])
+```
+#### 3. 鼠标点击
+```python
+# Generic click
+page.get_by_role("button").click()
+
+# Double click
+page.get_by_text("Item").dblclick()
+
+# Right click
+page.get_by_text("Item").click(button="right")
+
+# Shift + click
+page.get_by_text("Item").click(modifiers=["Shift"])
+
+# Hover over element
+page.get_by_text("Item").hover()
+
+# Click the top left corner
+page.get_by_text("Item").click(position={ "x": 0, "y": 0})
+
+# 是否绕过可操作性检查，如元素是否已加载入dom，元素是否可视化，元素是否加载完动画，元素是否可编辑，元素是否接收事件等
+page.get_by_role("button").click(force=True)
+```
+#### 4. 打字
+```python
+# Type character by character
+page.locator('#area').type('Hello World!')
+
+page.locator('div').type('Hello World!')
+
+page.locator('.class_name').type('Hello World!')
+
+page.locator('div.more-choice-one>div:has-text("I see"), div.more-choice-one>div:has-text("我看")')
+```
+#### 5. 键盘特殊键位输入
+```python
+# Hit Enter
+page.get_by_text("Submit").press("Enter")
+
+# Dispatch Control+Right
+page.get_by_role("textbox").press("Control+ArrowRight")
+
+# Press $ sign on keyboard
+page.get_by_role("textbox").press("$")
+```
+
+```text
+Backquote, Minus, Equal, Backslash, Backspace, Tab, Delete, Escape,
+ArrowDown, End, Enter, Home, Insert, PageDown, PageUp, ArrowRight,
+ArrowUp, F1 - F12, Digit0 - Digit9, KeyA - KeyZ, etc.
+```
+#### 6. 上传文件
+```python
+# Select one file
+page.get_by_label("Upload file").set_input_files('myfile.pdf')
+
+# Select multiple files
+page.get_by_label("Upload files").set_input_files(['file1.txt', 'file2.txt'])
+
+# Remove all the selected files
+page.get_by_label("Upload file").set_input_files([])
+
+# Upload buffer from memory
+page.get_by_label("Upload file").set_input_files(
+    files=[
+        {"name": "test.txt", "mimeType": "text/plain", "buffer": b"this is a test"}
+    ],
+)
+```
+#### 7. 聚焦
+```python
+page.get_by_label('password').focus()
+```
+#### 8. 拖拽
+```python
+page.locator("#item-to-be-dragged").hover()
+page.mouse.down()
+page.locator("#item-to-drop-at").hover()
+page.mouse.up()
+```
+#### 9. 处理弹窗
+处理`alert`、`confirm`、`prompt`
+```python
+page.on("dialog", lambda dialog: dialog.accept())
+page.get_by_role("button").click()
+
+def handle_dialog(dialog):
+    assert dialog.type == 'beforeunload'
+    dialog.dismiss()
+
+page.on('dialog', lambda: handle_dialog)
+page.close(run_before_unload=True)
+```
+#### 10. 下载
+```python
+# 点击按钮监听下载
+# Start waiting for the download
+with page.expect_download() as download_info:
+    # Perform the action that initiates download
+    page.get_by_text("Download file").click()
+# Wait for the download to start
+download = download_info.value
+# Wait for the download process to complete
+print(download.path())
+# Save downloaded file somewhere
+download.save_as("/path/to/save/download/at.txt")
+
+# 监听页面的所有下载事件
+page.on("download", lambda download: print(download.path()))
+```
+### 2. 仿真
+仿真可包括：`userAgent`、`screenSize`、`viewport`、`hasTouch`、`geolocation`、`locale`、`timezone`、`permissions`、`colorScheme`
+#### 1. 设备
+```python
+from playwright.sync_api import sync_playwright
+
+def run(playwright):
+    iphone_13 = playwright.devices['iPhone 13']
+    browser = playwright.webkit.launch(headless=False)
+    context = browser.new_context(
+        **iphone_13,
+    )
+
+with sync_playwright() as playwright:
+    run(playwright)
+```
+#### 2. 窗口
+```python
+# Create context with given viewport
+context = browser.new_context(
+	viewport={ 'width': 1280, 'height': 1024 }
+)
+
+# Resize viewport for individual page
+page.set_viewport_size({"width": 1600, "height": 1200})
+
+# Emulate high-DPI
+context = browser.new_context(
+	viewport={ 'width': 2560, 'height': 1440 },
+	device_scale_factor=2,
+)
+```
+#### 3. 触屏
+```python
+context = browser.new_context(
+	isMobile=false
+)
+```
+#### 4. 区域时区
+```python
+context = browser.new_context(
+	locale='de-DE',
+	timezone_id='Europe/Berlin',
+)
+```
+#### 5. 权限
+```python
+context = browser.new_context(
+	permissions=['notifications'],
+)
+
+context.grant_permissions(['notifications'], origin='https://skype.com')
+
+context.clear_permissions()
+```
+#### 6. 地理位置
+```python
+context = browser.new_context(
+	geolocation={"longitude": 41.890221, "latitude": 12.492348},
+	permissions=["geolocation"]
+)
+
+context.set_geolocation({"longitude": 48.858455, "latitude": 2.294474})
+```
+#### 7. 颜色主题
+```python
+# Create context with dark mode
+context = browser.new_context(
+	color_scheme='dark' # or 'light'
+)
+
+# Create page with dark mode
+page = browser.new_page(
+	color_scheme='dark' # or 'light'
+)
+
+# Change color scheme for the page
+page.emulate_media(color_scheme='dark')
+
+# Change media for page
+page.emulate_media(media='print')
+```
+#### 8. User-Agent
+```python
+context = browser.new_context(
+	user_agent='My user agent'
+)
+```
+#### 9. 网络
+```python
+context = browser.new_context(  
+	offline=True
+)
+```
+#### 10. JS
+```python
+context = browser.new_context(
+	javaScript_enabled=False
+)
+
+href = page.evaluate('() => document.location.href')
+status = page.evaluate("""async () => {
+  response = await fetch(location.href)
+  return response.status
+}""")
+
+# A primitive value.
+page.evaluate('num => num', 42)
+
+# An array.
+page.evaluate('array => array.length', [1, 2, 3])
+
+# An object.
+page.evaluate('object => object.foo', { 'foo': 'bar' })
+
+# A single handle.
+button = page.evaluate('window.button')
+page.evaluate('button => button.textContent', button)
+
+# Alternative notation using elementHandle.evaluate.
+button.evaluate('(button, from) => button.textContent.substring(from)', 5)
+
+# Object with multiple handles.
+button1 = page.evaluate('window.button1')
+button2 = page.evaluate('.button2')
+page.evaluate("""o => o.button1.textContent + o.button2.textContent""",
+    { 'button1': button1, 'button2': button2 })
+
+# Object destructuring works. Note that property names must match
+# between the destructured object and the argument.
+# Also note the required parenthesis.
+page.evaluate("""
+    ({ button1, button2 }) => button1.textContent + button2.textContent""",
+    { 'button1': button1, 'button2': button2 })
+
+# Array works as well. Arbitrary names can be used for destructuring.
+# Note the required parenthesis.
+page.evaluate("""
+    ([b1, b2]) => b1.textContent + b2.textContent""",
+    [button1, button2])
+
+# Any non-cyclic mix of serializables and handles works.
+page.evaluate("""
+    x => x.button1.textContent + x.list[0].textContent + String(x.foo)""",
+    { 'button1': button1, 'list': [button2], 'foo': None })
+
+data = { 'text': 'some data', 'value': 1 }
+# Pass |data| as a parameter.
+result = page.evaluate("""data => {
+  window.myApp.use(data)
+}""", data)
+```
+### 3. 监听事件
+```python
+# 每个事件起一个独立的监听器
+def print_request_sent(request):
+  print("Request sent: " + request.url)
+
+def print_request_finished(request):
+  print("Request finished: " + request.url)
+
+page.on("request", print_request_sent)
+page.on("requestfinished", print_request_finished)
+page.goto("https://wikipedia.org")
+
+page.remove_listener("requestfinished", print_request_finished)
+page.goto("https://www.openstreetmap.org/")
+
+
+# 若干个事件共用同一个监听器
+page.once("dialog", lambda dialog: dialog.accept("2021"))
+page.evaluate("prompt('Enter a number:')")
+```
+### 4. Locate定位元素
+```python
+# locate by role
+<h3>Sign up</h3>
+<label>
+  <input type="checkbox" /> Subscribe
+</label>
+<br/>
+<button>Submit</button>
+expect(page.get_by_role("heading", name="Sign up")).to_be_visible()
+page.get_by_role("checkbox", name="Subscribe").check()
+page.get_by_role("button", name=re.compile("submit", re.IGNORECASE)).click()
+
+
+<label>Password <input type="password" /></label>
+# locate by label
+page.get_by_label("Password").fill("secret")
+
+
+<input type="email" placeholder="name@example.com" />
+# locate by placeholder
+page.get_by_placeholder("name@example.com").fill("playwright@microsoft.com")
+
+
+<span>Welcome, John</span>
+# locate by text
+expect(page.get_by_text("Welcome, John")).to_be_visible()
+expect(page.get_by_text("Welcome, John", exact=True)).to_be_visible()
+expect(page.get_by_text(re.compile("welcome, john", re.IGNORECASE))).to_be_visible()
+
+
+<img alt="playwright logo" src="/img/playwright-logo.svg" width="100" />
+# locate by alt text
+page.get_by_alt_text("playwright logo").click()
+expect(page.get_by_title("Issues count")).to_have_text("25 issues")
+
+
+<span title='Issues count'>25 issues</span>
+# locate by title
+expect(page.get_by_title("Issues count")).to_have_text("25 issues")
+```
+
+**重点：Locate by CSS or XPath**
+```python
+page.locator("css=button").click()
+page.locator("xpath=//button").click()
+
+page.locator("button").click()
+page.locator("//button").click()
+
+page.locator(
+    "#tsf > div:nth-child(2) > div.A8SBwf > div.RNNXgb > div > div.a4bIc > input"
+).click()
+page.locator('//*[@id="tsf"]/div[2]/div[1]/div[1]/div/div[2]/input').click()
+```
+### 5. Filtering Locators过滤
+```python
+<ul>
+  <li>
+    <h3>Product 1</h3>
+    <button>Add to cart</button>
+  </li>
+  <li>
+    <h3>Product 2</h3>
+    <button>Add to cart</button>
+  </li>
+</ul>
+# filter by text
+page.get_by_role("listitem").filter(has_text="Product 2").get_by_role(
+    "button", name="Add to cart"
+).click()
+page.get_by_role("listitem").filter(has_text=re.compile("Product 2")).get_by_role(
+    "button", name="Add to cart"
+).click()
+
+
+<ul>
+  <li>
+    <h3>Product 1</h3>
+    <button>Add to cart</button>
+  </li>
+  <li>
+    <h3>Product 2</h3>
+    <button>Add to cart</button>
+  </li>
+</ul>
+# filter by not having text
+expect(page.get_by_role("listitem").filter(has_not_text="Out of stock")).to_have_count(5)
+
+
+<ul>
+  <li>
+    <h3>Product 1</h3>
+    <button>Add to cart</button>
+  </li>
+  <li>
+    <h3>Product 2</h3>
+    <button>Add to cart</button>
+  </li>
+</ul>
+# filter by child/descendant
+page.get_by_role("listitem").filter(
+    has=page.get_by_role("heading", name="Product 2")
+).get_by_role("button", name="Add to cart").click()
+# filter by not having child/descendant
+expect(
+    page.get_by_role("listitem").filter(
+        has_not=page.get_by_role("heading", name="Product 2")
+    )
+).to_have_count(1)
+```
+### 6. Match匹配
+```python
+# locator链
+save_button = page.get_by_role("button", name="Save")
+dialog = page.get_by_test_id("settings-dialog")
+dialog.locator(save_button).click()
+
+
+# 并
+button = page.get_by_role("button").and_(page.getByTitle("Subscribe"))
+# 或
+new_email = page.get_by_role("button", name="New")
+dialog = page.get_by_text("Confirm security settings")
+expect(new_email.or_(dialog)).to_be_visible()
+if (dialog.is_visible()):
+  page.get_by_role("button", name="Dismiss").click()
+new_email.click()
+
+
+<button style='display: none'>Invisible</button>
+<button>Visible</button>
+# 找不可见的
+page.locator("button").locator("visible=true").click()
+```
+### 7. HTTP Proxy
+```python
+browser = chromium.launch(proxy={
+	"server": "http://myproxy.com:3128",
+	"username": "usr",
+	"password": "pwd"
+})
+```
+## 9. Scrapy
 <img src="D:\Project\IT-notes\Python\img\Scrapy整体架构.png" style="width:700px;height:400px;" />
 
 ### 1. 起步
@@ -1467,3 +1970,4 @@ class QuotesSpider(scrapy.Spider):
         if next_page is not None:
             yield response.follow(next_page, self.parse)
 ```
+
