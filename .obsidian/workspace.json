@@ -4,17 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "83791bc2d66ce8bd",
+        "id": "27988a682f22b769",
         "type": "tabs",
         "children": [
           {
-            "id": "e661d13f55983f83",
+            "id": "68b03ff8da328478",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Python/Scrapy应用.md",
-                "mode": "source",
+                "file": "技术要点/定时任务.md",
+                "mode": "preview",
                 "source": false
               }
             }
@@ -69,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 254.5,
-    "collapsed": true
+    "width": 254.5
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -97,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Python/Scrapy应用.md",
+                "file": "技术要点/定时任务.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Python/Scrapy应用.md",
+                "file": "技术要点/定时任务.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Python/Scrapy应用.md"
+                "file": "技术要点/定时任务.md"
               }
             }
           }
@@ -147,23 +146,27 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "e661d13f55983f83",
+  "active": "68b03ff8da328478",
   "lastOpenFiles": [
-    "技术要点/加解密.md",
+    "技术要点/Apache-Commons.md",
+    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
+    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
     "Python/Scrapy应用.md",
-    "Python/Python基础.md",
-    "Plan.md",
+    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+    "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
     "框架or中间件/Docker/Docker概念与应用.md",
+    "框架or中间件/Redis/Redis基础.md",
+    "Python/Python基础.md",
+    "技术要点/加解密.md",
+    "Plan.md",
     "Python/img/Scrapy整体架构.png",
     "Python/img/Scrapy整体架构.png.crdownload",
     "Python/img",
     "Python/新建文件夹",
     "框架or中间件/Git/Git概念与配置.md",
-    "框架or中间件/Redis/Redis基础.md",
     "框架or中间件/Redis/Redis进阶.md",
     "框架or中间件/MyCat2/Mycat2概念与应用.md",
     "框架or中间件/Mysql/Mysql进阶.md",
-    "技术要点/Apache-Commons.md",
     "Java/并发/异步.md",
     "Java/并发/并发工具类.md",
     "Java/并发/原子操作类.md",
@@ -175,9 +178,6 @@
     "Java/并发/内存模型JMM.md",
     "Java/并发/并发容器与框架.md",
     "Java/并发/并发编程基础.md",
-    "技术要点/批处理.md",
-    "技术要点/多数据源切换.md",
-    "技术要点/动态注册bean.md",
     "技术要点/img/数字签名.jpg",
     "技术要点/img/数字签名.jpg.crdownload",
     "技术要点/img/apache-commons-lang.png",

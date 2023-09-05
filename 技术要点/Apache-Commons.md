@@ -1362,32 +1362,65 @@ CloseableHttpClient httpClient = HttpClients.custom()
 
 
 //异步支持
-CloseableHttpAsyncClient httpClient = HttpAsyncClients.createDefault();
-SimpleHttpRequest request = SimpleHttpRequest.create(Method.GET.name(), "https://www.baidu.com/");
-httpClient.start();
-httpClient.execute(request, new FutureCallback<SimpleHttpResponse>() {
-    @Override
-    public void completed(SimpleHttpResponse result) {
-        // 响应成功
-        println(result.getBodyText());
-        IOUtils.closeQuietly(httpClient);
-    }
+private static CloseableHttpAsyncClient httpClient = HttpAsyncClients.createDefault();
+//GET请求
+public static <T> T get(String url, Object param, Class<T> respClazz) throws Exception {
+	CloseableHttpAsyncClient httpClient = HttpAsyncClients.createDefault();
+	SimpleHttpRequest request = SimpleHttpRequest.create(Method.GET.name(), url);
 
-    @Override
-    public void failed(Exception ex) {
-        // 响应出错
-        ex.printStackTrace();
-        IOUtils.closeQuietly(httpClient);
-    }
+	URIBuilder uriBuilder = new URIBuilder(url);
+	for(Field attr : param.getClass().getDeclaredFields()) {
+		attr.setAccessible(true);
+		uriBuilder.addParameter(attr.getName(), attr.get(param).toString());
+	}
+	URI requestUri = uriBuilder.build();
 
-    @Override
-    public void cancelled() {
-        // 响应取消
-        println("cancelled");
-        IOUtils.closeQuietly(httpClient);
-    }
-});
-// ... ... 做其他业务处理
+	request.setUri(requestUri);
+	httpClient.start();
+	Future<SimpleHttpResponse> respFuture = httpClient.execute(request, new FutureCallback<SimpleHttpResponse>() {
+		@Override
+		public void completed(SimpleHttpResponse result) {
+			IOUtils.closeQuietly(httpClient);
+		}
+
+		@Override
+		public void failed(Exception ex) {
+			IOUtils.closeQuietly(httpClient);
+		}
+
+		@Override
+		public void cancelled() {
+			IOUtils.closeQuietly(httpClient);
+		}
+	});
+	SimpleHttpResponse resp = respFuture.get();
+	return (T) new ObjectMapper().readValue(new String(resp.getBodyBytes(), Charset.forName("utf-8")), respClazz);
+}
+//POST请求
+public static <T> T post(String url, Object param, Class<T> respClazz) throws Exception {
+	SimpleHttpRequest request = SimpleHttpRequest.create(Method.POST.name(), url);
+	String requestJson = new ObjectMapper().writeValueAsString(param);
+	request.setBody(requestJson, ContentType.APPLICATION_JSON);
+	httpClient.start();
+	Future<SimpleHttpResponse> respFuture = httpClient.execute(request, new FutureCallback<SimpleHttpResponse>() {
+		@Override
+		public void completed(SimpleHttpResponse result) {
+			IOUtils.closeQuietly(httpClient);
+		}
+
+		@Override
+		public void failed(Exception ex) {
+			IOUtils.closeQuietly(httpClient);
+		}
+
+		@Override
+		public void cancelled() {
+			IOUtils.closeQuietly(httpClient);
+		}
+	});
+	SimpleHttpResponse resp = respFuture.get();
+	return (T) new ObjectMapper().readValue(new String(resp.getBodyBytes(), Charset.forName("utf-8")), respClazz);
+}
 ```
 
 ## 9. Pool
