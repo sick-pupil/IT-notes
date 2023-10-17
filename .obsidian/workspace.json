@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "d3f68d43a2148265",
+        "id": "6cbbd4d041a9f13c",
         "type": "tabs",
         "children": [
           {
-            "id": "c4f6f4a9b09df165",
+            "id": "a7cb96fc3ef80c04",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "框架or中间件/Jenkins/Jenkins概念与使用.md",
+                "file": "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
                 "mode": "source",
                 "source": false
               }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/Jenkins/Jenkins概念与使用.md",
+                "file": "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/Jenkins/Jenkins概念与使用.md",
+                "file": "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/Jenkins/Jenkins概念与使用.md"
+                "file": "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md"
               }
             }
           },
@@ -144,7 +144,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 296.5
+    "width": 296.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -156,8 +157,16 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "c4f6f4a9b09df165",
+  "active": "a7cb96fc3ef80c04",
   "lastOpenFiles": [
+    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/ShardingJDBC概念与应用.md",
+    "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
+    "框架or中间件/GitLab/GitLab概念与应用.md",
+    "框架or中间件/ShardingSphere/ShardingSphere-Proxy",
+    "框架or中间件/ShardingSphere/ShardingSphere-JDBC",
+    "框架or中间件/ShardingSphere",
+    "框架or中间件/Jenkins/Jenkins概念与使用.md",
+    "框架or中间件/Jenkins/Jenkins概念与应用.md",
     "框架or中间件/Jenkins/img/Git回调.png",
     "框架or中间件/Jenkins/img/Git回调.png.crdownload",
     "框架or中间件/Jenkins/img/构建后操作.png",
@@ -173,13 +182,8 @@
     "框架or中间件/Jenkins/img/General.png",
     "框架or中间件/Jenkins/img/General.png.crdownload",
     "框架or中间件/Jenkins/img/新建工程.png",
-    "框架or中间件/Jenkins/img/新建工程.png.crdownload",
     "框架or中间件/Jenkins/img/全局工具配置-maven2.png",
-    "框架or中间件/Jenkins/img/全局工具配置-maven2.png.crdownload",
     "框架or中间件/Jenkins/img/全局工具配置-git.png",
-    "框架or中间件/Jenkins/img/全局工具配置-git.png.crdownload",
-    "框架or中间件/Jenkins/img/全局工具配置-jdk.png",
-    "框架or中间件/Jenkins/Jenkins概念与使用.md",
     "框架or中间件/Git/Git概念与配置.md",
     "框架or中间件/Dubbo/Dubbo相关配置.md",
     "技术要点/Apache-Commons.md",
@@ -201,9 +205,6 @@
     "框架or中间件/Redis/Redis进阶.md",
     "框架or中间件/MyCat2/Mycat2概念与应用.md",
     "Java/并发/异步.md",
-    "Java/并发/并发工具类.md",
-    "Java/并发/原子操作类.md",
-    "Java/并发/Executor框架.md",
-    "Java/并发/线程池.md"
+    "Java/并发/并发工具类.md"
   ]
 }
