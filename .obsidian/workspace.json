@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
+                "file": "框架or中间件/ShardingSphere/ShardingSphere-JDBC/ShardingJDBC概念与应用.md",
                 "mode": "source",
                 "source": false
               }
@@ -65,7 +65,8 @@
               "state": {}
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -96,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
+                "file": "框架or中间件/ShardingSphere/ShardingSphere-JDBC/ShardingJDBC概念与应用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
+                "file": "框架or中间件/ShardingSphere/ShardingSphere-JDBC/ShardingJDBC概念与应用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md"
+                "file": "框架or中间件/ShardingSphere/ShardingSphere-JDBC/ShardingJDBC概念与应用.md"
               }
             }
           },
@@ -144,8 +145,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 296.5,
-    "collapsed": true
+    "width": 296.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -159,7 +159,15 @@
   },
   "active": "a7cb96fc3ef80c04",
   "lastOpenFiles": [
+    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/img/MySQL主从同步原理.png",
+    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/img/MySQL主从同步.png",
+    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/img/image-20220714133617856.png",
+    "框架or中间件/Docker/Docker概念与应用.md",
     "框架or中间件/ShardingSphere/ShardingSphere-JDBC/ShardingJDBC概念与应用.md",
+    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/img/程序代理.jpg",
+    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/img/f8d538f9201e3ebee37dfdcd1922e9df.jpg",
+    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/img",
+    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/新建文件夹",
     "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
     "框架or中间件/GitLab/GitLab概念与应用.md",
     "框架or中间件/ShardingSphere/ShardingSphere-Proxy",
@@ -178,12 +186,6 @@
     "框架or中间件/Jenkins/img/添加凭依.png",
     "框架or中间件/Jenkins/img/添加凭依.png.crdownload",
     "框架or中间件/Jenkins/img/源码管理.png",
-    "框架or中间件/Jenkins/img/源码管理.png.crdownload",
-    "框架or中间件/Jenkins/img/General.png",
-    "框架or中间件/Jenkins/img/General.png.crdownload",
-    "框架or中间件/Jenkins/img/新建工程.png",
-    "框架or中间件/Jenkins/img/全局工具配置-maven2.png",
-    "框架or中间件/Jenkins/img/全局工具配置-git.png",
     "框架or中间件/Git/Git概念与配置.md",
     "框架or中间件/Dubbo/Dubbo相关配置.md",
     "技术要点/Apache-Commons.md",
@@ -199,12 +201,10 @@
     "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
     "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
-    "框架or中间件/Docker/Docker概念与应用.md",
     "框架or中间件/Redis/Redis基础.md",
     "技术要点/加解密.md",
     "框架or中间件/Redis/Redis进阶.md",
     "框架or中间件/MyCat2/Mycat2概念与应用.md",
-    "Java/并发/异步.md",
-    "Java/并发/并发工具类.md"
+    "Java/并发/异步.md"
   ]
 }
