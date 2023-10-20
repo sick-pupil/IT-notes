@@ -321,3 +321,160 @@ public class NioClient {
 
 ```
 ## 3. AIO
+**文件**
+```java
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.Future;
+
+public class AIOFileReader {
+
+    public static void main(String[] args) throws Exception {
+        Path path = Paths.get("D:\\test.txt");
+        AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(path);
+
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        long position = 0;
+
+        Future<Integer> operation = fileChannel.read(buffer, position);
+
+        while (!operation.isDone()) {
+            // do something else
+        }
+
+        buffer.flip();
+        String data = Charset.defaultCharset().decode(buffer).toString();
+        System.out.println(data);
+
+        fileChannel.close();
+    }
+}
+```
+
+**客户端**
+```java
+ package org.example.aio;
+ ​
+ import java.io.IOException;
+ import java.net.InetSocketAddress;
+ import java.nio.ByteBuffer;
+ import java.nio.channels.AsynchronousSocketChannel;
+ import java.nio.charset.Charset;
+ import java.util.concurrent.ExecutionException;
+ ​
+ public class AioClient {
+ ​
+     public static void main(String[] args) throws IOException, InterruptedException {
+         //打开一个客户端通道
+         AsynchronousSocketChannel channel = AsynchronousSocketChannel.open();
+         //与服务端建立连接
+         channel.connect(new InetSocketAddress("127.0.0.1", 9988));
+         //睡眠一秒，等待与服务端的连接
+         Thread.sleep(1000);
+ ​
+         try {
+             //向服务端发送数据
+             channel.write(ByteBuffer.wrap("Hello,我是客户端".getBytes())).get();
+         } catch (ExecutionException e) {
+             e.printStackTrace();
+         }
+ ​
+         try {
+             //从服务端读取返回的数据
+             ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+             channel.read(byteBuffer).get();//将通道中的数据写入缓冲Buffer
+             byteBuffer.flip();
+             String result = Charset.defaultCharset().newDecoder().decode(byteBuffer).toString();
+             System.out.println("客户端收到服务端返回的内容：" + result);//服务端返回的数据
+         } catch (ExecutionException e) {
+             e.printStackTrace();
+         }
+     }
+ }
+```
+
+**服务端**
+```java
+ package org.example.aio;
+ ​
+ import java.io.IOException;
+ import java.net.InetSocketAddress;
+ import java.nio.ByteBuffer;
+ import java.nio.channels.AsynchronousServerSocketChannel;
+ import java.nio.channels.AsynchronousSocketChannel;
+ import java.nio.channels.CompletionHandler;
+ import java.nio.charset.Charset;
+ ​
+ public class AioServer {
+ ​
+     public AsynchronousServerSocketChannel serverSocketChannel;
+ ​
+     public void listen() throws Exception {
+         //打开一个服务端通道
+         serverSocketChannel = AsynchronousServerSocketChannel.open();
+         serverSocketChannel.bind(new InetSocketAddress(9988));//监听9988端口
+         //监听
+         serverSocketChannel.accept(this, new CompletionHandler<AsynchronousSocketChannel, AioServer>() {
+             @Override
+             public void completed(AsynchronousSocketChannel client, AioServer attachment) {
+                 try {
+                     if (client.isOpen()) {
+                         System.out.println("接收到新的客户端的连接，地址：" + client.getRemoteAddress());
+                         final ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+                         //读取客户端发送的数据
+                         client.read(byteBuffer, client, new CompletionHandler<Integer, AsynchronousSocketChannel>() {
+                             @Override
+                             public void completed(Integer result, AsynchronousSocketChannel attachment) {
+                                 try {
+                                     //读取请求，处理客户端发送的数据
+                                     byteBuffer.flip();
+                                     String content = Charset.defaultCharset().newDecoder().decode(byteBuffer).toString();
+                                     System.out.println("服务端接受到客户端发来的数据：" + content);
+                                     //向客户端发送数据
+                                     ByteBuffer writeBuffer = ByteBuffer.allocate(1024);
+                                     writeBuffer.put("Server send".getBytes());
+                                     writeBuffer.flip();
+                                     attachment.write(writeBuffer).get();
+                                 } catch (Exception e) {
+                                     e.printStackTrace();
+                                 }
+                             }
+ ​
+                             @Override
+                             public void failed(Throwable exc, AsynchronousSocketChannel attachment) {
+                                 try {
+                                     exc.printStackTrace();
+                                     attachment.close();
+                                 } catch (IOException e) {
+                                     e.printStackTrace();
+                                 }
+                             }
+                         });
+                     }
+                 } catch (Exception e) {
+                     e.printStackTrace();
+                 } finally {
+                     //当有新的客户端接入的时候，直接调用accept的方法，递归执行下去，这样可以保证多个客户端都可以阻塞
+                     attachment.serverSocketChannel.accept(attachment, this);
+                 }
+             }
+ ​
+             @Override
+             public void failed(Throwable exc, AioServer attachment) {
+                 exc.printStackTrace();
+             }
+         });
+     }
+ ​
+ ​
+     public static void main(String[] args) throws Exception {
+         new AioServer().listen();
+         Thread.sleep(Integer.MAX_VALUE);
+     }
+ ​
+ }
+
+```
