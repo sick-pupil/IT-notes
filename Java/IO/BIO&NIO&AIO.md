@@ -77,7 +77,7 @@ public class BIOServer {
 ## 2. NIO
 <img src="D:\Project\IT-notes\Java\IO\img\NIO模型.png" style="width:700px;height:250px;" />
 
-<img src="D:\Project\IT-notes\Java\IO\img\buffer类型.png" style="width:700px;height:300px;" />
+<img src="D:\Project\IT-notes\Java\IO\img\buffer数据流程.png" style="width:700px;height:500px;" />
 
 特点：
 1. 每个`channel`对应一个`buffer`
@@ -87,75 +87,31 @@ public class BIOServer {
 5. `selector`根据不同的事件在各个通道上切换
 6. `buffer`为一个内存块，底层为一个数组
 7. 数据读取写入都是通过`buffer`，即`buffer`为全双工，需要使用`flip()`切换读写模式
-
+### 1. Channel
 <img src="D:\Project\IT-notes\Java\IO\img\NIO模型2.png" style="width:700px;height:700px;" />
-### 1. 文件读写
+
+`Channel`为数据的抽象通道，无论是文件还是`Socket`，可以通过`Channel`进行读取与写入；而`Channel`与`Stream`的不同之处在于`BIO`中的`Stream`为单工，而`Channel`为全双工；`Channel`一端连接`Buffer`，一端连接实体（文件、`Socket`），而`Channel`无论是读写数据都是先经过`buffer`
+
+`Channel`实现：
+1. `FileChannel`：读写文件
+2. `DatagramChannel`：读写`UDP`
+3. `SocketChannel`：读写`TCP`客户端
+4. `ServerSocketChannel`：读写`TCP`服务端
+
+存在`Scatter/Gather`（分散/聚集）：即针对单个`Channel`使用多个`buffer`进行读写
 ```java
-// 获取文件通道
-FileChannel.open(Paths.get(fileName), StandardOpenOption.READ);
-// 分配字节缓存
-ByteBuffer buf = ByteBuffer.allocate(10);
+ByteBuffer header = ByteBuffer.allocate(128);
+ByteBuffer body = ByteBuffer.allocate(1024);
+ByteBuffer[] bufferArray = [heander, body];
+channel.read(bufferArray);
 
-//读取
-while (channel.read(buf) != -1){ // 读取通道中的数据，并写入到 buf 中
-    buf.flip(); // 缓存区切换到读模式
-    while (buf.position() < buf.limit()){ // 读取 buf 中的数据
-        text.append((char)buf.get());
-    }
-    buf.clear(); // 清空 buffer，缓存区切换到写模式
-}
-
-//写入
-for (int i = 0; i < text.length(); i++) {
-    buf.put((byte)text.charAt(i)); // 填充缓冲区，需要将 2 字节的 char 强转为 1 自己的 byte
-    if (buf.position() == buf.limit() || i == text.length() - 1) { // 缓存区已满或者已经遍历到最后一个字符
-        buf.flip(); // 将缓冲区由写模式置为读模式
-        channel.write(buf); // 将缓冲区的数据写到通道
-        buf.clear(); // 清空缓存区，将缓冲区置为写模式，下次才能使用
-    }
-}
-
-//将数据刷出到物理磁盘
-channel.force(false);
-//关闭通道
-channel.close();
+ByteBuffer header = ByteBuffer.allocate(128);
+ByteBuffer body = ByteBuffer.allocate(1024);
+ByteBuffer[] bufferArray = [heander, body];
+channel.write(bufferArray);
 ```
-
-### 2. 网络读写
-```java
-//打开通道，连接到服务端
-SocketChannel channel = SocketChannel.open(); // 打开通道，此时还没有打开 TCP 连接
-channel.connect(new InetSocketAddress("localhost", 9090)); // 连接到服务端
-
-//分配缓冲区
-ByteBuffer buf = ByteBuffer.allocate(10); // 分配一个 10 字节的缓冲区，不实用，容量太小
-
-//配置是否为阻塞方式
-channel.configureBlocking(false); // 配置通道为非阻塞模式
-
-//交互
-...
-
-//关闭连接
-channel.close();          // 关闭通道
-```
-
-```java
-//打开通道，提供连接给客户端
-ServerSocketChannel server = ServerSocketChannel.open(); // 打开通道
-//绑定端口
-server.bind(new InetSocketAddress(9090)); // 绑定端口
-//等待客户端连接到来
-SocketChannel client = server.accept(); // 阻塞，直到有连接过来
-
-//交互
-...
-
-//关闭连接
-client.close();
-```
-### 3. buffer
-<img src="D:\Project\IT-notes\Java\IO\img\buffer数据流程.png" style="width:700px;height:500px;" />
+### 2. Buffer
+<img src="D:\Project\IT-notes\Java\IO\img\buffer类型.png" style="width:700px;height:300px;" />
 
 ```java
 put(byte b) //将给定单个字节写入缓冲区的当前位置
@@ -166,95 +122,202 @@ get() //读取单个字节
 get(byte[] dst) //批量读取多个字节到 dst 中
 get(int index) //读取指定索引位置的字节(不会移动 position)
 ```
-### 4. selector
+
+使用`Buffer`读写数据，一般遵循四个操作：
+1. 写数据到`Buffer`
+2. 调用`flip`方法切换读写模式，默认读模式
+3. 从`Buffer`中读取数据
+4. 调用`clear`或者`compact`清空`Buffer`，`clear`清空整个缓冲区，`compact`清除已经读写过的数据
+
+`Buffer`中存在三个重要属性：`capacity`、`position`、`limit`
+<img src="D:\Project\IT-notes\Java\IO\img\Buffer三个基本属性.png" style="width:700px;height:300px;" />
+
+`Buffer`几个重要方法：
+1. `alloacte`：分配若干大小缓冲区
+2. `read`：从`channel`中读取数据到`buffer`
+3. `write`：从`buffer`中写数据到`channel`
+4. `flip`：将`buffer`从写模式（读模式）切换到读模式（写模式）；从写模式切换到读模式`position`会置0，从读模式切换到写模式`position`会置为`limit`
+5. `rewind`：`position`置为0，重新读取`buffer`中的所有数据
+6. `clear`：清空缓冲区，`buffer`中的数据并未清除，只是`position limit capacity`被重置了而已，即`position=0`、`limit=capacity`
+7. `compact`：将第一个未读元素到`limit`处之间的所有元素拷贝到`buffer`起始处，然后`position=此时第一个未读元素位置`，`limit=capacity`
+8. `mark&reset`：调用`mark`标记一个`position`，之后通过`reset`恢复到这个`position`
+9. `slice`：创建子缓冲区
+10. `asReadOnlyBuffer`：设置为只读缓冲区
+11. `allocateDirect`：设置为直接缓冲区，即使用操作系统的`native`方法进行IO读写，避免将数据先从虚拟机堆栈中操作后再拷贝到直接内容中
+12. `map`：内存映射文件，`FileChannel channel = FileChannel.open(Paths.get("src/c.txt");MappedByteBuffer mapBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, length);`，直接调用系统底层的内存缓存，适合大文件的内存读写
+### 3. Selector
 <img src="D:\Project\IT-notes\Java\IO\img\channel轮询.png" style="width:700px;height:250px;" />
+
+特点：
+1. `FileChannel`不能被选择器复用，因为`FileChannel`并未继承抽象类`SelectableChannel`
+2. 一个`Channel`可以被注册到多个`Selector`上，而在同一个`Selector`上一个`Channel`只能被注册一次
+3. `Selector`会轮询每个`Channel`的就绪状态，满足就绪状态则可进行读写，就绪状态包括四种：
+	- 可读：`SelectionKey.OP_READ`
+	- 可写：`SelectionKey.OP_WRITE`
+	- 连接：`SelectionKey.OP_CONNECT`
+	- 接收：`SelectionKey.OP_ACCEPT`
+4. `Selector`对注册的`Channel`进行`select()`轮询查询，选中后得出选择键`SelectionKey`，使用选择键对信道进行操作
+### 5. 完整实例
+**FileChannel**
 ```java
-//获取选择器
-Selector selector = Selector.open(); // 获取一个选择器实例
+public class NIOInTest {
+    public static void main(String[] args) throws Exception {
+        File file = new File("C:/Users/25852/Desktop/HTTP请求.jmx");
+        FileInputStream inputStream = new FileInputStream(file);
+        FileChannel fileChannel = inputStream.getChannel();// 流变channel
+        ByteBuffer byteBuffer = ByteBuffer.allocate((int)file.length());
+        fileChannel.read(byteBuffer);//从channel中读数据给buffer
+        byteBuffer.flip();//翻转 从写变成读模式
+        while(byteBuffer.hasRemaining()){//buffer 中是否还有元素
+             byte b = byteBuffer.get();
+             System.out.print((char) b);
+        }
+        inputStream.close();
+    }
+}
 
-//获取可选择信道
-SocketChannel socketChannel = SocketChannel.open(new InetSocketAddress("localhost", 9090)); // 打开 SocketChannel 并连接到本机 9090 端口
-socketChannel.configureBlocking(false); // 配置通道为非阻塞模式
-
-//注册通道到选择器
-socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE); // 将套接字通过到注册到选择器，关注 read 和 write 事件
-
-//轮询select就绪事件
-while (selector.select() > 0){ // 轮询，且返回时有就绪事件
-	Set<SelectionKey> keys = selector.selectedKeys(); // 获取就绪事件集合
-	for(SelectionKey key : keys){
-		if(key.isWritable()){ // 可写事件
-			if("Bye".equals( (line = scanner.nextLine()) )){
-				socketChannel.shutdownOutput();
-				socketChannel.close();
-				break;
-			}
-			buf.put(line.getBytes());
-			buf.flip();
-			socketChannel.write(buf);
-			buf.compact();
-		}
-	}
+public class NIOOutTest {
+    public static void main(String[] args) throws Exception {
+        File file = new File("test.txt");
+        FileOutputStream outputStream = new FileOutputStream(file);
+        FileChannel fileChannel = outputStream.getChannel();// 流变 channel
+        byte[] message = "hello world ,It's me".getBytes();
+        ByteBuffer byteBuffer = ByteBuffer.allocate(message.length);
+        byteBuffer.put(message);// 数据都要装入buffer
+        byteBuffer.flip();  //Buffer 默认是读模式，需要反转
+        fileChannel.write(byteBuffer);// 将buffer写入channel
+        System.out.println("输出成功");
+        outputStream.close();
+    }
 }
 ```
 
-### 5. 完整实例
 **NIOServer**
 ```java
-public static void main(String[] args) throws  Exception{
-        //创建ServerSocketChannel，-->> ServerSocket
+public class NioServer {
+    private static Map<String, SocketChannel> clientMap = new HashMap<>();//记录客户端信息，方便内容分发
+
+    public static void main(String[] args) throws Exception {
         ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-        InetSocketAddress inetSocketAddress = new InetSocketAddress(5555);
-        serverSocketChannel.socket().bind(inetSocketAddress);
-        serverSocketChannel.configureBlocking(false); //设置成非阻塞
- 
-        //开启selector,并注册accept事件
+        serverSocketChannel.configureBlocking(false);
+        ServerSocket serverSocket = serverSocketChannel.socket();
+        serverSocket.bind(new InetSocketAddress(8899));
         Selector selector = Selector.open();
-        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
- 
-        while(true) {
-            selector.select(2000);  //监听所有通道
-            //遍历selectionKeys
-            Set<SelectionKey> selectionKeys = selector.selectedKeys();
-            Iterator<SelectionKey> iterator = selectionKeys.iterator();
-            while (iterator.hasNext()) {
-                SelectionKey key = iterator.next();
-                if(key.isAcceptable()) {  //处理连接事件
-                    SocketChannel socketChannel = serverSocketChannel.accept();
-                    socketChannel.configureBlocking(false);  //设置为非阻塞
-                    System.out.println("client:" + socketChannel.getLocalAddress() + " is connect");
-                    socketChannel.register(selector, SelectionKey.OP_READ); //注册客户端读取事件到selector
-                } else if (key.isReadable()) {  //处理读取事件
-                    ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-                    SocketChannel channel = (SocketChannel) key.channel();
-                    channel.read(byteBuffer);
-                    System.out.println("client:" + channel.getLocalAddress() + " send " + new String(byteBuffer.array()));
+        /*
+        当accept触发时，就可以触发对应的事件逻辑，
+        是将channel绑定到selector ，注册会有 SelectionKey生成
+         */
+        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);//一般以连接事件为起源
+        while (true){
+            selector.select();//阻塞，等待事件发生
+            Set<SelectionKey>  selectionKeys = selector.selectedKeys();//返回已发生的注册事件
+            selectionKeys.forEach(key ->{//判断事件类型，进行相应操作
+                final SocketChannel client;
+                try {
+                    if (key.isAcceptable()){//根据key获得channel
+                        //之所以转换ServerSocketChannel，因为前面注册的就是这个类
+                        ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
+                        client = serverChannel.accept();//新的channel 和客户端建立了通道
+                        client.configureBlocking(false);//非阻塞
+                        client.register(selector,SelectionKey.OP_READ);//将新的channel和selector，绑定
+                        String clientKey = "【"+ UUID.randomUUID() +"】";//用UUID，标识客户端client
+                        clientMap.put(clientKey,client);
+                        //完成客户端注册
+                    }else if (key.isReadable()){//是否有数据可读
+                        client = (SocketChannel) key.channel();
+                        ByteBuffer readBuffer =  ByteBuffer.allocate(1024);
+                        int count = client.read(readBuffer);
+                        if (count>0){
+                            readBuffer.flip();
+                            Charset charset = StandardCharsets.UTF_8;
+                            String receiveMassage = String.valueOf(charset.decode(readBuffer).array());
+                            System.out.println(client +": "+receiveMassage);//显示哪个client发消息
+                            String senderKey = null;
+                            for (Map.Entry<String, SocketChannel> entry : clientMap.entrySet()){
+                                if (client == entry.getValue()){
+                                    senderKey = entry.getKey();//确定哪个client发送的消息
+                                    break;
+                                }
+                            }
+                            for (Map.Entry<String, SocketChannel> entry : clientMap.entrySet()){
+                                SocketChannel channel = entry.getValue();
+                                ByteBuffer writeBuffer = ByteBuffer.allocate(1024);
+                                writeBuffer.put((senderKey + ": " + receiveMassage).getBytes());//告诉所有client ，谁发了消息，发了什么
+                                writeBuffer.flip();
+                                channel.write(writeBuffer);
+                            }
+                        }
+                    }
+                    //selectionKeys.clear();//处理完事件一定要移除
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally {
+                    selectionKeys.clear();//处理完事件一定要移除
                 }
-                iterator.remove();  //事件处理完毕，要记得清除
-            }
+            });
         }
- 
     }
+}
 ```
 
 **NIOClient**
 ```java
-public class NIOClient {
-	public static void main(String[] args) throws Exception{
-	        SocketChannel socketChannel = SocketChannel.open();
-	        socketChannel.configureBlocking(false);
-	        InetSocketAddress inetSocketAddress = new InetSocketAddress("127.0.0.1", 5555);
-	 
-	        if(!socketChannel.connect(inetSocketAddress)) {
-	            while (!socketChannel.finishConnect()) {
-	                System.out.println("客户端正在连接中，请耐心等待");
-	            }
-	        }
-	 
-	        ByteBuffer byteBuffer = ByteBuffer.wrap("mikechen的互联网架构".getBytes());
-	        socketChannel.write(byteBuffer);
-	        socketChannel.close();
-	}
+public class NioClient {
+    public static void main(String[] args) throws Exception {
+        SocketChannel socketChannel = SocketChannel.open();
+        socketChannel.configureBlocking(false);
+        Selector selector = Selector.open();
+        socketChannel.register(selector, SelectionKey.OP_CONNECT);
+        socketChannel.connect(new InetSocketAddress("127.0.0.1",8899));
+        while (true){
+            selector.select();//阻塞 等待事件发生
+            Set<SelectionKey> selectionKeys = selector.selectedKeys();
+            selectionKeys.forEach(key ->{
+                try {
+                    if (key.isConnectable()){
+                        SocketChannel channel = (SocketChannel) key.channel();
+                        if (channel.isConnectionPending()){//是否正在连接
+                            channel.finishConnect(); //结束正在连接
+                            ByteBuffer writeBuffer = ByteBuffer.allocate(1024);
+                            writeBuffer.put((LocalDateTime.now() + " 连接成功").getBytes());
+                            writeBuffer.flip();
+                            channel.write(writeBuffer);//将buffer写入channel
+                            ExecutorService service = Executors.newSingleThreadExecutor(Executors.defaultThreadFactory());
+                            service.submit(()->{//线程，从键盘读入数据
+                               try {
+                                   while (true){
+                                       writeBuffer.clear();//清空buffer
+                                       InputStreamReader input = new InputStreamReader(System.in);
+                                       BufferedReader bufferedReader = new BufferedReader(input);
+                                       String senderMessage = bufferedReader.readLine();
+                                       writeBuffer.put(senderMessage.getBytes());
+                                       writeBuffer.flip();
+                                       channel.write(writeBuffer);
+                                   }
+                               }catch (Exception e){
+                                   e.printStackTrace();
+                               }
+                            });
+                        }
+                        channel.register(selector,SelectionKey.OP_READ);//注册事件
+                    }else if (key.isReadable()){//channel 有信息的输入
+                        SocketChannel channel = (SocketChannel) key.channel();//哪个channel 触发了 read
+                        ByteBuffer readBuffer = ByteBuffer.allocate(1024);
+                        int count = channel.read(readBuffer);//server发来的
+                        if (count > 0){
+                            String receiveMessage = new String(readBuffer.array(),0,count);
+                            System.out.println(receiveMessage);
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally {
+                    selectionKeys.clear();//移除已经发生的事件
+                }
+            });
+        }
+    }
 }
+
 ```
 ## 3. AIO
