@@ -476,5 +476,152 @@ public class AIOFileReader {
      }
  ​
  }
+```
 
+## 4. NIO.Paths&NIO.FILES
+### 1. Path对象
+```java
+System.out.println(System.getProperty("os.name"));
+Path path = Paths.get("F:", "Speed.log");
+System.out.println("toString：" + path);
+System.out.println("Exists: " + Files.exists(path));
+System.out.println("RegularFile: " + Files.isRegularFile(path));
+System.out.println("Readable: " + Files.isReadable(path));
+System.out.println("Hidden: " + Files.isHidden(path));
+System.out.println("Directory: " + Files.isDirectory(path));
+System.out.println("Absolute: " + path.isAbsolute());
+System.out.println("Parent Path: " + path.getParent());
+System.out.println("FileName: " + path.getFileName());
+System.out.println("Root: " + path.getRoot());
+```
+
+### 2. 选取路径部分片段
+```java
+Path path = Paths.get("F:", "迅雷下载", "寄生虫", "寄生虫", "Parasite.寄生虫.2019.中文字幕.BDrip.1080P-BR.mp4");
+//String path = "F:\迅雷下载\寄生虫\寄生虫\Parasite.寄生虫.2019.中文字幕.BDrip.1080P-BR.mp4"
+System.out.println(path.getNameCount());
+for (Path path1 : path) {
+	System.out.println("Current: " + path1);
+}
+//true
+System.out.println(path.startsWith(path.getRoot()));
+//false
+System.out.println(path.startsWith("\\迅雷下载"));
+//false
+System.out.println(path.endsWith(".map"));
+//true
+System.out.println(path.endsWith("F:\\迅雷下载\\寄生虫\\寄生虫\\Parasite.寄生虫.2019.中文字幕.BDrip.1080P-BR.mp4"));
+```
+
+### 3. 路径分析
+```java
+//返回以相对地址为基础的路径，不判断文件是否存在
+Path path = Paths.get("pom.xml").toAbsolutePath();
+System.out.println(path);
+System.out.println("文件是否存在: " + Files.exists(path));
+System.out.println("是否是目录: " + Files.isDirectory(path));
+System.out.println("是否是可执行文件: " + Files.isExecutable(path));
+System.out.println("是否可读: " + Files.isReadable(path));
+System.out.println("判断是否是一个文件: " + Files.isRegularFile(path));
+System.out.println("是否可写: " + Files.isWritable(path));
+System.out.println("文件是否不存在: " + Files.notExists(path));
+System.out.println("文件是否隐藏: " + Files.isHidden(path));
+System.out.println("文件大小: " + Files.size(path));
+System.out.println("文件存储在SSD还是HDD: " + Files.getFileStore(path));
+System.out.println("文件修改时间：" + Files.getLastModifiedTime(path));
+System.out.println("文件拥有者： "  + Files.getOwner(path));
+System.out.println("文件类型: " + Files.probeContentType(path));
+```
+
+### 4. Paths增删改
+```java
+//当前路径是D:\ideaworkspace\webchang2
+//所以get(..)就是获取其上一级路径
+//使用relativize()移除Path的根路径
+//使用resolve()添加Path的尾路径(不一定是存在的路径)
+Path path = Paths.get("").toAbsolutePath().normalize();
+//输出:D:\ideaspace
+System.out.println(path);
+//输出:D:\
+System.out.println(Paths.get("..", "..").toAbsolutePath().normalize());
+//===============
+Path base = Paths.get("F:", "迅雷下载");
+Path fullPath = Paths.get("F:", "迅雷下载", "寄生虫", "寄生虫", "Parasite.寄生虫.2019.中文字幕.BDrip.1080P-BR.mp4");
+//relative是从fullPath中将base部分截取掉
+System.out.println(base.relativize(fullPath));
+//如果参数不是从根路径开始,那么base会完全拼接参数形成一个全新的路径
+System.out.println(base.resolve(Paths.get("迅雷下载", "123")));
+//PS:如果base和fullPath从根路径下是重合的了,那么只会添加不重合的部分
+System.out.println(base.resolve(fullPath));
+```
+
+### 5. 遍历子目录与文件
+```java
+Path path = Paths.get("D:\\jdk1.8");
+Files.walkFileTree(path, new SimpleFileVisitor<Path>(){
+	@Override
+	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+		if (file.getFileName().toString().contains(".jar")) {
+			System.out.println(file);
+		}
+		return FileVisitResult.CONTINUE;
+	}
+	@Override
+	public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attributes) {
+		System.out.println(path);
+		return FileVisitResult.CONTINUE;
+	}
+	@Override
+	public FileVisitResult visitFileFailed(Path path, IOException exc) {
+		System.out.println(path);
+		System.out.println(exc.getMessage());
+		return FileVisitResult.CONTINUE;
+	}
+	@Override
+	public FileVisitResult postVisitDirectory(Path path, IOException exc) {
+		System.out.println(path);
+		return FileVisitResult.CONTINUE;
+	}
+});
+
+
+public static void rmdir(Path dir) throws IOException {
+	Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+		@Override
+		public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+			Files.delete(file);
+			return FileVisitResult.CONTINUE;
+		}
+		@Override
+		public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+			Files.delete(dir);
+			return FileVisitResult.CONTINUE;
+		}
+	});
+}
+```
+
+### 6. 文件系统
+```java
+System.out.println(System.getProperty("os.name"));
+FileSystem fileSystem = FileSystems.getDefault();
+//获取逻辑磁盘信息
+for (FileStore fileStore : fileSystem.getFileStores()) {
+	System.out.println("File Store :" + fileStore);
+}
+//获取根目录
+for (Path path : fileSystem.getRootDirectories()) {
+	System.out.println("Root Directory :" + path);
+}
+//获取文件路径的分隔符
+System.out.println(fileSystem.getSeparator());
+```
+
+### 7. 文件读写
+```java
+byte[] bytes = new byte[1024];
+Files.write(Paths.get("bytes.dat"), bytes);
+
+List<String> lines = Files.readAllLines(Paths.get("../streams/Cheese.dat"));
+Files.write(Paths.get("Cheese.txt"), lines);
 ```
