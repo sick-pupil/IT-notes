@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Java/IO/BIO&NIO&AIO.md",
+                "file": "Plan.md",
                 "mode": "source",
                 "source": false
               }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Java/IO/BIO&NIO&AIO.md",
+                "file": "Plan.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Java/IO/BIO&NIO&AIO.md",
+                "file": "Plan.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Java/IO/BIO&NIO&AIO.md"
+                "file": "Plan.md"
               }
             }
           },
@@ -158,8 +158,12 @@
   },
   "active": "166e06bc18633648",
   "lastOpenFiles": [
-    "技术要点/Apache-Commons.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Gateway.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Hystrix.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Eureka.md",
+    "框架or中间件/SpringCloud/SpringCloud基本概念与配置.md",
     "Java/IO/BIO&NIO&AIO.md",
+    "技术要点/Apache-Commons.md",
     "Java/IO/img/Buffer三个基本属性.png",
     "Java/IO/img/Buffer三个基本属性.png.crdownload",
     "Java/IO/img/channel轮询.png",
@@ -200,9 +204,6 @@
     "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
     "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
-    "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
-    "框架or中间件/Redis/Redis基础.md",
-    "技术要点/加解密.md",
-    "框架or中间件/Redis/Redis进阶.md"
+    "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md"
   ]
 }
