@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "b7da7f8d7482c044",
+        "id": "2e62b668c1deb93f",
         "type": "tabs",
         "children": [
           {
-            "id": "166e06bc18633648",
+            "id": "979cc307b7d9e5a1",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Plan.md",
+                "file": "框架or中间件/SpringCloud/SpringCloud组件/Config.md",
                 "mode": "source",
                 "source": false
               }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Plan.md",
+                "file": "框架or中间件/SpringCloud/SpringCloud组件/Config.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Plan.md",
+                "file": "框架or中间件/SpringCloud/SpringCloud组件/Config.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Plan.md"
+                "file": "框架or中间件/SpringCloud/SpringCloud组件/Config.md"
               }
             }
           },
@@ -144,7 +144,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 296.5
+    "width": 296.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -156,12 +157,18 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "166e06bc18633648",
+  "active": "979cc307b7d9e5a1",
   "lastOpenFiles": [
-    "框架or中间件/SpringCloud/SpringCloud组件/Gateway.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Hystrix.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Eureka.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Config.md",
+    "框架or中间件/SpringCloud/img/Config基本原理.png",
+    "框架or中间件/SpringCloud/img/Config基本原理.png.crdownload",
+    "框架or中间件/SpringCloud/SpringCloud组件/OpenFeign.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Hystrix.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Gateway.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Ribbon.md",
     "框架or中间件/SpringCloud/SpringCloud基本概念与配置.md",
+    "Plan.md",
     "Java/IO/BIO&NIO&AIO.md",
     "技术要点/Apache-Commons.md",
     "Java/IO/img/Buffer三个基本属性.png",
@@ -185,9 +192,7 @@
     "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
     "框架or中间件/ShardingSphere/ShardingSphere-JDBC/img/MySQL主从同步原理.png",
     "框架or中间件/ShardingSphere/ShardingSphere-JDBC/img/MySQL主从同步.png",
-    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/img/image-20220714133617856.png",
     "框架or中间件/Docker/Docker概念与应用.md",
-    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/img",
     "框架or中间件/GitLab/GitLab概念与应用.md",
     "框架or中间件/Jenkins/Jenkins概念与使用.md",
     "框架or中间件/Jenkins/Jenkins概念与应用.md",
@@ -198,12 +203,7 @@
     "框架or中间件/Mysql/Mysql进阶.md",
     "框架or中间件/Mysql/Mysql基础.md",
     "未命名.canvas",
-    "Plan.md",
     "README.md",
-    "技术要点/定时任务.md",
-    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
-    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
-    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
-    "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md"
+    "技术要点/定时任务.md"
   ]
 }
