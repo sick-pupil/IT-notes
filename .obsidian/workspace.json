@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "框架or中间件/SpringCloud/SpringCloud组件/Config.md",
+                "file": "框架or中间件/SpringCloud/SpringCloud组件/Consul.md",
                 "mode": "source",
                 "source": false
               }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/SpringCloud/SpringCloud组件/Config.md",
+                "file": "框架or中间件/SpringCloud/SpringCloud组件/Consul.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/SpringCloud/SpringCloud组件/Config.md",
+                "file": "框架or中间件/SpringCloud/SpringCloud组件/Consul.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/SpringCloud/SpringCloud组件/Config.md"
+                "file": "框架or中间件/SpringCloud/SpringCloud组件/Consul.md"
               }
             }
           },
@@ -160,13 +160,15 @@
   "active": "979cc307b7d9e5a1",
   "lastOpenFiles": [
     "框架or中间件/SpringCloud/SpringCloud组件/Eureka.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Consul.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Resilience4J.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Hystrix.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/OpenFeign.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Gateway.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Config.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Ribbon.md",
     "框架or中间件/SpringCloud/img/Config基本原理.png",
     "框架or中间件/SpringCloud/img/Config基本原理.png.crdownload",
-    "框架or中间件/SpringCloud/SpringCloud组件/OpenFeign.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Hystrix.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Gateway.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Ribbon.md",
     "框架or中间件/SpringCloud/SpringCloud基本概念与配置.md",
     "Plan.md",
     "Java/IO/BIO&NIO&AIO.md",
@@ -203,7 +205,6 @@
     "框架or中间件/Mysql/Mysql进阶.md",
     "框架or中间件/Mysql/Mysql基础.md",
     "未命名.canvas",
-    "README.md",
-    "技术要点/定时任务.md"
+    "README.md"
   ]
 }
