@@ -4,19 +4,15 @@
     "type": "split",
     "children": [
       {
-        "id": "3b241461982244d4",
+        "id": "b81eac88748de8eb",
         "type": "tabs",
         "children": [
           {
-            "id": "72689be6a03617e3",
+            "id": "1ea02ef377b16223",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "框架or中间件/SpringCloud/SpringCloud组件/Seata.md",
-                "mode": "source",
-                "source": false
-              }
+              "type": "empty",
+              "state": {}
             }
           }
         ]
@@ -96,7 +92,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/SpringCloud/SpringCloud组件/Seata.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +108,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/SpringCloud/SpringCloud组件/Seata.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -124,9 +118,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "框架or中间件/SpringCloud/SpringCloud组件/Seata.md"
-              }
+              "state": {}
             }
           },
           {
@@ -144,8 +136,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 296.5,
-    "collapsed": true
+    "width": 296.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -157,26 +148,28 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "72689be6a03617e3",
+  "active": "367506daf2a5a7b3",
   "lastOpenFiles": [
+    "框架or中间件/SpringCloud/SpringCloud组件/OpenFeign.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Seata.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Sentinel.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Nacos.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Hystrix.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Config.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Gateway.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Consul.md",
+    "框架or中间件/SpringCloud/img/Seata工作流程.png",
+    "框架or中间件/SpringCloud/img/Seata工作流程.png.crdownload",
+    "框架or中间件/SpringCloud/SpringCloud组件/Config.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Eureka.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Resilience4J.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Ribbon.md",
     "框架or中间件/SpringCloud/img/Sentinel熔断状态.png",
     "框架or中间件/SpringCloud/img/Sentinel熔断状态.png.crdownload",
-    "框架or中间件/SpringCloud/SpringCloud组件/Seata.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Nacos.md",
     "Java/并发/并发工具类.md",
     "Java/并发/锁.md",
     "Java/并发/线程池.md",
     "Python/Scrapy应用.md",
     "Python/Python基础.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Ribbon.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Eureka.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Gateway.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/OpenFeign.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Resilience4J.md",
     "框架or中间件/Mybatis/Mybatis-Plus.md",
     "框架or中间件/ShardingSphere/ShardingSphere-JDBC/ShardingJDBC概念与应用.md",
     "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
@@ -202,8 +195,6 @@
     "Java/IO/img/NIO模型.png.crdownload",
     "Java/IO/img/BIO模型.png",
     "Java/IO/img/BIO模型.png.crdownload",
-    "Java/IO/img",
-    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/img/MySQL主从同步原理.png",
     "未命名.canvas"
   ]
 }
