@@ -4,15 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "b81eac88748de8eb",
+        "id": "7562e8b283fd470c",
         "type": "tabs",
         "children": [
           {
-            "id": "1ea02ef377b16223",
+            "id": "b7db06be0ebc9ccd",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "框架or中间件/Redis/Redis基础.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -65,7 +69,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 293.5
+    "width": 293.5,
+    "collapsed": true
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -92,6 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "框架or中间件/Redis/Redis基础.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -108,6 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "框架or中间件/Redis/Redis基础.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +125,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "框架or中间件/Redis/Redis基础.md"
+              }
             }
           },
           {
@@ -148,39 +157,37 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "367506daf2a5a7b3",
+  "active": "b7db06be0ebc9ccd",
   "lastOpenFiles": [
-    "框架or中间件/SpringCloud/SpringCloud组件/OpenFeign.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Seata.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Sentinel.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Nacos.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Hystrix.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Gateway.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Consul.md",
-    "框架or中间件/SpringCloud/img/Seata工作流程.png",
-    "框架or中间件/SpringCloud/img/Seata工作流程.png.crdownload",
-    "框架or中间件/SpringCloud/SpringCloud组件/Config.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Eureka.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Resilience4J.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Ribbon.md",
-    "框架or中间件/SpringCloud/img/Sentinel熔断状态.png",
-    "框架or中间件/SpringCloud/img/Sentinel熔断状态.png.crdownload",
-    "Java/并发/并发工具类.md",
-    "Java/并发/锁.md",
-    "Java/并发/线程池.md",
-    "Python/Scrapy应用.md",
-    "Python/Python基础.md",
-    "框架or中间件/Mybatis/Mybatis-Plus.md",
-    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/ShardingJDBC概念与应用.md",
-    "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
-    "框架or中间件/Mysql/Mysql8新特性.md",
-    "框架or中间件/Mysql/Mysql基础.md",
-    "技术要点/多数据源切换.md",
+    "框架or中间件/Redis/Redis进阶.md",
+    "技术要点/登录认证与权限管理.md",
+    "技术要点/Apache-Commons.md",
     "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
     "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
+    "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Sentinel.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Seata.md",
     "技术要点/定时任务.md",
+    "技术要点/动态注册bean.md",
+    "技术要点/多数据源切换.md",
+    "技术要点/Captcha.md",
+    "技术要点/批处理.md",
+    "技术要点/文件上传下载.md",
+    "技术要点/套用模板生成文件.md",
+    "技术要点/加解密.md",
+    "框架or中间件/Mybatis/Mybatis-Plus.md",
+    "框架or中间件/Mysql/Mysql8新特性.md",
+    "Plan.md",
+    "框架or中间件/SpringCloud/img/Sentinel熔断状态.png",
+    "框架or中间件/SpringCloud/img/Seata工作流程.png",
     "框架or中间件/SpringCloud/img/Config基本原理.png",
-    "框架or中间件/SpringCloud/img/Config基本原理.png.crdownload",
+    "框架or中间件/SpringCloud/SpringCloud组件/Resilience4J.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Nacos.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Consul.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Config.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Gateway.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Hystrix.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Eureka.md",
     "Java/IO/img/Buffer三个基本属性.png",
     "Java/IO/img/Buffer三个基本属性.png.crdownload",
     "Java/IO/img/channel轮询.png",
@@ -195,6 +202,9 @@
     "Java/IO/img/NIO模型.png.crdownload",
     "Java/IO/img/BIO模型.png",
     "Java/IO/img/BIO模型.png.crdownload",
+    "Java/IO/img",
+    "Java/IO",
+    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/img",
     "未命名.canvas"
   ]
 }

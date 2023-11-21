@@ -1236,4 +1236,228 @@ public final class RedisUtil {
 }
 ```
 
-### 3. Springboot整合redis订阅发布
+### 3. SpringCache整合redis
+```xml
+<!-- 使用spring cache -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-cache</artifactId>
+</dependency>
+
+<!-- redis -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+
+<!-- 为了解决 ClassNotFoundException: org.apache.commons.pool2.impl.GenericObjectPoolConfig -->
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-pool2</artifactId>
+    <version>2.0</version>
+</dependency>
+```
+
+```yml
+# Redis数据库索引（默认为0）
+spring:
+	redis:
+		database: 0
+		# Redis服务器地址
+		host: localhost
+		# Redis服务器连接端口
+		port: 6379
+		# Redis服务器连接密码（默认为空）
+		password: yourpwd
+		# 连接池最大连接数（使用负值表示没有限制）
+		lettuce: 
+			pool: 
+				max-active: 8
+				# 连接池最大阻塞等待时间 
+				max-wait: -1ms
+				# 连接池中的最大空闲连接
+				max-idle: 8  
+				# 连接池中的最小空闲连接
+				min-idle: 0  
+		# 连接超时时间（毫秒）
+		timeout: 5000ms
+	cache:
+		type: redis
+
+#配置缓存相关
+cache: 
+	default:
+		expire-time: 200
+	user: 
+		expire-time: 180
+		name: test
+```
+
+```java
+@Configuration
+@EnableCaching
+public class RedisConfig {
+
+    @Value("${cache.default.expire-time}")
+    private int defaultExpireTime;
+    @Value("${cache.user.expire-time}")
+    private int userCacheExpireTime;
+    @Value("${cache.user.name}")
+    private String userCacheName;
+
+    /**
+     * 缓存管理器
+     *
+     * @param lettuceConnectionFactory
+     * @return
+     */
+    @Bean
+    public CacheManager cacheManager(RedisConnectionFactory lettuceConnectionFactory) {
+        RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig();
+        // 设置缓存管理器管理的缓存的默认过期时间
+        defaultCacheConfig = defaultCacheConfig.entryTtl(Duration.ofSeconds(defaultExpireTime))
+                // 设置 key为string序列化
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                // 设置value为json序列化
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                // 不缓存空值
+                .disableCachingNullValues();
+
+        Set<String> cacheNames = new HashSet<>();
+        cacheNames.add(userCacheName);
+
+        // 对每个缓存空间应用不同的配置
+        Map<String, RedisCacheConfiguration> configMap = new HashMap<>();
+        configMap.put(userCacheName, defaultCacheConfig.entryTtl(Duration.ofSeconds(userCacheExpireTime)));
+
+        RedisCacheManager cacheManager = RedisCacheManager.builder(lettuceConnectionFactory)
+                .cacheDefaults(defaultCacheConfig)
+                .initialCacheNames(cacheNames)
+                .withInitialCacheConfigurations(configMap)
+                .build();
+        return cacheManager;
+    }
+}
+```
+
+```java
+@Service
+@CacheConfig(cacheNames="user")// cacheName 是一定要指定的属性，可以通过 @CacheConfig 声明该类的通用配置
+public class UserService {
+
+    /**
+     * 将结果缓存，当参数相同时，不会执行方法，从缓存中取
+     *
+     * @param id
+     * @return
+     */
+    @Cacheable(key = "#id")
+    public User findUserById(Integer id) {
+        System.out.println("===> findUserById(id), id = " + id);
+        return new User(id, "taven");
+    }
+
+    /**
+     * 将结果缓存，并且该方法不管缓存是否存在，每次都会执行
+     *
+     * @param user
+     * @return
+     */
+    @CachePut(key = "#user.id")
+    public User update(User user) {
+        System.out.println("===> update(user), user = " + user);
+        return user;
+    }
+
+    /**
+     * 移除缓存，根据指定key
+     *
+     * @param user
+     */
+    @CacheEvict(key = "#user.id")
+    public void deleteById(User user) {
+        System.out.println("===> deleteById(), user = " + user);
+    }
+
+    /**
+     * 移除当前 cacheName下所有缓存
+     *
+     */
+    @CacheEvict(allEntries = true)
+    public void deleteAll() {
+        System.out.println("===> deleteAll()");
+    }
+}
+```
+
+|注解|作用|
+|---|---|
+|**`@Cacheable`**|将方法的结果缓存起来，下一次方法执行参数相同时，将不执行方法，返回缓存中的结果|
+|**`@CacheEvict`**|移除指定缓存|
+|**`@CachePut`**|标记该注解的方法总会执行，根据注解的配置将结果缓存|
+|**`@Caching`**|可以指定相同类型的多个缓存注解，例如根据不同的条件|
+|**`@CacheConfig`**|类级别注解，可以设置一些共通的配置，**`@CacheConfig(cacheNames="user")`**, 代表该类下的方法均使用这个`cacheNames`|
+
+#### 1. `@Cacheable`
+将方法结果缓存，必须指定一个`cacheName`缓存空间
+```java
+//默认cache key名字
+@Cacheable("books")
+
+
+//自定义cache key
+@Cacheable(cacheNames="books", key="#isbn")
+public Book findBook(ISBN isbn, boolean checkWarehouse, boolean includeUsed)
+
+@Cacheable(cacheNames="books", key="#isbn.rawNumber")
+public Book findBook(ISBN isbn, boolean checkWarehouse, boolean includeUsed)
+
+@Cacheable(cacheNames="books", key="T(someType).hash(#isbn)")
+public Book findBook(ISBN isbn, boolean checkWarehouse, boolean includeUsed)
+
+
+//自定义keyGenerator，自定义cache key的生成策略
+@Cacheable(cacheNames="books", keyGenerator="myKeyGenerator")
+public Book findBook(ISBN isbn, boolean checkWarehouse, boolean includeUsed)
+
+
+//自定义cacheManager
+@Cacheable(cacheNames="books", cacheManager="anotherCacheManager") 
+public Book findBook(ISBN isbn) {...}
+
+
+//当缓存出现并发访问的线程间安全性问题，可以设置为同步
+@Cacheable(cacheNames="foos", sync=true) 
+public Foo executeExpensiveOperation(String id) {...}
+
+
+//什么情况下缓存，什么情况下不缓存
+@Cacheable(cacheNames="book", condition="#name.length() < 32") 
+public Book findBook(String name)
+
+@Cacheable(cacheNames="book", condition="#name.length() < 32", unless="#result?.hardback")
+public Optional<Book> findBook(String name)
+```
+#### 2. `@CachePut`
+与`@Cacheable`有点区别，`@CachePut`每一次都会存放/更新缓存，而`@Cacheable`会判断如果缓存存在则不更新
+```java
+@CachePut(cacheNames="book", key="#isbn")
+public Book updateBook(ISBN isbn, BookDescriptor descriptor)
+```
+#### 3. `@CacheEvict`
+移除`cache`：`allEntries=true`移除该`cacheName`下所有缓存；`beforeInvocation=true`在方法执行之前清除缓存，无论方法执行是否成功
+```java
+@CacheEvict(cacheNames="book", key="#isbn")
+public Book updateBook(ISBN isbn, BookDescriptor descriptor)
+
+@CacheEvict(cacheNames="books", allEntries=true) 
+public void loadBooks(InputStream batch)
+```
+#### 4. `@Caching`
+在一个方法上套用多个`@Cache`注解
+```java
+@Caching(evict = { @CacheEvict("primary"), @CacheEvict(cacheNames="secondary", key="#p0") })
+public Book importBooks(String deposit, Date date)
+```
+#### 5. `CacheConfig`
+### 4. Springboot整合redis订阅发布
