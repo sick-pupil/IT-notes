@@ -13,8 +13,8 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "框架or中间件/Redis/Redis基础.md",
-                "mode": "source",
+                "file": "Vue3/Vue3概念与应用.md",
+                "mode": "preview",
                 "source": false
               }
             }
@@ -69,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 293.5,
-    "collapsed": true
+    "width": 293.5
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -97,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/Redis/Redis基础.md",
+                "file": "Vue3/Vue3概念与应用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/Redis/Redis基础.md",
+                "file": "Vue3/Vue3概念与应用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/Redis/Redis基础.md"
+                "file": "Vue3/Vue3概念与应用.md"
               }
             }
           },
@@ -145,7 +144,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 296.5
+    "width": 255.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -159,11 +158,26 @@
   },
   "active": "b7db06be0ebc9ccd",
   "lastOpenFiles": [
-    "框架or中间件/Redis/Redis进阶.md",
+    "Plan.md",
+    "README.md",
+    "Vue3/Vue3概念与应用.md",
+    "Java/JVM/Java内存区域与内存溢出异常.md",
+    "markdown语法/markdown.md",
+    "Python/Scrapy应用.md",
+    "Python/Python基础.md",
+    "Vue3/img/vue3生命周期.png",
+    "Vue3/img/vue3生命周期.png.crdownload",
+    "Vue3/img",
+    "Vue3/新建文件夹",
     "技术要点/登录认证与权限管理.md",
-    "技术要点/Apache-Commons.md",
+    "Vue/img",
+    "Vue3",
+    "新建文件夹",
     "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
     "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
+    "框架or中间件/Redis/Redis基础.md",
+    "框架or中间件/Redis/Redis进阶.md",
+    "技术要点/Apache-Commons.md",
     "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Sentinel.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Seata.md",
@@ -177,17 +191,9 @@
     "技术要点/加解密.md",
     "框架or中间件/Mybatis/Mybatis-Plus.md",
     "框架or中间件/Mysql/Mysql8新特性.md",
-    "Plan.md",
     "框架or中间件/SpringCloud/img/Sentinel熔断状态.png",
     "框架or中间件/SpringCloud/img/Seata工作流程.png",
     "框架or中间件/SpringCloud/img/Config基本原理.png",
-    "框架or中间件/SpringCloud/SpringCloud组件/Resilience4J.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Nacos.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Consul.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Config.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Gateway.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Hystrix.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Eureka.md",
     "Java/IO/img/Buffer三个基本属性.png",
     "Java/IO/img/Buffer三个基本属性.png.crdownload",
     "Java/IO/img/channel轮询.png",
@@ -197,14 +203,7 @@
     "Java/IO/img/buffer类型.png",
     "Java/IO/img/buffer类型.png.crdownload",
     "Java/IO/img/NIO模型2.png",
-    "Java/IO/img/NIO模型2.png.crdownload",
     "Java/IO/img/NIO模型.png",
-    "Java/IO/img/NIO模型.png.crdownload",
-    "Java/IO/img/BIO模型.png",
-    "Java/IO/img/BIO模型.png.crdownload",
-    "Java/IO/img",
-    "Java/IO",
-    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/img",
     "未命名.canvas"
   ]
 }
