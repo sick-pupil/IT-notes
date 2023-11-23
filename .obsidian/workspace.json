@@ -13,13 +13,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Vue3/Vue3概念与基础.md",
+                "file": "框架or中间件/Spring/AOP面向切面.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "58544ed13e7707b3",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "技术要点/自定义注解.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -96,7 +109,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Vue3/Vue3概念与基础.md",
+                "file": "技术要点/自定义注解.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +126,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Vue3/Vue3概念与基础.md",
+                "file": "技术要点/自定义注解.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Vue3/Vue3概念与基础.md"
+                "file": "技术要点/自定义注解.md"
               }
             }
           },
@@ -156,10 +169,11 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "b7db06be0ebc9ccd",
+  "active": "58544ed13e7707b3",
   "lastOpenFiles": [
-    "技术要点/自定义注解.md",
     "框架or中间件/Spring/AOP面向切面.md",
+    "技术要点/自定义注解.md",
+    "Vue3/Vue3概念与基础.md",
     "技术要点/多数据源切换.md",
     "Plan.md",
     "README.md",
@@ -190,7 +204,6 @@
     "技术要点/批处理.md",
     "技术要点/文件上传下载.md",
     "技术要点/套用模板生成文件.md",
-    "技术要点/加解密.md",
     "框架or中间件/SpringCloud/img/Sentinel熔断状态.png",
     "框架or中间件/SpringCloud/img/Seata工作流程.png",
     "框架or中间件/SpringCloud/img/Config基本原理.png",
