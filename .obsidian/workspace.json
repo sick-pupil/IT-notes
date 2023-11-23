@@ -4,35 +4,22 @@
     "type": "split",
     "children": [
       {
-        "id": "7562e8b283fd470c",
+        "id": "750d3a69d628b2a6",
         "type": "tabs",
         "children": [
           {
-            "id": "b7db06be0ebc9ccd",
+            "id": "54b7ef47fd4f59ee",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "框架or中间件/Spring/AOP面向切面.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "58544ed13e7707b3",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "技术要点/自定义注解.md",
+                "file": "Vue3/Vue3高级组件使用.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -82,7 +69,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 293.5
+    "width": 293.5,
+    "collapsed": true
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -109,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "技术要点/自定义注解.md",
+                "file": "Vue3/Vue3高级组件使用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -126,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "技术要点/自定义注解.md",
+                "file": "Vue3/Vue3高级组件使用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "技术要点/自定义注解.md"
+                "file": "Vue3/Vue3高级组件使用.md"
               }
             }
           },
@@ -157,7 +145,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 255.5
+    "width": 255.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -169,13 +158,14 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "58544ed13e7707b3",
+  "active": "54b7ef47fd4f59ee",
   "lastOpenFiles": [
-    "框架or中间件/Spring/AOP面向切面.md",
-    "技术要点/自定义注解.md",
     "Vue3/Vue3概念与基础.md",
-    "技术要点/多数据源切换.md",
+    "技术要点/自定义注解.md",
+    "框架or中间件/Spring/AOP面向切面.md",
+    "Vue3/Vue3高级组件使用.md",
     "Plan.md",
+    "技术要点/多数据源切换.md",
     "README.md",
     "Vue3/Vue3概念与应用.md",
     "Java/JVM/Java内存区域与内存溢出异常.md",
@@ -203,7 +193,6 @@
     "技术要点/Captcha.md",
     "技术要点/批处理.md",
     "技术要点/文件上传下载.md",
-    "技术要点/套用模板生成文件.md",
     "框架or中间件/SpringCloud/img/Sentinel熔断状态.png",
     "框架or中间件/SpringCloud/img/Seata工作流程.png",
     "框架or中间件/SpringCloud/img/Config基本原理.png",
