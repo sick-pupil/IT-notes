@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Vue3/Vue3高级组件使用.md",
+                "file": "Vue3/VueRouter.md",
                 "mode": "source",
                 "source": false
               }
@@ -97,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Vue3/Vue3高级组件使用.md",
+                "file": "Vue3/VueRouter.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Vue3/Vue3高级组件使用.md",
+                "file": "Vue3/VueRouter.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Vue3/Vue3高级组件使用.md"
+                "file": "Vue3/VueRouter.md"
               }
             }
           },
@@ -160,10 +160,13 @@
   },
   "active": "54b7ef47fd4f59ee",
   "lastOpenFiles": [
+    "Vue3/Vue3高级组件使用.md",
+    "Vue3/VueRouter.md",
     "Vue3/Vue3概念与基础.md",
+    "Vue3/img/插槽.png",
+    "Vue3/img/插槽.png.crdownload",
     "技术要点/自定义注解.md",
     "框架or中间件/Spring/AOP面向切面.md",
-    "Vue3/Vue3高级组件使用.md",
     "Plan.md",
     "技术要点/多数据源切换.md",
     "README.md",
@@ -192,7 +195,6 @@
     "技术要点/动态注册bean.md",
     "技术要点/Captcha.md",
     "技术要点/批处理.md",
-    "技术要点/文件上传下载.md",
     "框架or中间件/SpringCloud/img/Sentinel熔断状态.png",
     "框架or中间件/SpringCloud/img/Seata工作流程.png",
     "框架or中间件/SpringCloud/img/Config基本原理.png",
@@ -203,9 +205,7 @@
     "Java/IO/img/buffer数据流程.png",
     "Java/IO/img/buffer数据流程.png.crdownload",
     "Java/IO/img/buffer类型.png",
-    "Java/IO/img/buffer类型.png.crdownload",
     "Java/IO/img/NIO模型2.png",
-    "Java/IO/img/NIO模型.png",
     "未命名.canvas"
   ]
 }
