@@ -69,7 +69,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 293.5
+    "width": 293.5,
+    "collapsed": true
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -157,11 +158,12 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "54b7ef47fd4f59ee",
+  "active": "9e964c24066f1113",
   "lastOpenFiles": [
+    "Vue3/Vue3概念与基础.md",
     "Vue3/Vue3高级组件使用.md",
     "Vue3/VueRouter.md",
-    "Vue3/Vue3概念与基础.md",
+    "Vue3/Pinia.md",
     "Vue3/img/插槽.png",
     "Vue3/img/插槽.png.crdownload",
     "技术要点/自定义注解.md",
@@ -193,7 +195,6 @@
     "技术要点/定时任务.md",
     "技术要点/动态注册bean.md",
     "技术要点/Captcha.md",
-    "技术要点/批处理.md",
     "框架or中间件/SpringCloud/img/Sentinel熔断状态.png",
     "框架or中间件/SpringCloud/img/Seata工作流程.png",
     "框架or中间件/SpringCloud/img/Config基本原理.png",

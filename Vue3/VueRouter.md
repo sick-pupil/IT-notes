@@ -326,7 +326,6 @@ const routes = [
 ```js
 router.push({ name: 'user', params: { username: 'erina' } })
 ```
-
 ## 7. 命名视图
 如果希望同级展示多个`router-view`，需要在`router-view`上设置名字`name`属性
 ```html
@@ -373,7 +372,6 @@ const router = createRouter({
   }]
 }
 ```
-
 ## 8. 重定向与别名
 ```js
 const routes = [{ path: '/home', redirect: '/' }]
@@ -432,7 +430,6 @@ const routes = [
   },
 ]
 ```
-
 ## 9. prop传入路由参数
 ```js
 const User = {
@@ -479,6 +476,7 @@ const routes = [
 - `Hash`模式
 - `HTML5`模式
 ## 11. 导航守卫
+主要用来通过跳转或取消的方式守卫导航
 ```js
 const router = createRouter({ ... })
 
@@ -505,3 +503,286 @@ router.beforeEach((to, from) => {
    }
  })
 ```
+
+## 12. 路由元信息
+可以通过路由元信息将任意信息附加到路由上：过渡名称、路由访问权限，可以通过接收属性对象的`meta`属性实现，该属性可以在路由地址和导航守卫上被访问到
+```js
+const routes = [
+  {
+    path: '/posts',
+    component: PostsLayout,
+    children: [
+      {
+        path: 'new',
+        component: PostsNew,
+        // 只有经过身份验证的用户才能创建帖子
+        meta: { requiresAuth: true }
+      },
+      {
+        path: ':id',
+        component: PostsDetail,
+        // 任何人都可以阅读文章
+        meta: { requiresAuth: false }
+      }
+    ]
+  }
+]
+```
+
+可以访问路由以及导航守卫中的`$router.matched`数组，遍历该数组检查每个路由记录中的`meta`字段，但`Vue3`提供`$router.meta`查询`meta`
+```js
+router.beforeEach((to, from) => {
+  // 而不是去检查每条路由记录
+  // to.matched.some(record => record.meta.requiresAuth)
+  if (to.meta.requiresAuth && !auth.isLoggedIn()) {
+    // 此路由需要授权，请检查是否已登录
+    // 如果没有，则重定向到登录页面
+    return {
+      path: '/login',
+      // 保存我们所在的位置，以便以后再来
+      query: { redirect: to.fullPath },
+    }
+  }
+})
+```
+## 13. 数据获取
+在**路由前**或**路由后**通过调用钩子函数，发起请求获取页面初始数据
+### 1. 在路由后获取数据
+```html
+<template>
+  <div class="post">
+    <div v-if="loading" class="loading">Loading...</div>
+
+    <div v-if="error" class="error">{{ error }}</div>
+
+    <div v-if="post" class="content">
+      <h2>{{ post.title }}</h2>
+      <p>{{ post.body }}</p>
+    </div>
+  </div>
+</template>
+```
+
+```js
+export default {
+  data() {
+    return {
+      loading: false,
+      post: null,
+      error: null,
+    }
+  },
+  created() {
+    // watch 路由的参数，以便再次获取数据
+    this.$watch(
+      () => this.$route.params,
+      () => {
+        this.fetchData()
+      },
+      // 组件创建完后获取数据，
+      // 此时 data 已经被 observed 了
+      { immediate: true }
+    )
+  },
+  methods: {
+    fetchData() {
+      this.error = this.post = null
+      this.loading = true
+      // replace `getPost` with your data fetching util / API wrapper
+      getPost(this.$route.params.id, (err, post) => {
+        this.loading = false
+        if (err) {
+          this.error = err.toString()
+        } else {
+          this.post = post
+        }
+      })
+    },
+  },
+}
+```
+### 2. 在路由前获取数据
+```js
+export default {
+  data() {
+    return {
+      post: null,
+      error: null,
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    getPost(to.params.id, (err, post) => {
+      next(vm => vm.setData(err, post))
+    })
+  },
+  // 路由改变前，组件就已经渲染完了
+  // 逻辑稍稍不同
+  async beforeRouteUpdate(to, from) {
+    this.post = null
+    try {
+      this.post = await getPost(to.params.id)
+    } catch (error) {
+      this.error = error.toString()
+    }
+  },
+}
+```
+## 14. 组合式API
+### 1. 在`setup`中访问路由与当前路由
+由于`setup`无法访问`this`，因此不能在`setup`中直接访问`this.$router`或`this.$route`；作为替代，可以使用`useRouter`和`useRoute`
+```js
+import { useRouter, useRoute } from 'vue-router'
+
+export default {
+  setup() {
+    const router = useRouter()
+    const route = useRoute()
+
+    function pushWithQuery(query) {
+      router.push({
+        name: 'search',
+        query: {
+          ...route.query,
+          ...query,
+        },
+      })
+    }
+  },
+}
+```
+
+监听`route`参数
+```js
+import { useRoute } from 'vue-router'
+import { ref, watch } from 'vue'
+
+export default {
+  setup() {
+    const route = useRoute()
+    const userData = ref()
+
+    // 当参数更改时获取用户信息
+    watch(
+      () => route.params.id,
+      async newId => {
+        userData.value = await fetchUser(newId)
+      }
+    )
+  },
+}
+```
+
+导航守卫在`setup()`中的更新与离开：`onBeforeRouteLeave`与`onBeforeRouteUpdate`（在`setup`中无法使用`this`）
+```js
+import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
+import { ref } from 'vue'
+
+export default {
+  setup() {
+    // 与 beforeRouteLeave 相同，无法访问 `this`
+    onBeforeRouteLeave((to, from) => {
+      const answer = window.confirm(
+        'Do you really want to leave? you have unsaved changes!'
+      )
+      // 取消导航并停留在同一页面上
+      if (!answer) return false
+    })
+
+    const userData = ref()
+
+    // 与 beforeRouteUpdate 相同，无法访问 `this`
+    onBeforeRouteUpdate(async (to, from) => {
+      //仅当 id 更改时才获取用户，例如仅 query 或 hash 值已更改
+      if (to.params.id !== from.params.id) {
+        userData.value = await fetchUser(to.params.id)
+      }
+    })
+  },
+}
+```
+### 2. useLink
+```js
+import { RouterLink, useLink } from 'vue-router'
+import { computed } from 'vue'
+
+export default {
+  name: 'AppLink',
+
+  props: {
+    // 如果使用 TypeScript，请添加 @ts-ignore
+    ...RouterLink.props,
+    inactiveClass: String,
+  },
+
+  setup(props) {
+    const {
+      // 解析出来的路由对象
+      route,
+      // 用在链接里的 href
+      href,
+      // 布尔类型的 ref 标识链接是否匹配当前路由
+      isActive,
+      // 布尔类型的 ref 标识链接是否严格匹配当前路由
+      isExactActive,
+      // 导航至该链接的函数
+      navigate
+      } = useLink(props)
+
+    const isExternalLink = computed(
+      () => typeof props.to === 'string' && props.to.startsWith('http')
+    )
+
+    return { isExternalLink, href, navigate, isActive }
+  },
+}
+```
+## 15. 过渡动画效果
+```html
+<router-view v-slot="{ Component }">
+  <transition name="fade">
+    <component :is="Component" />
+  </transition>
+</router-view>
+```
+
+```js
+const routes = [
+  {
+    path: '/custom-transition',
+    component: PanelLeft,
+    meta: { transition: 'slide-left' },
+  },
+  {
+    path: '/other-transition',
+    component: PanelRight,
+    meta: { transition: 'slide-right' },
+  },
+]
+```
+
+```html
+<router-view v-slot="{ Component, route }">
+  <!-- 使用任何自定义过渡和回退到 `fade` -->
+  <transition :name="route.meta.transition || 'fade'">
+    <component :is="Component" />
+  </transition>
+</router-view>
+```
+## 16. 滚动行为
+
+
+## 17. 路由懒加载
+```js
+// 将
+// import UserDetails from './views/UserDetails.vue'
+// 替换成
+const UserDetails = () => import('./views/UserDetails.vue')
+
+const router = createRouter({
+  // ...
+  routes: [{ path: '/users/:id', component: UserDetails }],
+})
+```
+## 18. 导航故障
+
+## 19. 动态路由
