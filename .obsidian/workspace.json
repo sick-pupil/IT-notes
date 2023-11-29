@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Vue3/Pinia.md",
+                "file": "Vue3/Vue疑难杂症.md",
                 "mode": "source",
                 "source": false
               }
@@ -97,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Vue3/Pinia.md",
+                "file": "Vue3/Vue疑难杂症.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Vue3/Pinia.md",
+                "file": "Vue3/Vue疑难杂症.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Vue3/Pinia.md"
+                "file": "Vue3/Vue疑难杂症.md"
               }
             }
           },
@@ -160,10 +160,11 @@
   },
   "active": "768bc12d5f00d6a9",
   "lastOpenFiles": [
+    "Vue3/Pinia.md",
+    "Vue3/Vue疑难杂症.md",
     "Vue3/Vue3概念与基础.md",
     "Vue3/Vue3高级组件使用.md",
     "Vue3/VueRouter.md",
-    "Vue3/Pinia.md",
     "Vue3/img/Pinia Store变量.png",
     "Vue3/img/Pinia Store变量.png.crdownload",
     "Vue3/img/插槽.png",
