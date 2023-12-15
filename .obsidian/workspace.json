@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "77c6bb12661cbf33",
+        "id": "0fba56e3d52ab122",
         "type": "tabs",
         "children": [
           {
-            "id": "0f991d4191441f1f",
+            "id": "768bc12d5f00d6a9",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ES6/ES6基本语法与使用.md",
+                "file": "框架or中间件/CDC/Debezium.md",
                 "mode": "source",
                 "source": false
               }
@@ -48,7 +48,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "serviceImpl",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -69,7 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 293.5
+    "width": 202.5
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ES6/ES6基本语法与使用.md",
+                "file": "框架or中间件/CDC/Debezium.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "ES6/ES6基本语法与使用.md",
+                "file": "框架or中间件/CDC/Debezium.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ES6/ES6基本语法与使用.md"
+                "file": "框架or中间件/CDC/Debezium.md"
               }
             }
           },
@@ -144,7 +144,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 310.5,
+    "width": 255.5,
     "collapsed": true
   },
   "left-ribbon": {
@@ -157,39 +157,37 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "0f991d4191441f1f",
+  "active": "768bc12d5f00d6a9",
   "lastOpenFiles": [
-    "框架or中间件/Docker/Docker概念与应用.md",
     "ES6/ES6基本语法与使用.md",
-    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
-    "Python/Scrapy应用.md",
-    "框架or中间件/Mybatis/Mybatis-Plus.md",
-    "技术要点/登录认证与权限管理.md",
-    "技术要点/动态注册bean.md",
-    "框架or中间件/CDC/Debezium.md",
+    "框架or中间件/Mysql/Mysql8新特性.md",
     "框架or中间件/CDC/FlinkCDC.md",
-    "框架or中间件/GitLab/GitLab概念与应用.md",
+    "框架or中间件/CDC/Debezium.md",
     "框架or中间件/CDC",
-    "Vue3/Vue疑难杂症.md",
-    "TypeScript",
     "ES6",
-    "Vue3/Vue3概念与基础.md",
-    "Vue3/img/Pinia Store变量.png",
-    "Vue3/Pinia.md",
-    "Vue3/VueRouter.md",
-    "Vue3/Vue3高级组件使用.md",
-    "Java/并发/线程池.md",
-    "Java/并发/锁.md",
-    "Java/并发/内存模型JMM.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Resilience4J.md",
-    "Vue3/img/插槽.png",
-    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
-    "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
-    "Java/并发/并发机制底层实现原理.md",
-    "Java/并发/并发容器与框架.md",
-    "Java/并发/并发基础知识.md",
-    "Java/并发/并发编程基础.md",
+    "框架or中间件/Mybatis/Mybatis-Plus.md",
+    "技术要点/Apache-Commons.md",
     "技术要点/自定义注解.md",
+    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
+    "技术要点/多数据源切换.md",
+    "技术要点/登录认证与权限管理.md",
+    "Vue3/VueRouter.md",
+    "Vue3/Vue疑难杂症.md",
+    "Vue3/Pinia.md",
+    "Vue3/Vue3概念与基础.md",
+    "Vue3/Vue3高级组件使用.md",
+    "Vue3/img/Pinia Store变量.png",
+    "Vue3/img/Pinia Store变量.png.crdownload",
+    "Vue3/img/插槽.png",
+    "Vue3/img/插槽.png.crdownload",
+    "框架or中间件/Spring/AOP面向切面.md",
+    "Plan.md",
+    "README.md",
+    "Vue3/Vue3概念与应用.md",
+    "Java/JVM/Java内存区域与内存溢出异常.md",
+    "markdown语法/markdown.md",
+    "Python/Scrapy应用.md",
+    "Python/Python基础.md",
     "Vue3/img/vue3生命周期.png",
     "Vue3/img/vue3生命周期.png.crdownload",
     "Vue3/img",
@@ -197,11 +195,13 @@
     "Vue/img",
     "Vue3",
     "新建文件夹",
+    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
+    "框架or中间件/Redis/Redis基础.md",
+    "框架or中间件/Redis/Redis进阶.md",
     "框架or中间件/SpringCloud/img/Sentinel熔断状态.png",
     "框架or中间件/SpringCloud/img/Seata工作流程.png",
     "框架or中间件/SpringCloud/img/Config基本原理.png",
     "Java/IO/img/Buffer三个基本属性.png",
-    "Java/IO/img/Buffer三个基本属性.png.crdownload",
     "Java/IO/img/channel轮询.png",
     "Java/IO/img/buffer数据流程.png",
     "Java/IO/img/buffer类型.png",
