@@ -201,3 +201,171 @@ iter.next()//每一次执行next，就会执行一次yield
 ```
 
 ## 11. Promise
+`ES6`引入的异步编程，`Promise`本质上是一个构造函数，用来封装异步操作获取成功或失败的结果
+```js
+//resolve与reject是两个函数，调用resolve后Promise对象为成功状态，调用reject后Promise对象为失败状态
+const p = new Promise(function(resolve, reject) {
+	//异步操作
+	setTimeout(function() {
+		let data = ''
+		resolve(data)
+		//reject(err)
+	}, 1000)
+})
+
+p.then(function(value) {
+	//该回调函数为调用resolve函数后的成功回调
+	//return '123'如果回调存在返回，则返回值会被封装进Promise对象中
+	//Promise的resolve与reject函数返回值都是Promise对象
+	//return new Promise((resolve, reject) => {
+		//resolve('ok')
+		//reject('fail')
+	//})
+	console.log(value)
+}, function(err) {
+	//该回调函数为调用reject函数后的失败回调
+	console.log(err)
+})
+
+//链式调用
+p.then(value => {
+	//...
+}).then(value => {
+	//...
+})
+
+//catch
+p.catch(err => {
+	console.warn(err)
+})
+```
+
+## 12. Set与Map
+```js
+//与Java的set类似，非重复
+let s = new Set(['a', 'b', 'c', 'd'])
+console.log(s)
+
+s.size
+s.add('abc')
+s.delete('a')
+s.has('b')
+s.clear()
+
+for(let v of s) {
+	console.log(v)
+}
+```
+
+```js
+//与Java的map类似，key-value
+let m = new Map()
+m.set('1', 'a')
+m.set('2', 'b')
+m.set('3', function() {
+	console.log('function')
+})
+
+let key = {a : 'abc'}
+m.set(key, ['1', '2', '3'])
+
+m.size
+m.delete('1')
+m.get('2')
+m.clear()
+
+for(let v of m) {
+	console.log(v)
+}
+```
+
+## 13. Class
+```js
+//ES5
+function ClassInstance(arg1, arg2) {
+	this.arg1 = arg1
+	this.arg2 = arg2
+}
+
+Clazz.prototype.func1 = function() {
+	console.log('执行方法')
+}
+
+let classInstance = new ClassInstance('a', 'b')
+classInstance.func1()
+console.log(classInstance)
+
+//ES6
+class Class1 {
+	//类中的静态属性与方法
+	static name = 'abc'
+	static func2() {
+		console.log('abc')
+	}
+
+	constructor(arg1, arg2) {
+		this.arg1 = arg1
+		this.arg2 = arg2
+	}
+
+	func1() {
+		console.log('执行方法')
+	}
+}
+
+class Class2 extends Class1 {
+
+	constructor(arg1, arg2) {
+		super(arg1, arg2)
+	}
+
+	func11() {
+		console.log('执行方法')
+	}
+
+	//get set实例属性方法
+	get field() {
+		return 'abcd'
+	}
+
+	set field(newVal) {
+		console.log('set')
+	}
+}
+
+let class2Instance = new Class2()
+s.field = 'abcdefg'
+
+let classInstance1 = new Class1('1', '2')
+console.log(classInstance1)
+```
+
+## 14. 模块化
+模块化指一个大程序文件，拆分成多个小文件，再将多个小文件组合起来
+主要通过命令`export`暴露模块对外接口，命令`import`引入其他模块暴露的接口
+
+```js
+export let field = 'abc'
+
+export function func() {
+	console.log('abcdefg')
+}
+
+export default {
+	field1 : 'abc'
+	func1 : function() {
+		console.log('abcdefg')
+	}
+}
+```
+
+```js
+<script type='module'>
+	import * as m1 from '../src/m1.js'
+	//import {func1, field1} from '../src/m1.js'
+	console.log(m1)
+</script>
+```
+
+## 15. Babel
+将ES6语法转为浏览器适配的js语法
