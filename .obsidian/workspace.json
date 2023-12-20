@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ES6/ES6基本语法与使用.md",
+                "file": "TypeScript/TypeScript基本语法与使用.md",
                 "mode": "source",
                 "source": false
               }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ES6/ES6基本语法与使用.md",
+                "file": "TypeScript/TypeScript基本语法与使用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "ES6/ES6基本语法与使用.md",
+                "file": "TypeScript/TypeScript基本语法与使用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ES6/ES6基本语法与使用.md"
+                "file": "TypeScript/TypeScript基本语法与使用.md"
               }
             }
           },
@@ -156,9 +156,11 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "9e964c24066f1113",
+  "active": "986df1dafa158e64",
   "lastOpenFiles": [
     "ES6/ES6基本语法与使用.md",
+    "TypeScript/TypeScript基本语法与使用.md",
+    "TypeScript",
     "框架or中间件/CDC/FlinkCDC.md",
     "框架or中间件/CDC/Debezium.md",
     "框架or中间件/CDC",
@@ -199,7 +201,6 @@
     "框架or中间件/SpringCloud/img/Seata工作流程.png",
     "框架or中间件/SpringCloud/img/Config基本原理.png",
     "Java/IO/img/Buffer三个基本属性.png",
-    "Java/IO/img/Buffer三个基本属性.png.crdownload",
     "Java/IO/img/channel轮询.png",
     "Java/IO/img/buffer数据流程.png",
     "Java/IO/img/buffer类型.png",
