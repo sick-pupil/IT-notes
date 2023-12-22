@@ -11,9 +11,11 @@
             "id": "cc59e75eee57824d",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "Python/img/Scrapy整体架构.png"
+                "file": "Vue3/Vite.md",
+                "mode": "source",
+                "source": false
               }
             }
           }
@@ -67,7 +69,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 293.5
+    "width": 293.5,
+    "collapsed": true
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -94,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Python/img/Scrapy整体架构.png",
+                "file": "Vue3/Vite.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -111,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Python/img/Scrapy整体架构.png",
+                "file": "Vue3/Vite.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -123,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Python/img/Scrapy整体架构.png"
+                "file": "Vue3/Vite.md"
               }
             }
           },
@@ -142,7 +145,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 310.5
+    "width": 310.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -154,9 +158,12 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "9e964c24066f1113",
+  "active": "cc59e75eee57824d",
   "lastOpenFiles": [
+    "Vue3/Pinia.md",
+    "Vue3/Vite.md",
     "Plan.md",
+    "Python/img/Scrapy整体架构.png",
     "ES6/ES6基本语法与使用.md",
     "TypeScript/TypeScript基本语法与使用.md",
     "TypeScript",
@@ -175,7 +182,6 @@
     "TypeScript",
     "Vue3/Vue3概念与基础.md",
     "Vue3/img/Pinia Store变量.png",
-    "Vue3/Pinia.md",
     "Vue3/VueRouter.md",
     "Vue3/Vue3高级组件使用.md",
     "Java/并发/线程池.md",
@@ -187,7 +193,6 @@
     "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
     "Java/并发/并发机制底层实现原理.md",
     "Java/并发/并发容器与框架.md",
-    "Java/并发/并发基础知识.md",
     "Vue3/img/vue3生命周期.png",
     "Vue3/img/vue3生命周期.png.crdownload",
     "Vue3/img",
@@ -201,7 +206,6 @@
     "Java/IO/img/Buffer三个基本属性.png",
     "Java/IO/img/channel轮询.png",
     "Java/IO/img/buffer数据流程.png",
-    "Java/IO/img/buffer类型.png",
     "未命名.canvas"
   ]
 }
