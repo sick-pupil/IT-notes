@@ -40,8 +40,8 @@ debezium:
   # 数据库服务连接设置时区
   server-time-zone: UTC
   database-allowPublicKeyRetrieval: true
-  # 数据库服务实例serverId
-  database-server-id: 1
+  # 从机数据库服务实例serverId，不配置则在范围内随机设置server-id
+  # database-server-id: 1000
   # 数据库服务名称
   database-server-name: mysql_instance
   # 数据库历史数据快照同步
