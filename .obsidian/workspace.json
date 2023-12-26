@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "4dbd791ed60794f2",
+        "id": "a4c9d8c34801703d",
         "type": "tabs",
         "children": [
           {
-            "id": "6086226c8c7146b9",
+            "id": "e92f5a11a8314177",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Vue3/Vite.md",
+                "file": "Vue3/Vue疑难杂症.md",
                 "mode": "source",
                 "source": false
               }
@@ -69,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 293.5,
-    "collapsed": true
+    "width": 293.5
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -97,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Vue3/Vite.md",
+                "file": "Vue3/Vue疑难杂症.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Vue3/Vite.md",
+                "file": "Vue3/Vue疑难杂症.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Vue3/Vite.md"
+                "file": "Vue3/Vue疑难杂症.md"
               }
             }
           },
@@ -136,7 +135,9 @@
             "state": {
               "type": "all-properties",
               "state": {
-                "sortOrder": "frequency"
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
               }
             }
           }
@@ -145,8 +146,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 310.5,
-    "collapsed": true
+    "width": 310.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -158,10 +158,18 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "6086226c8c7146b9",
+  "active": "e92f5a11a8314177",
   "lastOpenFiles": [
-    "TypeScript/TypeScript基本语法与使用.md",
+    "Vue3/tsconfig.json.md",
     "Vue3/Vite.md",
+    "Vue3/Vue疑难杂症.md",
+    "TypeScript/TypeScript基本语法与使用.md",
+    "计算机网络/应用层.md",
+    "计算机网络/运输层.md",
+    "计算机网络/网络层.md",
+    "计算机网络/数据链路层.md",
+    "计算机网络/物理层.md",
+    "计算机网络/起步.md",
     "Vue3/Pinia.md",
     "Plan.md",
     "Python/img/Scrapy整体架构.png",
@@ -170,7 +178,6 @@
     "框架or中间件/CDC/FlinkCDC.md",
     "框架or中间件/CDC/Debezium.md",
     "框架or中间件/CDC",
-    "Vue3/Vue疑难杂症.md",
     "ES6",
     "框架or中间件/Docker/Docker概念与应用.md",
     "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
@@ -185,14 +192,7 @@
     "Vue3/VueRouter.md",
     "Vue3/Vue3高级组件使用.md",
     "Java/并发/线程池.md",
-    "Java/并发/锁.md",
-    "Java/并发/内存模型JMM.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Resilience4J.md",
     "Vue3/img/插槽.png",
-    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
-    "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
-    "Java/并发/并发机制底层实现原理.md",
-    "Java/并发/并发容器与框架.md",
     "Vue3/img/vue3生命周期.png",
     "Vue3/img/vue3生命周期.png.crdownload",
     "Vue3/img",
