@@ -4,15 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "4b6a4ccb3c3736ef",
+        "id": "ce16b0307efab96a",
         "type": "tabs",
         "children": [
           {
-            "id": "21c68a61c7c0a115",
+            "id": "412ee1e0d53b6047",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -92,6 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -108,6 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +124,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md"
+              }
             }
           },
           {
@@ -150,13 +158,23 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "21c68a61c7c0a115",
+  "active": "412ee1e0d53b6047",
   "lastOpenFiles": [
-    "框架or中间件/CDC/Debezium.md",
-    "Vue3/Vite.md",
-    "Vue3/Vue疑难杂症.md",
-    "Vue3/tsconfig.json.md",
+    "框架or中间件/Mybatis/Mybatis-Plus.md",
+    "技术要点/多数据源切换.md",
+    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
+    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
+    "框架or中间件/Mybatis/Mybatis相关配置.md",
+    "技术要点/Apache-Commons.md",
     "TypeScript/TypeScript基本语法与使用.md",
+    "技术要点/加解密.md",
+    "Vue3/Vue3概念与基础.md",
+    "Vue3/Vue3高级组件使用.md",
+    "Vue3/Vite.md",
+    "Vue3/VueRouter.md",
+    "Vue3/Vue疑难杂症.md",
+    "框架or中间件/CDC/Debezium.md",
+    "Vue3/tsconfig.json.md",
     "计算机网络/应用层.md",
     "计算机网络/运输层.md",
     "计算机网络/网络层.md",
@@ -172,18 +190,8 @@
     "框架or中间件/CDC",
     "ES6",
     "框架or中间件/Docker/Docker概念与应用.md",
-    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
-    "Python/Scrapy应用.md",
-    "框架or中间件/Mybatis/Mybatis-Plus.md",
-    "技术要点/登录认证与权限管理.md",
-    "技术要点/动态注册bean.md",
-    "框架or中间件/GitLab/GitLab概念与应用.md",
     "TypeScript",
-    "Vue3/Vue3概念与基础.md",
     "Vue3/img/Pinia Store变量.png",
-    "Vue3/VueRouter.md",
-    "Vue3/Vue3高级组件使用.md",
-    "Java/并发/线程池.md",
     "Vue3/img/插槽.png",
     "Vue3/img/vue3生命周期.png",
     "Vue3/img/vue3生命周期.png.crdownload",

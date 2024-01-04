@@ -1361,86 +1361,83 @@ public interface DisplayMapper {
 	<artifactId>knife4j-spring-ui</artifactId>
 	<version>${lastVersion}</version>
 </dependency>
+
+<!-- knife4j可以选择knife4j-springboot-starter -->
+<dependency>  
+    <groupId>com.github.xiaoymin</groupId>  
+    <artifactId>knife4j-spring-boot-starter</artifactId>  
+    <version>3.0.3</version>  
+</dependency>
 ```
 
-2. 启动类添加注解`@EnableSwagger2`
+2. 启动类添加注解`@EnableSwagger2`，如果设置了增强，比如选择`knife4j`增强，则需要添加注解`@EnableKnife4j`
 3. 添加Swagger的`JavaConfig`
 ```java
-@Configuration
-public class SwaggerConfig {
-
-    // 创建swagger bean
-    @Bean
-    public Docket docket() {
-		
-		// 配置swagger的docket的bean实例 
-		Profiles profiles = Profiles.of("dev","test"); 
-		// 通过environment.acceptsProfiles()判断是否指定的环境中，是，则为true 
-		boolean flag = environment.acceptsProfiles(profiles);
-		
-        // Docket是swagger全局配置对象
-        // DocumentationType：指定文档类型为swagger2
-        return new Docket(DocumentationType.SWAGGER_2)
-                // swagger信息
-                .apiInfo(apiInfo())
-                // swagger 扫描包配置
-				// select()获取Docket中的选择器，返回ApiSelectorBuilder构造选择器，如扫描扫描包的注解
-				// 配置是否开启swagger，若为false，则浏览器不能访问
-				.enable(flag)
-				.select()
-				/**
-				 * requestHandlerSelectors：请求处理选择器
-				 * basePackage()：扫描指定包下的所有接口
-				 * any()：扫描所有的包
-				 * none()：不扫描
-				 * withClassAnnotation()：扫描指定类上的注解，参数是一个注解的放射对象
-				 * withMethodAnnotation()：扫描方法上的注解
-				 */
-				// 指定扫描器扫描的规则（断言）
-				.apis(RequestHandlerSelectors.basePackage("com.iqiuq.swaggerdemo.controller"))
-				/**
-				 * pathSelectors：路径选择器，过滤路径
-				 * ang()：选择所有路径
-				 * none()：都不选择
-				 * ant()：选择指定路径
-				 * regex()：正则表达式
-				 */
-				.paths(PathSelectors.regex("/hello"))
-				.build();
-    }
-
-    // swagger文档信息
-    public ApiInfo apiInfo() {
-        // 作者信息
-        Contact contact = new Contact(
-                // 文档发布者的名称
-                "iqiuq",
-                // 文档发布者的网站地址
-                "https://iqiuq.gitee.io/qiuqblogs/",
-                // 文档发布者的电子邮箱
-                "qiuyonghui258@163.com"
-        );
-        return new ApiInfo(
-                // 标题
-                "iqiuq swagger api",
-                // 文档描述
-                "演好自己人生的剧本",
-                // 版本号
-                "1.0",
-                // 服务组url地址
-                "urn:tos", 
-                // 作者信息
-                contact,
-                // 开源组织
-                "Apache 2.0",
-                // 开源地址
-                "http://www.apache.org/licenses/LICENSE-2.0",
-                // 集合
-                new ArrayList()
-        );
-    }
+@Configuration  
+public class SwaggerConfig {  
+    private static final String SWAGGER_TITLE = "图片去重项目 API 接口文档";  
+    private static final String VERSION = "3.0.3";  
+  
+    @Bean  
+    public Docket createRestApi() {  
+        return new Docket(DocumentationType.OAS_30)  
+                .enable(true)  
+                // .useDefaultResponseMessages(false)  
+                .apiInfo(apiInfo())  
+                .groupName("3.X 版本")  
+                .select()  
+                // 方式一: 配置扫描 所有想在swagger界面的统一管理接口，都必须在此包下  
+//                .apis(RequestHandlerSelectors.basePackage("com.dake.controller"))  
+                .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))  
+                // 方式二: 只有当方法上有  @ApiOperation 注解时才能生成对应的接口文档  
+                // .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))  
+                .paths(PathSelectors.any())  
+                .build();  
+    }  
+  
+    private ApiInfo apiInfo() {  
+        return new ApiInfoBuilder()  
+                .title(SwaggerConfig.SWAGGER_TITLE)  
+                .description("# 图片去重项目项目API接口文档简介")  
+                .termsOfServiceUrl("http://ip:port/img-deduplication")  
+                .contact(new Contact("lhy", "", ""))  
+                .version(SwaggerConfig.VERSION)  
+                .build();  
+    }  
+  
+    @Bean  
+    public static BeanPostProcessor springfoxHandlerProviderBeanPostProcessor() {  
+        return new BeanPostProcessor() {  
+            @Override  
+            public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {  
+                if (bean instanceof WebMvcRequestHandlerProvider || bean instanceof WebFluxRequestHandlerProvider) {  
+                    customizeSpringfoxHandlerMappings(getHandlerMappings(bean));  
+                }  
+                return bean;  
+            }  
+  
+            private <T extends RequestMappingInfoHandlerMapping> void customizeSpringfoxHandlerMappings(List<T> mappings) {  
+                List<T> copy = mappings.stream()  
+                        .filter(mapping -> mapping.getPatternParser() == null)  
+                        .collect(Collectors.toList());  
+                mappings.clear();  
+                mappings.addAll(copy);  
+            }  
+  
+            @SuppressWarnings("unchecked")  
+            private List<RequestMappingInfoHandlerMapping> getHandlerMappings(Object bean) {  
+                try {  
+                    Field field = ReflectionUtils.findField(bean.getClass(), "handlerMappings");  
+                    assert field != null;  
+                    field.setAccessible(true);  
+                    return (List<RequestMappingInfoHandlerMapping>) field.get(bean);  
+                } catch (IllegalArgumentException | IllegalAccessException e) {  
+                    throw new IllegalStateException(e);  
+                }  
+            }  
+        };  
+    }  
 }
-
 ```
 4. 访问`ip:port/swagger-ui.html`
 5. 访问`ip:port/v2/api-docs`，可以获取项目中所有配置了`swagger api`接口的
@@ -1452,16 +1449,16 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
-                .antMatchers("/swagger-ui.html").permitAll()
-                .antMatchers("/webjars/**").permitAll()
-                .antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/v2/*").permitAll()
-                .antMatchers("/csrf").permitAll()
-                .antMatchers("/").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
+			.authorizeRequests()
+			.antMatchers("/swagger-ui.html").permitAll()
+			.antMatchers("/webjars/**").permitAll()
+			.antMatchers("/swagger-resources/**").permitAll()
+			.antMatchers("/v2/*").permitAll()
+			.antMatchers("/csrf").permitAll()
+			.antMatchers("/").permitAll()
+			.anyRequest().authenticated()
+			.and()
+			.formLogin()
         ;
     }
 }
