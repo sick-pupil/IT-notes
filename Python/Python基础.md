@@ -703,7 +703,340 @@ except Exception,err:
 else:
 	print 2
 ```
+### 10. 进程
+Python多进程依赖于标准库`mutiprocessing`
 
+|序号|方法|含义|
+|---|---|---|
+|1|start()|创建一个Process子进程实例并执行该实例的run()方法|
+|2|run()|子进程需要执行的目标任务|
+|3|join()|主进程阻塞等待子进程直到子进程结束才继续执行，可以设置等待超时时间timeout|
+|4|terminate()|终止子进程|
+|5|is_alive()|判断子进程是否终止|
+|6|daemon|设置子进程是否随主进程退出而退出|
+
+| 序号 | 构造方法属性 | 含义 |
+| ---- | ---- | ---- |
+| 1 | group | 线程组 |
+| 2 | target | 要执行的方法 |
+| 3 | name | 进程名 |
+| 4 | args/kwargs | 要传入方法的参数 |
+
+| 序号 | 属性 | 含义 |
+| ---- | ---- | ---- |
+| 1 | daemon | 和线程的`setDeamon`功能一样 |
+| 2 | name | 进程名字 |
+| 3 | pid | 进程号 |
+#### 1. 创建方式1
+```python
+import os, time
+import multiprocessing
+
+class myProcess(multiprocessing.Process):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__()
+        self.name = kwargs['name']
+
+    def run(self):
+        print("process name:", self.name)
+        for i in range(10):
+            print(multiprocessing.current_process(), "process pid:",
+                  os.getpid(), "正在执行...")
+            time.sleep(0.2)
+
+if __name__ == "__main__":
+    task = myProcess(name="testProcess")
+    task.start()
+    task.join()  
+    print("----------------")
+```
+#### 2. 创建方式2
+```python
+from multiprocessing import  Process
+
+def fun1(name):
+    print('测试%s多进程' %name)
+
+if __name__ == '__main__':
+    process_list = []
+    for i in range(5):  #开启5个子进程执行fun1函数
+        p = Process(target=fun1, args=('Python',)) #实例化进程对象
+        p.start()
+        process_list.append(p)
+
+    for i in process_list:
+        p.join()
+
+    print('结束测试')
+```
+#### 3. 创建方式3
+```python
+from multiprocessing import  Process
+
+class MyProcess(Process): #继承Process类
+    def __init__(self,name):
+        super(MyProcess,self).__init__()
+        self.name = name
+
+    def run(self):
+        print('测试%s多进程' % self.name)
+
+
+if __name__ == '__main__':
+    process_list = []
+    for i in range(5):  #开启5个子进程执行fun1函数
+        p = MyProcess('Python') #实例化进程对象
+        p.start()
+        process_list.append(p)
+
+    for i in process_list:
+        p.join()
+
+    print('结束测试')
+```
+#### 4. 进程池
+- `apply(func, args=(), kwds={})`：该函数用于传递不定参数，主进程会被阻塞直到函数执行结束
+- `apply_async(func, args=(), kwds={}, callback=None)`：与`apply`用法一致，但它是非阻塞的且支持结果返回后进行回调
+- `map(func, iterable, chunksize=None)`：与内置的`map`函数用法基本一致，它会使进程阻塞直到结果返回
+- `map_async(func, iterable, chunksize, callback)`：与`map`用法一致，但是它是非阻塞的
+
+```python
+from  multiprocessing import Process,Pool
+import os, time, random
+
+def fun1(name):
+    print('Run task %s (%s)...' % (name, os.getpid()))
+    start = time.time()
+    time.sleep(random.random() * 3)
+    end = time.time()
+    print('Task %s runs %0.2f seconds.' % (name, (end - start)))
+
+if __name__=='__main__':
+    pool = Pool(5) #创建一个5个进程的进程池
+
+    for i in range(10):
+        pool.apply_async(func=fun1, args=(i,))
+
+    pool.close()
+    pool.join()
+    print('结束测试')
+```
+
+```python
+import time
+
+def func2(args):  # multiple parameters (arguments)
+    # x, y = args
+    x = args[0]  # write in this way, easier to locate errors
+    y = args[1]  # write in this way, easier to locate errors
+
+    time.sleep(1)  # pretend it is a time-consuming operation
+    return x - y
+
+
+def run__pool():  # main process
+    from multiprocessing import Pool
+
+    cpu_worker_num = 3
+    process_args = [(1, 1), (9, 9), (4, 4), (3, 3), ]
+
+    print(f'| inputs:  {process_args}')
+    start_time = time.time()
+    with Pool(cpu_worker_num) as p:
+        outputs = p.map(func2, process_args)
+    print(f'| outputs: {outputs}    TimeUsed: {time.time() - start_time:.1f}    \n')
+
+    '''Another way (I don't recommend)
+    Using 'functions.partial'. See https://stackoverflow.com/a/25553970/9293137
+    from functools import partial
+    # from functools import partial
+    # pool.map(partial(f, a, b), iterable)
+    '''
+
+if __name__ =='__main__':
+    run__pool()
+```
+#### 5. 进程通信
+##### 1. Queue
+```python
+def func1(i):
+    time.sleep(1)
+    print(f'args {i}')
+
+def run__queue():
+    from multiprocessing import Process, Queue
+
+    queue = Queue(maxsize=4)  # the following attribute can call in anywhere
+    queue.put(True)
+    queue.put([0, None, object])  # you can put deepcopy thing
+    queue.qsize()  # the length of queue
+    print(queue.get())  # First In First Out
+    print(queue.get())  # First In First Out
+    queue.qsize()  # the length of queue
+
+    process = [Process(target=func1, args=(queue,)),
+               Process(target=func1, args=(queue,)), ]
+    [p.start() for p in process]
+    [p.join() for p in process]
+
+if __name__ =='__main__':
+    run__queue()
+
+
+
+
+def fun1(q,i):
+    print('子进程%s 开始put数据' %i)
+    q.put('我是%s 通过Queue通信' %i)
+
+if __name__ == '__main__':
+    q = Queue()
+
+    process_list = []
+    for i in range(3):
+        p = Process(target=fun1,args=(q,i,))  #注意args里面要把q对象传给我们要执行的方法，这样子进程才能和主进程用Queue来通信
+        p.start()
+        process_list.append(p)
+
+    for i in process_list:
+        p.join()
+
+    print('主进程获取Queue数据')
+    print(q.get())
+    print(q.get())
+    print(q.get())
+    print('结束测试')
+```
+##### 2. Pipe
+```python
+from multiprocessing import Process, Pipe
+def fun1(conn):
+    print('子进程发送消息：')
+    conn.send('你好主进程')
+    print('子进程接受消息：')
+    print(conn.recv())
+    conn.close()
+
+if __name__ == '__main__':
+    conn1, conn2 = Pipe() #关键点，pipe实例化生成一个双向管
+    p = Process(target=fun1, args=(conn2,)) #conn2传给子进程
+    p.start()
+    print('主进程接受消息：')
+    print(conn1.recv())
+    print('主进程发送消息：')
+    conn1.send("你好子进程")
+    p.join()
+    print('结束测试')
+
+
+
+
+import time
+
+def func_pipe1(conn, p_id):
+    print(p_id)
+
+    time.sleep(0.1)
+    conn.send(f'{p_id}_send1')
+    print(p_id, 'send1')
+
+    time.sleep(0.1)
+    conn.send(f'{p_id}_send2')
+    print(p_id, 'send2')
+
+    time.sleep(0.1)
+    rec = conn.recv()
+    print(p_id, 'recv', rec)
+
+    time.sleep(0.1)
+    rec = conn.recv()
+    print(p_id, 'recv', rec)
+
+
+def func_pipe2(conn, p_id):
+    print(p_id)
+
+    time.sleep(0.1)
+    conn.send(p_id)
+    print(p_id, 'send')
+    time.sleep(0.1)
+    rec = conn.recv()
+    print(p_id, 'recv', rec)
+
+
+def run__pipe():
+    from multiprocessing import Process, Pipe
+
+    conn1, conn2 = Pipe()
+
+    process = [Process(target=func_pipe1, args=(conn1, 'I1')),
+               Process(target=func_pipe2, args=(conn2, 'I2')),
+               Process(target=func_pipe2, args=(conn2, 'I3')), ]
+
+    [p.start() for p in process]
+    print('| Main', 'send')
+    conn1.send(None)
+    print('| Main', conn2.recv())
+    [p.join() for p in process]
+
+if __name__ =='__main__':
+    run__pipe()
+```
+##### 3. Manager
+```python
+import multiprocessing as mp
+
+def worker(shared_list):
+    shared_list.append(6)
+    print(f\"Worker: {shared_list}\")
+
+if __name__ == '__main__':
+	manager = mp.Manager()
+	shared_list = manager.list([1, 2, 3, 4, 5])
+	
+	processes = []
+	for _ in range(2):
+		p = mp.Process(target=worker, args=(shared_list,))
+		p.start()
+		processes.append(p)
+	
+	for p in processes:
+		p.join()
+	
+	print(f\"Main: {shared_list}\")
+
+
+
+
+import multiprocessing as mp
+
+def worker(shared_dict):
+	shared_dict['d'] = 4
+    print(f\"Worker: {shared_dict}\")
+
+if __name__ == '__main__':
+    manager = mp.Manager()
+    shared_dict = manager.dict({'a': 1, 'b': 2, 'c': 3})
+
+    processes = []
+    for _ in range(2):
+        p = mp.Process(target=worker, args=(shared_dict,))
+        p.start()
+        processes.append(p)
+
+    for p in processes:
+        p.join()
+
+    print(f\"Main: {shared_dict}\")
+```
+### 11. 线程
+```python
+
+```
+### 12. 协程
+```python
+
+```
 ## 3. 面向对象
 ```python
 #!/usr/bin/python
