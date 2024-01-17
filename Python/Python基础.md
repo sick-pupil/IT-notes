@@ -795,6 +795,7 @@ if __name__ == '__main__':
     print('结束测试')
 ```
 #### 4. 进程池
+`from concurrent.futures import ProcessPoolExecutor`
 - `apply(func, args=(), kwds={})`：该函数用于传递不定参数，主进程会被阻塞直到函数执行结束
 - `apply_async(func, args=(), kwds={}, callback=None)`：与`apply`用法一致，但它是非阻塞的且支持结果返回后进行回调
 - `map(func, iterable, chunksize=None)`：与内置的`map`函数用法基本一致，它会使进程阻塞直到结果返回
@@ -1030,12 +1031,639 @@ if __name__ == '__main__':
     print(f\"Main: {shared_dict}\")
 ```
 ### 11. 线程
+#### 1. threading与_thread
+存在两个线程模块`_thread`与`threading`
+其中，`_thread`可以使用`start_new_thread()`产生新线程：`_thread.start_new_thread ( function, args, kwargs )`
+- `function`：线程函数
+- `args`：传递给线程函数的参数，他必须是个`tuple`类型
+- `kwargs`：可选参数
 ```python
+#!/usr/bin/python3
 
+import _thread
+import time
+
+# 为线程定义一个函数
+def print_time( threadName, delay):
+   count = 0
+   while count < 5:
+      time.sleep(delay)
+      count += 1
+      print ("%s: %s" % ( threadName, time.ctime(time.time()) ))
+
+# 创建两个线程
+try:
+   _thread.start_new_thread( print_time, ("Thread-1", 2, ) )
+   _thread.start_new_thread( print_time, ("Thread-2", 4, ) )
+except:
+   print ("Error: 无法启动线程")
+
+while 1:
+   pass
+```
+
+<img src="D:\Project\IT-notes\Python\img\Thread调用过程.png" style="width:700px;height:450px;" />
+
+而`threading`不仅包含了`_thread`模块中的所有方法外，还提供以下其他方法：
+- `threading.currentThread`：返回当前的线程变量
+- `threading.enumerate`：返回一个包含正在运行的线程的`list`。正在运行指线程启动后、结束前，不包括启动前和终止后的线程
+- `threading.activeCount`：返回正在运行的线程数量，与`threading.enumerate`返回的`len(list)`相同
+`threading`还提供`Thread`类操作线程，并提供以下方法：
+- `run()`：线程活动的方法
+- `start()`：启动线程
+- `join()`或者`join(time)`：外部调用线程等待该线程结束
+- `isAlive()`：线程是否活动
+- `getName()`：获取线程名称
+- `setName()`：设置线程名称
+
+```python
+from threading import Thread
+from time import sleep, ctime
+def func(name, sec):
+    print('---开始---', name, '时间', ctime())
+    sleep(sec)
+    print('***结束***', name, '时间', ctime())
+
+# 创建 Thread 实例
+t1 = Thread(target=func, args=('第一个线程', 1))
+t2 = Thread(target=func, args=('第二个线程', 2))
+
+# 启动线程运行
+t1.start()
+t2.start()
+
+# 等待所有线程执行完毕
+t1.join()  # join() 等待线程终止，要不然一直挂起
+t2.join()
+
+
+
+from threading import Thread
+from time import sleep, ctime
+# 创建 Thread 的子类
+class MyThread(Thread):
+    def __init__(self, func, args):
+        '''
+        :param func: 可调用的对象
+        :param args: 可调用对象的参数
+        '''
+        Thread.__init__(self)   # 不要忘记调用Thread的初始化方法
+        self.func = func
+        self.args = args
+
+    def run(self):
+        self.func(*self.args)
+
+
+def func(name, sec):
+    print('---开始---', name, '时间', ctime())
+    sleep(sec)
+    print('***结束***', name, '时间', ctime())
+
+def main():
+    # 创建 Thread 实例
+    t1 = MyThread(func, (1, 1))
+    t2 = MyThread(func, (2, 2))
+    # 启动线程运行
+    t1.start()
+    t2.start()
+    # 等待所有线程执行完毕
+    t1.join()
+    t2.join()
+
+if __name__ == '__main__':
+    main()
+```
+#### 2. 线程同步(锁)
+```python
+#!/usr/bin/python3
+
+import threading
+import time
+
+class myThread (threading.Thread):
+	def __init__(self, threadID, name, delay):
+		threading.Thread.__init__(self)
+		self.threadID = threadID
+		self.name = name
+		self.delay = delay
+	def run(self):
+		print ("开启线程： " + self.name)
+		# 获取锁，用于线程同步
+		threadLock.acquire()
+		print_time(self.name, self.delay, 3)
+		# 释放锁，开启下一个线程
+		threadLock.release()
+
+def print_time(threadName, delay, counter):
+	while counter:
+		time.sleep(delay)
+		print ("%s: %s" % (threadName, time.ctime(time.time())))
+		counter -= 1
+
+threadLock = threading.Lock()
+threads = []
+
+# 创建新线程
+thread1 = myThread(1, "Thread-1", 1)
+thread2 = myThread(2, "Thread-2", 2)
+
+# 开启新线程
+thread1.start()
+thread2.start()
+
+# 添加线程到线程列表
+threads.append(thread1)
+threads.append(thread2)
+
+# 等待所有线程完成
+for t in threads:
+	t.join()
+print ("退出主线程")
+```
+#### 3. 线程优先级队列
+`Python`的`Queue`模块中提供了同步的、线程安全的队列类，包括FIFO（先入先出)队列`Queue`，`LIFO`（后入先出）队列`LifoQueue`，和优先级队列`PriorityQueue`
+这些队列都实现了锁原语，能够在多线程中直接使用，可以使用队列来实现线程间的同步
+
+`Queue`模块中的常用方法：
+- `Queue.qsize()`返回队列的大小
+- `Queue.empty()`如果队列为空，返回`True`，反之`False`
+- `Queue.full()`如果队列满了，返回`True`，反之`False`
+- `Queue.full`与`maxsize`大小对应
+- `Queue.get([block[, timeout]])`获取队列，`timeout`等待时间
+- `Queue.get_nowait()`相当`Queue.get(False)`
+- `Queue.put(item)`写入队列，`timeout`等待时间
+- `Queue.put_nowait(item)`相当`Queue.put(item, False)`
+- `Queue.task_done()`在完成一项工作之后，`Queue.task_done()`函数向任务已经完成的队列发送一个信号
+- `Queue.join()`实际上意味着等到队列为空，再执行别的操作
+
+```python
+#!/usr/bin/python3
+import queue
+import threading
+import time
+
+exitFlag = 0
+
+class myThread (threading.Thread):
+    def __init__(self, threadID, name, q):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+        self.q = q
+    def run(self):
+        print ("开启线程：" + self.name)
+        process_data(self.name, self.q)
+        print ("退出线程：" + self.name)
+
+def process_data(threadName, q):
+    while not exitFlag:
+        queueLock.acquire()
+        if not workQueue.empty():
+            data = q.get()
+            queueLock.release()
+            print ("%s processing %s" % (threadName, data))
+        else:
+            queueLock.release()
+        time.sleep(1)
+
+threadList = ["Thread-1", "Thread-2", "Thread-3"]
+nameList = ["One", "Two", "Three", "Four", "Five"]
+queueLock = threading.Lock()
+workQueue = queue.Queue(10)
+threads = []
+threadID = 1
+
+# 创建新线程
+for tName in threadList:
+    thread = myThread(threadID, tName, workQueue)
+    thread.start()
+    threads.append(thread)
+    threadID += 1
+
+# 填充队列
+queueLock.acquire()
+for word in nameList:
+    workQueue.put(word)
+queueLock.release()
+
+# 等待队列清空
+while not workQueue.empty():
+    pass
+
+# 通知线程是时候退出
+exitFlag = 1
+
+# 等待所有线程完成
+for t in threads:
+    t.join()
+print ("退出主线程")
+```
+#### 4. 线程池
+`from concurrent.futures import ThreadPoolExecutor`
+```python
+import concurrent.futures
+import time
+
+# 定义一个简单的任务函数
+def task(name):
+    print(f"{name} is running")
+    time.sleep(2)
+    return f"{name} is done"
+
+# 使用线程池
+with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+    # 提交任务给线程池
+    future_to_name = {executor.submit(task, f"Thread-{i}"): f"Thread-{i}" for i in range(5)}
+
+    # 获取任务结果
+    for future in concurrent.futures.as_completed(future_to_name):
+        name = future_to_name[future]
+        try:
+            result = future.result()
+            print(f"{name}: {result}")
+        except Exception as e:
+            print(f"{name}: {e}")
 ```
 ### 12. 协程
-```python
+协程的作用是在执行函数A时可以随时中断去执行函数B，然后中断函数B继续执行函数A（可以自由切换）。但这一过程并不是函数调用，这一整个过程看似像多线程，然而协程只有一个线程执行
 
+即一个线程通过不停交叉调用不同的函数，让一个线程的工作过程看起来像是多个线程执行各自的函数一样，避免了线程切换的消耗
+
+- 执行效率极高，因为子程序切换（函数）不是线程切换，由程序自身控制，没有切换线程的开销。所以与多线程相比，线程的数量越多，协程性能的优势越明显
+- 不需要多线程的锁机制，因为只有一个线程，也不存在同时写变量冲突，在控制共享资源时也不需要加锁，因此执行效率高很多
+- 发展历程从`python2.x`的`yield/send` -> `greenlet` -> `gevent`到`python3.x`的`asyncio`和`async/await`
+#### 1. yield+send
+```python
+#-*- coding:utf8 -*-
+def consumer():
+    r = ''
+    while True:
+        n = yield r
+        if not n:
+            return
+        print('[CONSUMER]Consuming %s...' % n)
+        r = '200 OK'
+
+def producer(c):
+    # 启动生成器
+    c.send(None)
+    n = 0
+    while n < 5:
+        n = n + 1
+        print('[PRODUCER]Producing %s...' % n)
+        r = c.send(n)
+        print('[PRODUCER]Consumer return: %s' % r)
+    c.close()
+
+if __name__ == '__main__':
+    c = consumer()
+    producer(c)
+```
+#### 2. greenlet
+`generator`实现的协程在`yield value`时只能将value返回给调用者`(caller)`。而在`greenlet`中，`target.switch(value)`可以切换到指定的协程`(target)`， 然后`yield value`。`greenlet`用`switch`来表示协程的切换，从一个协程切换到另一个协程需要显式指定
+```python
+# 基本的greenlet使用
+from greenlet import greenlet
+def test1():
+    print 12
+    gr2.switch()
+    print 34
+def test2():
+    print 56
+    gr1.switch()
+    print 78
+gr1 = greenlet(test1)
+gr2 = greenlet(test2)
+gr1.switch()
+
+
+
+# greenlet被切换后，再切换回来函数会返回值
+import greenlet
+def test1(x, y):
+    z = gr2.switch(x+y)
+    print('test1 ', z)
+def test2(u):
+    print('test2 ', u)
+    gr1.switch(10)
+gr1 = greenlet.greenlet(test1)
+gr2 = greenlet.greenlet(test2)
+print gr1.switch("hello", " world")
+
+
+
+# greenlet从调用greenlet的主线程，和在主线程产生的子孙greenlet，从上至下形成一棵greenlet树
+import greenlet
+def test1(x, y):
+    print id(greenlet.getcurrent()), id(greenlet.getcurrent().parent) # 40240272 40239952
+    z = gr2.switch(x+y)
+    print 'back z', z
+
+def test2(u):
+    print id(greenlet.getcurrent()), id(greenlet.getcurrent().parent) # 40240352 40239952
+    return 'hehe'
+gr1 = greenlet.greenlet(test1)
+gr2 = greenlet.greenlet(test2)
+print id(greenlet.getcurrent()), id(gr1), id(gr2)     # 40239952, 40240272, 40240352
+print gr1.switch("hello", " world"), 'back to main'    # hehe back to main
+
+
+
+# 当协程对应的函数执行完毕，协程才会die
+from greenlet import greenlet
+def test1():
+    gr2.switch(1)
+    print 'test1 finished'
+
+def test2(x):
+    print 'test2 first', x
+    z = gr1.switch()
+    print 'test2 back', z
+gr1 = greenlet(test1)
+gr2 = greenlet(test2)
+gr1.switch()
+print 'gr1 is dead?: %s, gr2 is dead?: %s' % (gr1.dead, gr2.dead)
+gr2.switch()
+print 'gr1 is dead?: %s, gr2 is dead?: %s' % (gr1.dead, gr2.dead)
+print gr2.switch(10)
+```
+#### 3. gevent
+```python
+# 基本使用
+g1=gevent.spawn(func,1,2,3,x=4,y=5)
+# 创建一个协程对象g1，spawn括号内第一个参数是函数名，如eat，后面可以有多个参数，可以是位置实参或关键字实参，都是传给函数eat的
+g2=gevent.spawn(func2)
+g1.join() #等待g1结束
+g2.join() #等待g2结束
+#或者上述两步合作一步：gevent.joinall([g1,g2])
+g1.value#拿到func1的返回值
+
+
+
+# 遇到io立刻 切换到另外一个任务，这是使用gevent.sleep自己产生的io操作
+# time.sleep或者其他阻塞，gevent是不能识别的
+import gevent
+import time
+
+def eat(name):
+    print("%s:eat 1" %name)
+    gevent.sleep(3)
+    print("%s:eat 2" %name)
+
+def play(name):
+    print("%s:play 1" % name)
+    gevent.sleep(4)
+    print("%s:play 2" % name)
+
+g1 = gevent.spawn(eat,"mike")
+g2 = gevent.spawn(play,"mike")
+
+start_time = time.time()
+g1.join()
+g2.join()
+
+end_time = time.time()
+print(end_time-start_time)
+'''
+mike:eat 1
+mike:eat 2
+mike:play 1
+mike:play 2
+7.0004003047943115
+'''
+
+
+
+# 如果希望gevent识别到大部分的IO阻塞，则需要打补丁mokey
+# monkey.pathch_all() 下面所有代码的涉及到io阻塞操作都打个标记，变成非阻塞操作，让gevent可以识别
+from gevent import monkey;monkey.patch_all()
+import gevent
+import time
+
+def eat(name):
+    print("%s:eat 1" %name)
+    time.sleep(3)
+    print("%s:eat 2" %name)
+
+def play(name):
+    print("%s:play 1" % name)
+    time.sleep(4)
+    print("%s:play 2" % name)
+
+g1 = gevent.spawn(eat,"mike")
+g2 = gevent.spawn(play,"mike")
+
+start_time = time.time()
+g1.join()
+g2.join()
+
+end_time = time.time()
+print(end_time-start_time)
+'''
+mike:eat 1
+mike:play 1
+mike:eat 2
+mike:play 2
+4.032230854034424
+'''
+
+
+# join()主线程等待任务运行完后才销毁
+# joinall()等待多个任务 用列表存放任务
+from gevent import monkey;monkey.patch_all()
+import gevent
+import time
+
+def eat(name):
+    print("%s:eat 1" %name)
+    time.sleep(3)
+    print("%s:eat 2" %name)
+
+def play(name):
+    print("%s:play 1" % name)
+    time.sleep(4)
+    print("%s:play 2" % name)
+
+
+g1 = gevent.spawn(eat,"mike")
+g2 = gevent.spawn(play,"mike")
+
+gevent.joinall([g1,g2])
+```
+#### 4. asyncio
+`asyncio`用于实现异步编程，基于事件循环模型，通过协程实现任务切换和调度
+- `async`：定义协程函数
+- `await`：挂起协程的执行
+- `eventloop`：负责协调和调度协程的执行，以及处理IO操作和定时器等事件，会循环监听事件的发生，并根据事件的类型选择适当的协程进行调度
+- `run_until_complete`：`run_until_complete()`方法接受一个可等待对象作为参数，可以是协程对象、任务对象或者`Future`对象。它会持续运行事件循环，直到可等待对象完成
+```python
+# async、await
+import asyncio
+async def hello():
+    print("Hello")
+    await asyncio.sleep(1)  # 模拟耗时操作，挂起协程执行
+    print("World")
+async def main():
+    await asyncio.gather(
+        hello(),
+        hello()
+    )
+
+asyncio.run(main())
+
+
+
+# eventloop
+import asyncio
+async def hello():
+    print("Hello")
+    await asyncio.sleep(1)  # 模拟耗时操作，挂起协程执行
+    print("World")
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(hello())
+loop.close()
+
+
+
+# io
+import asyncio
+async def read_file(file_path):
+    async with asyncio.open(file_path, 'r') as file:
+        data = await file.read()
+        print(data)
+asyncio.run(read_file('example.txt'))
+
+  
+import asyncio
+async def write_file(file_path, content):
+    try:
+        async with asyncio.open_file(file_path, 'w') as file:
+            await file.write(content)
+            print("文件写入成功")
+    except OSError:
+        print("写入文件失败")
+
+async def main():
+    await write_file("myfile.txt", "Hello, world!")
+
+asyncio.run(main())
+
+
+
+# 异步创建网络连接
+import asyncio
+import aiohttp
+async def fetch_data(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            data = await response.text()
+            print(data)
+async def main():
+    await fetch_data("https://www.example.com")
+asyncio.run(main())
+
+
+
+# 异步数据库操作
+import asyncio
+import cx_Oracle
+class OracleHandler:
+    def __init__(self, username, password, hostname, port, sid):
+        self.username = username
+        self.password = password
+        self.hostname = hostname
+        self.port = port
+        self.sid = sid
+
+    async def connect(self):
+        """建立与Oracle数据库的连接"""
+        connection = await cx_Oracle.connect(f"{self.username}/{self.password}@{self.hostname}:{self.port}/{self.sid}")
+        return connection
+
+    async def disconnect(self, connection):
+        """断开与Oracle数据库的连接"""
+        await connection.close()
+
+    async def insert(self, table_name, data):
+        """插入数据"""
+        connection = await self.connect()
+        try:
+            cursor = await connection.cursor()
+            # 构造插入语句
+            query = f"INSERT INTO {table_name} (column1, column2, ...) VALUES (:value1, :value2, ...)"
+            await cursor.execute(query, data)
+            await connection.commit()
+
+        finally:
+            await self.disconnect(connection)
+
+    async def delete(self, table_name, condition):
+        """删除数据"""
+        connection = await self.connect()
+        try:
+            cursor = await connection.cursor()
+            # 构造删除语句
+            query = f"DELETE FROM {table_name} WHERE {condition}"
+            await cursor.execute(query)
+            await connection.commit()
+
+        finally:
+            await self.disconnect(connection)
+
+    async def update(self, table_name, data, condition):
+        """更新数据"""
+        connection = await self.connect()
+        try:
+            cursor = await connection.cursor()
+            # 构造更新语句
+            query = f"UPDATE {table_name} SET column1 = :value1, column2 = :value2, ... WHERE {condition}"
+            await cursor.execute(query, data)
+            await connection.commit()
+
+        finally:
+            await self.disconnect(connection)
+
+    async def select(self, table_name, columns, condition):
+        """查询数据"""
+        connection = await self.connect()
+        try:
+            cursor = await connection.cursor()
+            # 构造查询语句
+            query = f"SELECT {columns} FROM {table_name} WHERE {condition}"
+            await cursor.execute(query)
+            result = await cursor.fetchall()
+            return result
+
+        finally:
+            await self.disconnect(connection)
+
+# 示例用法
+async def main():
+    handler = OracleHandler("username", "password", "hostname", "port", "sid")
+
+    # 插入数据
+    data = {"value1": "foo", "value2": "bar"}  # 替换为具体的数据
+    await handler.insert("table_name", data)
+
+    # 删除数据
+    condition = "column1 = 'foo'"  # 替换为具体的条件
+    await handler.delete("table_name", condition)
+
+    # 更新数据
+    data = {"value1": "new_value"}  # 替换为具体的数据
+    condition = "column2 = 'bar'"  # 替换为具体的条件
+    await handler.update("table_name", data, condition)
+
+    # 查询数据
+    columns = "column1, column2"  # 替换为具体的列名
+    condition = "column1 = 'foo'"  # 替换为具体的条件
+    result = await handler.select("table_name", columns, condition)
+    print(result)
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
 ```
 ## 3. 面向对象
 ```python

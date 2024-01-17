@@ -4,15 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "96d79b0d5925a15e",
+        "id": "8fd70e49fc4caf5b",
         "type": "tabs",
         "children": [
           {
-            "id": "62baf3b5c3b405f0",
+            "id": "1ac5a63e61b2fa4f",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "Python/Python基础.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -65,7 +69,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 293.5
+    "width": 293.5,
+    "collapsed": true
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -92,6 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "Python/Python基础.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -108,6 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "Python/Python基础.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +125,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "Python/Python基础.md"
+              }
             }
           },
           {
@@ -150,10 +159,14 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "62baf3b5c3b405f0",
+  "active": "1ac5a63e61b2fa4f",
   "lastOpenFiles": [
-    "技术要点/Apache-Commons.md",
     "Java/IO/BIO&NIO&AIO.md",
+    "Python/Python基础.md",
+    "Python/Scrapy应用.md",
+    "Python/img/Thread调用过程.png",
+    "Python/img/Thread调用过程.png.crdownload",
+    "技术要点/Apache-Commons.md",
     "计算机网络/应用层.md",
     "技术要点/文件上传下载.md",
     "框架or中间件/Minio/Minio概念与应用.md",
@@ -176,8 +189,6 @@
     "计算机网络/数据链路层.md",
     "计算机网络/物理层.md",
     "计算机网络/起步.md",
-    "Vue3/Pinia.md",
-    "Plan.md",
     "Python/img/Scrapy整体架构.png",
     "TypeScript",
     "框架or中间件/CDC",
@@ -191,13 +202,11 @@
     "Vue3/新建文件夹",
     "Vue/img",
     "Vue3",
-    "新建文件夹",
     "框架or中间件/SpringCloud/img/Sentinel熔断状态.png",
     "框架or中间件/SpringCloud/img/Seata工作流程.png",
     "框架or中间件/SpringCloud/img/Config基本原理.png",
     "Java/IO/img/Buffer三个基本属性.png",
     "Java/IO/img/channel轮询.png",
-    "Java/IO/img/buffer数据流程.png",
     "未命名.canvas"
   ]
 }
