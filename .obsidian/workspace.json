@@ -13,8 +13,8 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Python/Python基础.md",
-                "mode": "source",
+                "file": "Java/JVM/类加载机制.md",
+                "mode": "preview",
                 "source": false
               }
             }
@@ -69,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 293.5,
-    "collapsed": true
+    "width": 293.5
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -97,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Python/Python基础.md",
+                "file": "Java/JVM/类加载机制.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Python/Python基础.md",
+                "file": "Java/JVM/类加载机制.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Python/Python基础.md"
+                "file": "Java/JVM/类加载机制.md"
               }
             }
           },
@@ -161,8 +160,29 @@
   },
   "active": "1ac5a63e61b2fa4f",
   "lastOpenFiles": [
-    "Java/IO/BIO&NIO&AIO.md",
+    "操作系统/Pasted image 20240128210354.png",
+    "操作系统/Pasted image 20240128210338.png",
+    "操作系统/Pasted image 20240128210332.png",
+    "Java/JVM/字节码执行引擎.md",
+    "Java/JVM/类加载机制.md",
+    "Java/JVM/类文件结构.md",
+    "Java/并发/异步.md",
+    "Java/并发/原子操作类.md",
+    "Java/并发/Executor框架.md",
+    "Java/并发/并发容器与框架.md",
+    "Java/并发/线程池.md",
+    "Java/并发/并发工具类.md",
+    "Java/并发/锁.md",
+    "Java/并发/并发机制底层实现原理.md",
+    "Java/并发/并发基础知识.md",
+    "Java/并发/并发编程基础.md",
+    "Java/并发/内存模型JMM.md",
+    "Java/JVM/Java内存区域与内存溢出异常.md",
+    "Java/JVM/JVM性能监控与故障处理工具.md",
+    "Java/JVM/垃圾收集器与内存分配策略.md",
+    "Java/Java基础.md",
     "Python/Python基础.md",
+    "Java/IO/BIO&NIO&AIO.md",
     "Python/Scrapy应用.md",
     "Python/img/Thread调用过程.png",
     "Python/img/Thread调用过程.png.crdownload",
@@ -170,25 +190,6 @@
     "计算机网络/应用层.md",
     "技术要点/文件上传下载.md",
     "框架or中间件/Minio/Minio概念与应用.md",
-    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
-    "框架or中间件/Mybatis/Mybatis-Plus.md",
-    "技术要点/多数据源切换.md",
-    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
-    "框架or中间件/Mybatis/Mybatis相关配置.md",
-    "TypeScript/TypeScript基本语法与使用.md",
-    "技术要点/加解密.md",
-    "Vue3/Vue3概念与基础.md",
-    "Vue3/Vue3高级组件使用.md",
-    "Vue3/Vite.md",
-    "Vue3/VueRouter.md",
-    "Vue3/Vue疑难杂症.md",
-    "框架or中间件/CDC/Debezium.md",
-    "Vue3/tsconfig.json.md",
-    "计算机网络/运输层.md",
-    "计算机网络/网络层.md",
-    "计算机网络/数据链路层.md",
-    "计算机网络/物理层.md",
-    "计算机网络/起步.md",
     "Python/img/Scrapy整体架构.png",
     "TypeScript",
     "框架or中间件/CDC",
@@ -205,8 +206,6 @@
     "框架or中间件/SpringCloud/img/Sentinel熔断状态.png",
     "框架or中间件/SpringCloud/img/Seata工作流程.png",
     "框架or中间件/SpringCloud/img/Config基本原理.png",
-    "Java/IO/img/Buffer三个基本属性.png",
-    "Java/IO/img/channel轮询.png",
     "未命名.canvas"
   ]
 }
