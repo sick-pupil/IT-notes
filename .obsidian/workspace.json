@@ -13,8 +13,8 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Java/JVM/类加载机制.md",
-                "mode": "preview",
+                "file": "Java/并发/并发编程基础.md",
+                "mode": "source",
                 "source": false
               }
             }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Java/JVM/类加载机制.md",
+                "file": "Java/并发/并发编程基础.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Java/JVM/类加载机制.md",
+                "file": "Java/并发/并发编程基础.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Java/JVM/类加载机制.md"
+                "file": "Java/并发/并发编程基础.md"
               }
             }
           },
@@ -160,25 +160,27 @@
   },
   "active": "1ac5a63e61b2fa4f",
   "lastOpenFiles": [
+    "Java/并发/并发机制底层实现原理.md",
+    "Java/并发/img/Thread、ThreadLocalMap、ThreadLocal.png",
+    "Java/并发/img/Thread、ThreadLocalMap、ThreadLocal.png.crdownload",
+    "Java/并发/并发工具类.md",
+    "Java/并发/并发编程基础.md",
+    "Java/JVM/类加载机制.md",
+    "Java/并发/并发基础知识.md",
+    "Java/并发/锁.md",
+    "Java/并发/并发容器与框架.md",
+    "Java/并发/线程池.md",
+    "Java/并发/异步.md",
+    "Java/并发/Executor框架.md",
+    "Java/并发/原子操作类.md",
+    "Java/并发/内存模型JMM.md",
+    "Java/JVM/JVM性能监控与故障处理工具.md",
     "操作系统/Pasted image 20240128210354.png",
     "操作系统/Pasted image 20240128210338.png",
     "操作系统/Pasted image 20240128210332.png",
     "Java/JVM/字节码执行引擎.md",
-    "Java/JVM/类加载机制.md",
     "Java/JVM/类文件结构.md",
-    "Java/并发/异步.md",
-    "Java/并发/原子操作类.md",
-    "Java/并发/Executor框架.md",
-    "Java/并发/并发容器与框架.md",
-    "Java/并发/线程池.md",
-    "Java/并发/并发工具类.md",
-    "Java/并发/锁.md",
-    "Java/并发/并发机制底层实现原理.md",
-    "Java/并发/并发基础知识.md",
-    "Java/并发/并发编程基础.md",
-    "Java/并发/内存模型JMM.md",
     "Java/JVM/Java内存区域与内存溢出异常.md",
-    "Java/JVM/JVM性能监控与故障处理工具.md",
     "Java/JVM/垃圾收集器与内存分配策略.md",
     "Java/Java基础.md",
     "Python/Python基础.md",
@@ -202,10 +204,7 @@
     "Vue3/img",
     "Vue3/新建文件夹",
     "Vue/img",
-    "Vue3",
     "框架or中间件/SpringCloud/img/Sentinel熔断状态.png",
-    "框架or中间件/SpringCloud/img/Seata工作流程.png",
-    "框架or中间件/SpringCloud/img/Config基本原理.png",
     "未命名.canvas"
   ]
 }
