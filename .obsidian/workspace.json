@@ -13,8 +13,8 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Java/并发/并发编程基础.md",
-                "mode": "source",
+                "file": "框架or中间件/Mysql/Mysql进阶.md",
+                "mode": "preview",
                 "source": false
               }
             }
@@ -69,7 +69,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 293.5
+    "width": 293.5,
+    "collapsed": true
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -96,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Java/并发/并发编程基础.md",
+                "file": "框架or中间件/Mysql/Mysql进阶.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Java/并发/并发编程基础.md",
+                "file": "框架or中间件/Mysql/Mysql进阶.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Java/并发/并发编程基础.md"
+                "file": "框架or中间件/Mysql/Mysql进阶.md"
               }
             }
           },
@@ -146,7 +147,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 310.5
+    "width": 310.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -160,20 +162,22 @@
   },
   "active": "1ac5a63e61b2fa4f",
   "lastOpenFiles": [
+    "框架or中间件/Mysql/Mysql基础.md",
+    "Java/Java基础.md",
+    "Java/并发/并发容器与框架.md",
+    "Java/并发/内存模型JMM.md",
+    "Java/并发/锁.md",
+    "Java/并发/并发基础知识.md",
     "Java/并发/并发机制底层实现原理.md",
-    "Java/并发/img/Thread、ThreadLocalMap、ThreadLocal.png",
-    "Java/并发/img/Thread、ThreadLocalMap、ThreadLocal.png.crdownload",
     "Java/并发/并发工具类.md",
     "Java/并发/并发编程基础.md",
+    "Java/并发/img/Thread、ThreadLocalMap、ThreadLocal.png",
+    "Java/并发/img/Thread、ThreadLocalMap、ThreadLocal.png.crdownload",
     "Java/JVM/类加载机制.md",
-    "Java/并发/并发基础知识.md",
-    "Java/并发/锁.md",
-    "Java/并发/并发容器与框架.md",
     "Java/并发/线程池.md",
     "Java/并发/异步.md",
     "Java/并发/Executor框架.md",
     "Java/并发/原子操作类.md",
-    "Java/并发/内存模型JMM.md",
     "Java/JVM/JVM性能监控与故障处理工具.md",
     "操作系统/Pasted image 20240128210354.png",
     "操作系统/Pasted image 20240128210338.png",
@@ -182,7 +186,6 @@
     "Java/JVM/类文件结构.md",
     "Java/JVM/Java内存区域与内存溢出异常.md",
     "Java/JVM/垃圾收集器与内存分配策略.md",
-    "Java/Java基础.md",
     "Python/Python基础.md",
     "Java/IO/BIO&NIO&AIO.md",
     "Python/Scrapy应用.md",
