@@ -4,19 +4,15 @@
     "type": "split",
     "children": [
       {
-        "id": "8fd70e49fc4caf5b",
+        "id": "676d1fa04669cda6",
         "type": "tabs",
         "children": [
           {
-            "id": "1ac5a63e61b2fa4f",
+            "id": "fe3d5f6cae4070ee",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "框架or中间件/Mysql/Mysql进阶.md",
-                "mode": "preview",
-                "source": false
-              }
+              "type": "empty",
+              "state": {}
             }
           }
         ]
@@ -69,8 +65,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 293.5,
-    "collapsed": true
+    "width": 293.5
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -97,7 +92,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/Mysql/Mysql进阶.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +108,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/Mysql/Mysql进阶.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,9 +118,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "框架or中间件/Mysql/Mysql进阶.md"
-              }
+              "state": {}
             }
           },
           {
@@ -147,7 +138,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 310.5,
+    "width": 311.5,
     "collapsed": true
   },
   "left-ribbon": {
@@ -160,9 +151,19 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "1ac5a63e61b2fa4f",
+  "active": "fe3d5f6cae4070ee",
   "lastOpenFiles": [
+    "框架or中间件/Redis/Redis进阶.md",
+    "框架or中间件/Redis/Redis基础.md",
+    "框架or中间件/Redis/img/redisson分布式锁原理流程.png",
+    "框架or中间件/Redis/img/redisson分布式锁原理流程.png.crdownload",
+    "框架or中间件/Redis/~$edis进阶.docx",
+    "框架or中间件/Mysql/Mysql8新特性.md",
+    "框架or中间件/Mysql/Mysql进阶.md",
     "框架or中间件/Mysql/Mysql基础.md",
+    "操作系统/虚拟内存.md",
+    "Java/IO/BIO&NIO&AIO.md",
+    "操作系统/IO管理与磁盘调度.md",
     "Java/Java基础.md",
     "Java/并发/并发容器与框架.md",
     "Java/并发/内存模型JMM.md",
@@ -185,16 +186,8 @@
     "Java/JVM/字节码执行引擎.md",
     "Java/JVM/类文件结构.md",
     "Java/JVM/Java内存区域与内存溢出异常.md",
-    "Java/JVM/垃圾收集器与内存分配策略.md",
-    "Python/Python基础.md",
-    "Java/IO/BIO&NIO&AIO.md",
-    "Python/Scrapy应用.md",
     "Python/img/Thread调用过程.png",
     "Python/img/Thread调用过程.png.crdownload",
-    "技术要点/Apache-Commons.md",
-    "计算机网络/应用层.md",
-    "技术要点/文件上传下载.md",
-    "框架or中间件/Minio/Minio概念与应用.md",
     "Python/img/Scrapy整体架构.png",
     "TypeScript",
     "框架or中间件/CDC",
@@ -205,9 +198,6 @@
     "Vue3/img/vue3生命周期.png",
     "Vue3/img/vue3生命周期.png.crdownload",
     "Vue3/img",
-    "Vue3/新建文件夹",
-    "Vue/img",
-    "框架or中间件/SpringCloud/img/Sentinel熔断状态.png",
     "未命名.canvas"
   ]
 }
