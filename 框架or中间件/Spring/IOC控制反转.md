@@ -178,9 +178,12 @@ public class Mybean implements FactoryBean<Course> {
 ```java
 ...
 	ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+	//此处返回的是Course对象
 	Course course = applicationContext.getBean("com.local.bean.MyBean");
 ...
 ```
+
+<img src="D:\Project\IT-notes\框架or中间件\spring\img\FactoryBean调用getObject流程.png" style="width:700px;height:1200px;" />
 
 ## 6. Bean作用域
 Bean作用域：在IOC容器中决定bean对象是**单实例singleton**还是**多实例prototype**，在`applicationContext.getBean`的返回值会存在返回同一个对象或者多个同类型的不同对象，Spring容器中默认bean为单实例
