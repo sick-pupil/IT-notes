@@ -349,11 +349,14 @@ zrange class 0 4
 ```
 #### 6. 消费者组
 <img src="D:\Project\IT-notes\框架or中间件\Redis\img\stream消费者组.png" style="width:700px;height:450px;" />
+##### 1. 创建消费者组
 ```ruby
 xgroup create stream-key(Stream 名) g1(消费者组名) 0-0(表示从头开始消费)
 xgroup create stream-key g2 $
 xgroup create stream-key g3 1636362619125-0  #1636362619125-0 这个是上方aa消息的id的值
-
+```
+##### 2. 消费者组消费
+```ruby
 127.0.0.1:6379> xreadgroup group g1(消费组名) c1(消费者名，自动创建) count 3(读取3条) streams stream-key(Stream 名) >(从该消费者组中还未分配给另外的消费者的消息开始读取)
 1) 1) "stream-key"
    2) 1) 1) "1636362619125-0"
@@ -371,6 +374,80 @@ xgroup create stream-key g3 1636362619125-0  #1636362619125-0 这个是上方aa�
             2) "bb"
 127.0.0.1:6379>
 ```
+##### 3. 消息等待确认
+为了解决组内消息读取但处理期间消费者崩溃带来的消息丢失问题，`STREAM` 设计了`Pending`列表，用于记录读取但并未处理完毕的消息
+```ruby
+127.0.0.1:6379> xpending stream-key g1 - + 10 c1
+1) 1) "1636362619125-0"
+   2) "c1"
+   3) (integer) 2686183
+   4) (integer) 1
+2) 1) "1636362623191-0"
+   2) "c1"
+   3) (integer) 102274
+   4) (integer) 7
+127.0.0.1:6379> xpending stream-key g1 - + 10 c2
+(empty array)
+127.0.0.1:6379> xclaim stream-key g1 c2 102274 1636362623191-0
+1) 1) "1636362623191-0"
+   2) 1) "bb"
+      2) "bb"
+127.0.0.1:6379> xpending stream-key g1 - + 10 c2
+1) 1) "1636362623191-0"
+   2) "c2"
+   3) (integer) 17616
+   4) (integer) 8
+127.0.0.1:6379>
+```
+每个`pending`消息有四个属性：
+1. 消息ID
+2. 所属消费者
+3. IDLE，已读取时长
+4. delivery counter，消息被读取次数
+
+**使用`XACK`确认消息处理完成**
+```ruby
+127.0.0.1:6379> XACK mq mqGroup 1553585533795-0 # 通知消息处理结束，用消息ID标识
+(integer) 1
+
+127.0.0.1:6379> XPENDING mq mqGroup # 再次查看Pending列表
+1) (integer) 4 # 已读取但未处理的消息已经变为4个
+2) "1553585533795-1"
+3) "1553585533795-4"
+4) 1) 1) "consumerA" # 消费者A，还有2个消息处理
+      2) "2"
+   2) 1) "consumerB"
+      2) "1"
+   3) 1) "consumerC"
+      2) "1"
+127.0.0.1:6379>
+```
+##### 4. 消息转移
+消息转移的操作时将某个消息转移到自己的`Pending`列表中。使用语法`XCLAIM`来实现，需要设置组、转移的目标消费者和消息`ID`，同时需要提供`IDLE`（已被读取时长），只有超过这个时长，才能被转移
+```ruby
+127.0.0.1:6379> xpending stream-key g1 - + 10 c1
+1) 1) "1636362619125-0"
+   2) "c1"
+   3) (integer) 2686183
+   4) (integer) 1
+2) 1) "1636362623191-0"
+   2) "c1"
+   3) (integer) 102274
+   4) (integer) 7
+127.0.0.1:6379> xpending stream-key g1 - + 10 c2
+(empty array)
+127.0.0.1:6379> xclaim stream-key g1 c2 102274 1636362623191-0
+1) 1) "1636362623191-0"
+   2) 1) "bb"
+      2) "bb"
+127.0.0.1:6379> xpending stream-key g1 - + 10 c2
+1) 1) "1636362623191-0"
+   2) "c2"
+   3) (integer) 17616
+   4) (integer) 8
+127.0.0.1:6379>
+```
+如果某个消息，不能被消费者处理，也就是不能被`XACK`，这是要长时间处于`Pending`列表中，即使被反复的转移给各个消费者也是如此。此时该消息的`delivery counter`就会累加（上一节的例子可以看到），当累加到某个我们预设的临界值时，我们就认为是坏消息（也叫死信，`DeadLetter`，无法投递的消息），由于有了判定条件，我们将坏消息处理掉即可，删除即可
 ### 7. 关于key键
 - `key`的类型对应`value`的类型，使用`type key`命令查看类型
 - 可以使用空字符串作为`key`值，`set "" value`，但不建议
