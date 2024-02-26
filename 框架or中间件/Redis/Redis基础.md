@@ -7,7 +7,6 @@
 
 也可以将`redis`安装目录添加至用户环境变量或者系统环境变量，直接使用`redis-server.exe`命令启动`redis`
 打开`redis-cli.exe`使用`ping`命令查看返回是否为`pong`，确定客户端与服务端是否成功连接
-
 ## 2. 常用数据类型
 ### 1. string
 `string`字符串为一组字节，具有**二进制安全**特性：只关心二进制化的字符串，不关心具体的字符串格式，严格的按照二进制的数据存取
@@ -65,7 +64,6 @@ struct sdshdr{
 | decr key | 将 key 所存储的整数值减 1 |
 | decrby key decrement | 将 key 所储存的值减去给定的递减值（decrement） |
 | append key value | 该命令将 value 追加到 key 所存储值的末尾 |
-
 ### 2. hash
 `hash`散列是由字符串类型的`field`和`value`组成的映射表，可以理解为由一个散列表名称与表中多个键值对组成，一般`hash`类型用来存储对象
 ```
@@ -100,7 +98,6 @@ hgetall user
 | hsetnx key field value | 仅当字段 field 不存在时，设置哈希表字段的值 |
 | hvals key | 用于获取哈希表中的所有值 |
 | hscan key cursor | 迭代哈希表中的所有键值对，cursor 表示游标，默认为 0 |
-
 ### 3. list
 `list`为有序可重复的字符串列表
 `list`中的元素都为字符串类型，其中的元素按照插入顺序进行排列，允许重复元素出现
@@ -126,7 +123,7 @@ lrange class 0 4
 `list`命令格式
 
 | 命令 | 说明 |
-| ----- | ----- |
+| ---- | ---- |
 | lpush key value1 \[value2\] | 在列表头部插入一个或者多个值 |
 | lrange key start stop | 获取列表指定范围内的元素 |
 | rpush key value1 \[value2\] | 在列表尾部添加一个或多个值 |
@@ -144,7 +141,6 @@ lrange class 0 4
 | blpop key1 \[key2...\] timeout | 用于删除并返回列表中的第一个元素（头部操作），如果列表中没有元素，就会发生阻塞，直到列表等待超时或发现可弹出元素为止 |
 | brpop key1 \[key2...\] timeout | 用于删除并返回列表中的最后一个元素（尾部操作），如果列表中没有元素，就会发生阻塞， 直到列表等待超时或发现可弹出元素为止 |
 | brpoplpush source destination timeout | 从列表中取出最后一个元素，并插入到另一个列表的头部。如果列表中没有元素，就会发生阻塞，直到等待超时或发现可弹出元素时为止 |
-
 ### 4. set
 `set`为无序不可重复的字符串集合
 `set`中的元素都为字符串类型且具有唯一性不重复，其中的元素通过哈希映射表实现，因此无论添加、删除、查找，时间复杂度都为O(1)
@@ -167,7 +163,7 @@ smembers class
 `set`命令格式
 
 | 命令 | 说明 |
-| ----- | ----- |
+| ---- | ---- |
 | sadd key member1 \[member2\] | 向集合中添加一个或者多个元素，并且自动去重 |
 | scard key | 返回集合中元素的个数 |
 | sdiff key1 \[key2\] | 求两个或多个集合的差集 |
@@ -183,7 +179,6 @@ smembers class
 | sunion key1 \[key2\] | 求两个或者多个集合的并集 |
 | sunionstore destination key1 \[key2\] | 求两个或者多个集合的并集，并将结果保存到指定的集合中 |
 | sscan key cursor \[match pattern\] \[count count\] | 该命令用来迭代的集合中的元素 |
-
 ### 5. zset
 `zset`为有序不可重复的字符串集合
 `zset`中的元素都为字符串类型且具有唯一性不重复，其中的元素通过哈希映射表实现，因此无论添加、删除、查找，时间复杂度都为O(1)
@@ -229,10 +224,153 @@ zrange class 0 4
 | zscore key member | 返回有序集中，指定成员的分数值 |
 | zunionstore destination numkeys key \[key...\] | 求两个或多个有序集合的并集，并将返回结果存储在新的 key 中 |
 | zscan key cursor \[match pattern\] \[count count\] | 迭代有序集合中的元素（包括元素成员和元素分值） |
-
 ### 6. stream
+`stream`特点：
+1. 是可持久化的，可以保证数据不丢失
+2. 支持消息的多播、分组消费
+3. 支持消息的有序
 
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\stream内部原理.png" style="width:700px;height:500px;" />
 
+- 消费者组：`Consumer Group`,即使用`XGROUP CREATE`命令创建的，一个消费者组中可以存在多个消费者，这些消费者之间是竞争关系。
+    1. 同一条消息，只能被这个消费者组中的某个消费者获取
+    2. 多个消费者之间是相互独立的，互不干扰
+- 消费者：`Consumer`消费消息
+- `last_delivered_id`：这个id保证了在同一个消费者组中，一个消息只能被一个消费者获取。每当消费者组的某个消费者读取到了这个消息后，这个`last_delivered_id`的值会往后移动一位，保证消费者不会读取到重复的消息
+- `pending_ids`：记录了消费者读取到的消息`id`列表，但是这些消息可能还没有处理，如果认为某个消息处理，需要调用`ack`命令。这样就确保了某个消息一定会被执行一次
+- 消息内容：是一个键值对的格式
+- `Stream`中消息的`ID`：默认情况下，`ID`使用 `*` ，redis可以自动生成一个，格式为**时间戳-序列号**，也可以自己指定，一般使用默认生成的即可，且后生成的`id`号要比之前生成的大
+#### 1. 往stream末尾添加消息
+`xadd key [NOMKSTREAM] [MAXLEN|MINID [=|~] threshold [LIMIT count]] *|ID field value [field value ...]`
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\stream添加消息.png" style="width:700px;height:120px;" />
+```ruby
+# 向流添加数据
+127.0.0.1:6379> xadd stream-key * username zhangsan # 向stream-key这个流中增加一个 username 是zhangsan的数据 *表示自动生成id
+"1635999858912-0" # 返回的是ID
+127.0.0.1:6379> keys *
+1) "stream-key" # 可以看到stream自动创建了
+127.0.0.1:6379>
+
+# 向流添加数据但不自动创建流
+127.0.0.1:6379> xadd not-exists-stream nomkstream * username lisi # 因为指定了nomkstream参数，而not-exists-stream之前不存在，所以加入失败
+(nil)
+127.0.0.1:6379> keys *
+(empty array)
+127.0.0.1:6379>
+
+# 手动指定ID
+127.0.0.1:6379> xadd stream-key 1-1 username lisi # 此处id的值是自己传递的1-1,而不是使用*自动生成
+"1-1" # 返回的是id的值
+127.0.0.1:6379>
+```
+#### 2. 查看stream中的消息
+`xrange key start end [COUNT count]`
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\stream查看消息.png" style="width:700px;height:120px;" />
+```ruby
+# 查看所有数据
+127.0.0.1:6379> xrange stream-key - +
+1) 1) "1636003481706-0"
+   2) 1) "username"
+      2) "zhangsan"
+2) 1) "1636003481706-1"
+   2) 1) "username"
+      2) "lisi"
+3) 1) "1636003499055-0"
+   2) 1) "username"
+      2) "wangwu"
+127.0.0.1:6379>
+
+# 获取指定id范围闭区间内的数据
+127.0.0.1:6379> xrange stream-key 1636003481706-1 1636003499055-0
+1) 1) "1636003481706-1"
+   2) 1) "username"
+      2) "lisi"
+2) 1) "1636003499055-0"
+   2) 1) "username"
+      2) "wangwu"
+127.0.0.1:6379>
+
+# 获取指定id范围闭开间内的数据
+127.0.0.1:6379> xrange stream-key (1636003481706-0 (1636003499055-0
+1) 1) "1636003481706-1"
+   2) 1) "username"
+      2) "lisi"
+127.0.0.1:6379>
+
+# 获取固定条数
+127.0.0.1:6379> xrange stream-key - + count 1
+1) 1) "1636003481706-0"
+   2) 1) "username"
+      2) "zhangsan"
+127.0.0.1:6379>
+```
+#### 3. 删除stream中的消息
+`xdel key ID [ID ...]`
+```ruby
+127.0.0.1:6379> xdel stream-key 1636004183638-0
+(integer) 1 # 返回的是删除记录的数量
+127.0.0.1:6379> xrang stream -key - +
+127.0.0.1:6379> xrange stream-key - +
+1) 1) "1636004176924-0"
+   2) 1) "username"
+      2) "zhangsan"
+2) 1) "1636004189211-0"
+   2) 1) "username"
+      2) "wangwu"
+127.0.0.1:6379>
+```
+#### 4. 裁剪stream中的消息
+`xtrim key MAXLEN|MINID [=|~] threshold [LIMIT count]`
+```ruby
+127.0.0.1:6379> xtrim stream-key maxlen 2 # 保留最后的2个消息
+(integer) 2
+127.0.0.1:6379> xrange stream-key - + # 可以看到之前加入的2个消息被删除了
+1) 1) "1636009763955-1"
+   2) 1) "username"
+      2) "wangwu"
+2) 1) "1636009769625-0"
+   2) 1) "username"
+      2) "zhaoliu"
+127.0.0.1:6379>
+```
+#### 5. 独立消费stream中的消息
+`xread [COUNT count] [BLOCK milliseconds] STREAMS key [key ...] ID [ID ...]`
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\stream独立消费.png" style="width:700px;height:150px;" />
+```ruby
+127.0.0.1:6379> xread count 2 streams stream-key 0-0
+1) 1) "stream-key"
+   2) 1) 1) "1636011801365-0"
+         2) 1) "username"
+            2) "zhangsan"
+      2) 1) "1636011806261-0"
+         2) 1) "username"
+            2) "lisi"
+127.0.0.1:6379>
+```
+#### 6. 消费者组
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\stream消费者组.png" style="width:700px;height:450px;" />
+```ruby
+xgroup create stream-key(Stream 名) g1(消费者组名) 0-0(表示从头开始消费)
+xgroup create stream-key g2 $
+xgroup create stream-key g3 1636362619125-0  #1636362619125-0 这个是上方aa消息的id的值
+
+127.0.0.1:6379> xreadgroup group g1(消费组名) c1(消费者名，自动创建) count 3(读取3条) streams stream-key(Stream 名) >(从该消费者组中还未分配给另外的消费者的消息开始读取)
+1) 1) "stream-key"
+   2) 1) 1) "1636362619125-0"
+         2) 1) "aa"
+            2) "aa"
+      2) 1) "1636362623191-0"
+         2) 1) "bb"
+            2) "bb"
+127.0.0.1:6379> xreadgroup group g2 c1 count 3 streams stream-key >
+(nil) # 返回 nil 是因为 g2消费组是从最新的一条信息开始读取(创建消费者组时使用了$)，需要在另外的窗口执行`xadd`命令，才可以再次读取到消息
+127.0.0.1:6379> xreadgroup group g3 c1 count 3 streams stream-key >  #只读取到一条消息是因为，在创建消费者组时，指定了aa消息的id，bb消息的id大于aa,所以读取出来了。
+1) 1) "stream-key"
+   2) 1) 1) "1636362623191-0"
+         2) 1) "bb"
+            2) "bb"
+127.0.0.1:6379>
+```
 ### 7. 关于key键
 - `key`的类型对应`value`的类型，使用`type key`命令查看类型
 - 可以使用空字符串作为`key`值，`set "" value`，但不建议
@@ -243,7 +381,7 @@ zrange class 0 4
 - 关于`key`的命令格式
 
 | 命令 | 说明 |
-| ----- | ----- |
+| ---- | ---- |
 | del key | 若键存在的情况下，该命令用于删除键 |
 | dump key | 用于序列化给定 key ，并返回被序列化的值 |
 | exists key | 用于检查键是否存在，若存在则返回 1，否则返回 0 |
@@ -258,10 +396,9 @@ zrange class 0 4
 | ttl key | 用于检查 key 还剩多长时间过期，以秒为单位 |
 | randomkey | 从当前数据库中随机返回一个 key |
 | rename key newkey | 修改 key 的名称 |
-| renamenx key newkey| 如果新键名不重复，则将 key 修改为 newkey |
+| renamenx key newkey | 如果新键名不重复，则将 key 修改为 newkey |
 | scan cursor | 基于游标的迭代器，用于迭代数据库中存在的所有键，cursor 指的是迭代游标 |
 | type key | 该命令用于获取 value 的数据类型 |
-
 ## 3. 配置文件
 使用`config`可以查看或者更改`redis`的相关配置信息：
 - `redis 127.0.0.1:6379> config get 配置名称`
@@ -292,7 +429,6 @@ zrange class 0 4
 | maxmemory \<bytes\> | 最大内存限制配置项 | 指定 Redis 最大内存限制，Redis 在启动时会把数据加载到内存中，达到最大内存后，Redis 会尝试清除已到期或即将到期的 Key，当此方法处理 后，若仍然到达最大内存设置，将无法再进行写入操作，但可以进行读取操作 |
 | appendfilename | appendonly.aof | 指定 AOF 持久化时保存数据的文件名，默认为 appendonly.aof |
 | glueoutputbuf | yes | 设置向客户端应答时，是否把较小的包合并为一个包发送，默认开启状态 |
-
 ## 4. 常用命令
 ```
 客户端远程连接
@@ -332,7 +468,6 @@ client reply 控制发送当前连接的回复，on|off|skip
 服务端命令
 太多了...
 ```
-
 ## 5. 发布与订阅
 `redis pubsub`又称发布订阅模式，即`publish/subscribe`，实现消息传递与多播功能。发布者`publisher`发布消息，订阅者`subscriber`订阅消息。用来传递消息的链路称为`channel`，一个客户端可以订阅任意数量的`channel`
 
@@ -367,12 +502,10 @@ Reading messages... (press Ctrl-C to quit)
 | punsubscribe \[pattern \[pattern...\]\] | 退订所有指定模式的频道 |
 | subscribe channel \[channel...\] | 订阅一个或者多个频道的消息 |
 | unsubscribe \[channel \[channel...\]\] | 退订指定的频道 |
-
 ## 6. 命名空间
 `redis`进行数据缓存，可以对多个键值对使用**命名空间**进行分类，以命名空间开头的方式存储数据，使不同类型的数据统一到一个命名空间下
 - 键值以`namespace:key`命名，则在库中创建了一个以`namespace`命名的文件夹，文件夹下存在多个`key`
 - 键值以`namespace::key`命名，则在库中创建了一个以`namespace`命名的文件夹，该文件夹下还存在一个无名文件夹，而无名文件夹下才存在多个`key`
-
 ## 7. Springboot+Redis整合
 ### 1. 使用Jedis
 ```xml
@@ -583,7 +716,6 @@ public class RedisUtil {
     }
 }
 ```
-
 ### 2. 使用SpringBoot中自带的redisTemplate
 ```xml
 <!-- springboot整合redis -->  
@@ -1235,7 +1367,6 @@ public final class RedisUtil {
     }
 }
 ```
-
 ### 3. SpringCache整合redis
 ```xml
 <!-- 使用spring cache -->
@@ -1397,7 +1528,6 @@ public class UserService {
 |**`@CachePut`**|标记该注解的方法总会执行，根据注解的配置将结果缓存|
 |**`@Caching`**|可以指定相同类型的多个缓存注解，例如根据不同的条件|
 |**`@CacheConfig`**|类级别注解，可以设置一些共通的配置，**`@CacheConfig(cacheNames="user")`**, 代表该类下的方法均使用这个`cacheNames`|
-
 #### 1. `@Cacheable`
 将方法结果缓存，必须指定一个`cacheName`缓存空间
 ```java

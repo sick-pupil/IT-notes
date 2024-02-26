@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "e5805db185028ad0",
+        "id": "a80cc78d87df4493",
         "type": "tabs",
         "children": [
           {
-            "id": "df1dcc36b33bd6ef",
+            "id": "a4a04939d17e02a9",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "设计模式/观察者.md",
+                "file": "框架or中间件/Redis/Redis基础.md",
                 "mode": "source",
                 "source": false
               }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "设计模式/观察者.md",
+                "file": "框架or中间件/Redis/Redis基础.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "设计模式/观察者.md",
+                "file": "框架or中间件/Redis/Redis基础.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "设计模式/观察者.md"
+                "file": "框架or中间件/Redis/Redis基础.md"
               }
             }
           },
@@ -158,11 +158,25 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "df1dcc36b33bd6ef",
+  "active": "a4a04939d17e02a9",
   "lastOpenFiles": [
-    "设计模式/工厂.md",
+    "框架or中间件/Redis/img/stream消费者组.png",
+    "框架or中间件/Redis/img/stream消费者组.png.crdownload",
+    "框架or中间件/Redis/img/stream独立消费.png",
+    "框架or中间件/Redis/img/stream独立消费.png.crdownload",
+    "框架or中间件/Redis/img/stream查看消息.png",
+    "框架or中间件/Redis/img/stream查看消息.png.crdownload",
+    "框架or中间件/Redis/img/stream添加消息.png",
+    "框架or中间件/Redis/~$edis进阶.docx",
+    "框架or中间件/Redis/img/添加消息.png",
+    "框架or中间件/Redis/img/添加消息.png.crdownload",
+    "框架or中间件/Redis/img/stream内部原理.png",
+    "框架or中间件/Redis/img/stream内部原理.png.crdownload",
+    "框架or中间件/Redis/Redis进阶.md",
+    "框架or中间件/Redis/Redis基础.md",
     "Java/IO/BIO&NIO&AIO.md",
     "设计模式/观察者.md",
+    "设计模式/工厂.md",
     "设计模式/适配器.md",
     "设计模式/装饰器.md",
     "Java/并发/锁.md",
@@ -187,25 +201,11 @@
     "Java/JVM/垃圾收集器与内存分配策略.md",
     "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
     "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
-    "框架or中间件/SpringMVC/SpringMVC相关概念.md",
-    "框架or中间件/SpringMVC/SpringMVC配置与原理.md",
-    "框架or中间件/Spring/数据与事务.md",
     "框架or中间件/Spring/img/FactoryBean调用getObject流程.png",
     "框架or中间件/Spring/img/FactoryBean调用getObject流程.png.crdownload",
     "框架or中间件/Redis/img/redisson分布式锁原理流程.png",
     "框架or中间件/Redis/img/redisson分布式锁原理流程.png.crdownload",
-    "框架or中间件/Redis/~$edis进阶.docx",
-    "Java/并发/img/Thread、ThreadLocalMap、ThreadLocal.png",
     "Java/并发/img/Thread、ThreadLocalMap、ThreadLocal.png.crdownload",
-    "Python/img/Thread调用过程.png",
-    "Python/img/Thread调用过程.png.crdownload",
-    "Python/img/Scrapy整体架构.png",
-    "TypeScript",
-    "框架or中间件/CDC",
-    "ES6",
-    "TypeScript",
-    "Vue3/img/Pinia Store变量.png",
-    "Vue3/img/插槽.png",
     "未命名.canvas"
   ]
 }

@@ -18,6 +18,10 @@
 ## 1. BIO
 <img src="D:\Project\IT-notes\Java\IO\img\BIO模型.png" style="width:700px;height:350px;" />
 
+`Java BIO`：服务器实现模式为一个连接一个线程，即客户端有连接请求时服务器端就需要启动一个线程进行处理
+
+虽然此时服务器具备了高并发能力，即能够同时处理多个客户端请求了，但是却带来了一个问题，随着开启的线程数目增多，将会消耗过多的内存资源，导致服务器变慢甚至崩溃，`NIO`可以一定程度解决这个问题
+
 `BIOClient`
 ```java
 package io_learn.BIO;
@@ -78,6 +82,10 @@ public class BIOServer {
 <img src="D:\Project\IT-notes\Java\IO\img\NIO模型.png" style="width:700px;height:250px;" />
 
 <img src="D:\Project\IT-notes\Java\IO\img\buffer数据流程.png" style="width:700px;height:500px;" />
+
+`Java NIO`：同步非阻塞，服务器实现模式为一个线程处理多个请求（连接），即客户端发送的连接请求都会注册到多路复用器上，多路复用器轮询到连接有`I/O`请求就进行处理
+
+一个线程中就可以调用多路复用接口，`java中是select`，阻塞同时监听来自多个客户端的`IO`请求，一旦有收到`IO`请求就调用对应函数处理，`NIO`擅长1个线程管理多条连接，节约系统资源
 
 特点：
 1. 每个`channel`对应一个`buffer`
