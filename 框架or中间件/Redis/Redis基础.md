@@ -240,6 +240,24 @@ zrange class 0 4
 - `pending_ids`：记录了消费者读取到的消息`id`列表，但是这些消息可能还没有处理，如果认为某个消息处理，需要调用`ack`命令。这样就确保了某个消息一定会被执行一次
 - 消息内容：是一个键值对的格式
 - `Stream`中消息的`ID`：默认情况下，`ID`使用 `*` ，redis可以自动生成一个，格式为**时间戳-序列号**，也可以自己指定，一般使用默认生成的即可，且后生成的`id`号要比之前生成的大
+
+`stream`命令：
+- `XADD`：向流中添加新的消息
+- `XREAD`：从流中读取消息
+- `XREADGROUP`：从消费组中读取消息
+- `XRANGE`：根据消息`ID`范围读取流中的消息
+- `XREVRANGE`：与`XRANGE`类似，但以相反顺序返回结果
+- `XDEL`：从流中删除消息
+- `XTRIM`：修剪流的长度，可以指定修建策略（`MAXLEN` ／ `MINID` ）
+- `XLEN`：获取流的长度
+- `XGROUP CREATE`：创建消费者组
+- `XGROUP DESTROY`：删除消费者组
+- `XGROUP DELCONSUMER`：从消费者组中删除一个消费者
+- `XGROUPSETID`：为消费者组设置新的最后递送消息`ID`
+- `XACK`：确认消费组中的消息已被处理
+- `XPENDING`：查询消费组中挂起（未确认）的消息
+- `XCLAIM`：将挂起的消息从一个消费者转移到另一个消费者
+- `XINFO`：获取流`（XINFO STREAM）`、消费组`（XINFO GROUPS）`或消费者`（XINFO CONSUMERS）`的详细信息
 #### 1. 往stream末尾添加消息
 `xadd key [NOMKSTREAM] [MAXLEN|MINID [=|~] threshold [LIMIT count]] *|ID field value [field value ...]`
 <img src="D:\Project\IT-notes\框架or中间件\Redis\img\stream添加消息.png" style="width:700px;height:120px;" />
