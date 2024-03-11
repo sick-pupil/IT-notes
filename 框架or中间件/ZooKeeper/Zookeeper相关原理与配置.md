@@ -34,7 +34,7 @@ Zookeeper中存在三种角色：
 		2. 当Leader挂了，需要经过投票选举成为新Leader，Leader重新选举由Follower们投票决定
 		3. 向Leader发送消息与请求
 		4. 处理Leader发来的消息与请求
-- Observer：为了在Zookeeper集群中Follower越来越多导致写性能越来越差的情况下提高写性能而存在
+- Observer：为了在Zookeeper集群中Follower越来越多导致写性能越来越差的情况下（Follower越来越多，集群的写操作需要得到越来越多的Follower的写操作确认再进行整个集群的写操作commit）提高读性能而存在
 	- 负责：
 		1. 与Leader同步数据
 		2. 不参与Leader选举，也没有投票权，也不参与写操作的提议过程
@@ -164,6 +164,14 @@ Zookeeper节点中的四种状态：
 3. `Epoch`：每个Leader任期的代号。没有Leader时同一轮投票过程中的逻辑时钟值是相同的。每投完一次票这个数据就会增加
 
 #### 2. Zookeeper非第一次选举
+`SID`：服务器`ID`。用来唯一标识一台`ZooKeeper`集群中的机器，每台机器不能重复，和`myid`一致
+`ZXID`：事务`ID`。`ZXID`是一个事务`ID`，用来标识一次服务器状态的变更。在某一时刻，集群中的每台机器的`ZXID`值不一定完全一致，这和`ZooKeeper`服务器对于客户端“更新请求”的处理逻辑有关
+`Epoch`：每个`Leader`任期的代号。没有`Leader`时同一轮投票过程中的逻辑时钟值是相同的。每投完一次票这个数据就会增加
+`LOOKING`：选举中，正在寻找`Leader`
+`FOLLOWING`：随从状态，同步`leader`状态，参与投票
+`Leader`：领导者，差不多是`master`，在`zookeeper`中只有`leader`才有写的权限，`following`只有读的权限
+`OBSERVING`：观察者状态，不同`leader`状态，不参与投票
+
 1. 集群中本来就已经存在一个Leader，会被告知当前服务器的Leader信息，对于该机器来说，仅仅需要和Leader机器建立连接，并进行状态同步即可
 2. 集群中确实不存在Leader，根据每台服务器中（EPOCH，ZXID，SID）三维信息对比得出Leader：先比较EPOCH，谁大谁胜出；若EPOCH都相同，则比较ZXID谁大；最后比较myid
 
@@ -198,8 +206,27 @@ Zookeeper节点中的四种状态：
 - 根据单调递增的序号
 	1. 不带序号
 	2. 带序号：在命名末尾会加上诸如`001 002`等序号
+## 6. ACL权限限制
+在`Zookeeper`中，提供了`ACL`权限机制来保障节点及对应数据的安全，但是需要注意的是`Zookeeper`中的`ACL`机制和传统的`ACL`并不一样，分别分为：**权限模式(Scheme)、授权对象(ID)和权限(Permission)**，通常是以**Scheme:ID:Permission**方式组合成一个有效的`ACL`信息
 
-## 6. 客户端命令
+权限模式在`Zookeeper`中来确定权限验证过程中的校验策略：
+1. `IP`，**ip:192.168.1.1/24**
+2. `Digest`，账号名密码
+	`setAcl /runoob/child auth:user1:123456:cdrwa`
+	`addauth digest user1:123456`
+	`setAcl /runoob/child auth:user1:123456:cdrwa`
+	`getAcl /runoob/child`
+	
+	`ls /runoob`
+	`create /runoob/child01 runoob`
+	`getAcl /runoob/child01`
+	`setAcl /runoob/child01 digest:user1:HYGa7IZRm2PUBFiFFu8xY2pPP/s=:cdra`
+	`getAcl /runoob/child01`
+	`addauth digest user1:123456`
+	`getAcl /runoob/child01`
+3. `World`：默认权限，开放式权限
+4. `Super`
+## 7. 客户端命令
 | 操作      | 说明 |
 | ----------- | ----------- |
 | get \[\-w\] \[\-s\] path      | -w为可选参数，表示是否注册监听。若添加该参数，则其他客户端修改节点数据后，当前客户端可收到数据变更通知|
@@ -217,7 +244,7 @@ Zookeeper节点中的四种状态：
 | Setquota \-n\|\-b val path   | 设置节点个数以及数据长度的配额        |
 | delquota \[\-n\|\-b\] path   | 删除配额，\-n为子节点个数，\-b为节点数据长度        |
 
-## 7. 监听器
+## 8. 监听器
 1. 首先有个Main方法  
 2. 在main线程中，创建Zookeeper客户端；这时就会创建两个线程，一个负责网络连接通信（connect），一个负责监听（listener）  
 3. 通过connect线程将注册监听的事件发送给Zookeeper
@@ -232,7 +259,7 @@ get -s path注册一次监听器，只会监听一次数据变化
 ### 2. ls path \[watch\]监听子节点增减变化
 <img src="D:\Project\IT-notes\框架or中间件\ZooKeeper\img\ls -w监听.png" style="width:600px;height:100px;" />
 
-## 8. 客户端API
+## 9. 客户端API
 ```xml
 <dependency>
 	<groupId>org.apache.zookeeper</groupId>
@@ -336,7 +363,7 @@ public class ZKCreate {
 }
 ```
 
-## 9. 写数据
+## 10. 写数据
 写入数据的请求可以发送给Zookeeper集群中的Leader Server或者Follower Server，而这两种发送方式中处理写请求的方式是不一样的
 
 - 当写入请求直接发送到Leader节点：
@@ -354,7 +381,7 @@ public class ZKCreate {
 	5. 当Leader接收到一半以上节点(包含自己)返回写成功的信息之后，返回写入成功消息给原来的Follower
 	6. 原来的Follower返回写入成功消息给Client
 
-## 10. 服务器动态上下线
+## 11. 服务器动态上下线
 
 **使用DistributedServer新建若干个有序短暂节点，随后新建一个DistributedClient对server目录中的子节点进行监听；随后无论是再使用DistributedServer新建节点，还是通过杀掉DistributedServer进程删除节点，DistributedClient都会监听到变化**
 
@@ -505,8 +532,15 @@ public class DistributedClient {
 	}
 }
 ```
-
-## 11. 分布式锁
+## 12. 数据发布订阅
+**客户端向服务端注册需要订阅的节点，而订阅则会使得客户端本地存在一个回调通知机制(watch)，一旦服务端发现这个节点有数据变更，就去主动的将变更的信息推送给每一个客户端，触发客户端的watch机制**
+1. 配置存储
+在进行配置存储之前，我们需要在`zk`上创建一个节点，用来初始化阶段将数据存储进去，例如`/app1/database_config`节点，然后将需要管理的配置信息写入
+2. 配置获取
+分布式集群环境中的每台机器在工程初始化的时候，都会去`zk`上初始化一个配置信息，并且向该节点注册一个`watch`，一旦该节点的数据发生了变更，所有的客户端都会获取到数据变更的通知
+3. 配置变更
+在分布式系统运行的过程中，可能会出现配置修改的情况，这个时候就需要将`zk`上该节点的配置进行更新，当我们触发完修改操作后，`zk`的服务端就会将此变化发送给所有的客户端，当客户端收到通知以后，则可以重新进行最新数据的获取
+## 13. 分布式锁
 ```java
 // zk实现分布式锁
 public class DisLockTest {
@@ -680,8 +714,26 @@ public class DisClient {
     }
 }
 ```
+## 14. 分布式读写锁
+### 1. 排他锁
+排他锁又称写锁或者独占锁，是一种基本的锁类型。如果对客户端对数据对象`O1`添加了排他锁，那么在整个持有锁的过程中，只允许当前客户端对`O1`进行读取和更新操作。在`zk`中，我们可以通过节点来标识一个锁，例如`/exclusive_lock/lock`节点被定义为一个锁
 
-## 12. curator
+在获取排他锁的时候，所有的客户端都会试图通过`create()`方法去在`/exclusive_lock`下面创建临时节点`/lock`，而`zk`的创建方法最终能保证只有一个客户端创建成功，此客户端则认为成功获取到了锁，其他客户端创建失败以后，则可以选择注册一个`watch`监听。我们创建的锁节点属于临时节点，因此在以下两种情况下，都有可能被释放
+1. 由于临时节点的特性，不会进行持久化保存，而是和当前连接的`session`关联，因此当服务器出现宕机的情况下会被释放
+2. 在创建临时节点成功后，客户端执行需要处理的业务操作完毕后，主动调用临时节点的删除操作
+### 2. 共享锁
+读锁，即如果当前资源`O1`被挂载了共享锁，那么其他的客户端只能对当前的资源`O1`进行读取的操作，而不是进行更新操作，但是当前资源可以同时挂载多个共享锁，如果想要更新当前资源，则需要挂载的共享锁全部释放。与排他锁不同的是，排他锁仅仅对一个客户端可见，而共享锁则是可以对多个客户端同时可见
+
+同样可以使用`zk`的临时节点来实现共享锁操作，我们指定一个节点`/sharedlock`为共享锁的节点，而每个客户端则是在当前节点下创建临时顺序节点，例如`/shared****lock/192.168.1.1-R-000000001`，节点名称规则为`/shared_lock/ip-`读写类型-临时节点序号
+
+当所有的客户端都创建完属于自己类型的共享锁后，我们则需要进行读写规则判断，确定当前各个客户端对资源的操作属于读还是写操作
+1. 每个客户端都在当前节点下创建对应规则类型的临时顺序节点，并且对该节点注册一个子节点变更的`watch`监听
+2. 当创建节点成功以后，每个客户端需要判断创建的节点在所有的子节点中的顺序
+3. 并且判断在当前节点的类型的操作
+	- 如果是读请求的节点，在此之前的所有的子节点类型都是读类型的，那么当前客户端也可以执行读操作；如果之前的节点有写请求类型，那么在写请求之后的所有客户端都需要进行等待写操作完成
+	- 如果当前的节点是写请求操作，那么除非当前节点在第一个，否则进入等待
+4.当接收到`watch`通知操作后，每个客户端都会重复创建`watch`监听操作
+## 15. curator
 ```xml
 <dependency>
 	<groupId>org.apache.curator</groupId>
@@ -867,11 +919,8 @@ public static void treeCache() throws Exception {
 
 可重入读写锁
 `InterProcessReadWriteLock InterProcessLock`
-
-
-## 13. 相关算法理论
+## 16. 相关算法理论
 Zookeeper使用多种算法协议保证实现分布式中的一致性
-
 ### 1. Paxos算法
 为快速正确地在一个分布式系统中对某个数据值达成一致，并且保证不论发生任何异常，都不会破坏整个系统的一致性
 

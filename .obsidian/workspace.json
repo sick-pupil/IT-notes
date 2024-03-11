@@ -13,8 +13,8 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "框架or中间件/Redis/Redis基础.md",
-                "mode": "source",
+                "file": "框架or中间件/ZooKeeper/Zookeeper相关原理与配置.md",
+                "mode": "preview",
                 "source": false
               }
             }
@@ -69,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 292.5,
-    "collapsed": true
+    "width": 292.5
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -97,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/Redis/Redis基础.md",
+                "file": "框架or中间件/ZooKeeper/Zookeeper相关原理与配置.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/Redis/Redis基础.md",
+                "file": "框架or中间件/ZooKeeper/Zookeeper相关原理与配置.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/Redis/Redis基础.md"
+                "file": "框架or中间件/ZooKeeper/Zookeeper相关原理与配置.md"
               }
             }
           },
@@ -147,7 +146,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 311.5
+    "width": 311.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -161,6 +161,14 @@
   },
   "active": "a4a04939d17e02a9",
   "lastOpenFiles": [
+    "框架or中间件/Mysql/Mysql进阶.md",
+    "框架or中间件/Mysql/Mysql基础.md",
+    "框架or中间件/Redis/Redis进阶.md",
+    "框架or中间件/ZooKeeper/Zookeeper相关原理与配置.md",
+    "Python/Python基础.md",
+    "设计模式/工厂.md",
+    "框架or中间件/Minio/Minio概念与应用.md",
+    "框架or中间件/Redis/Redis基础.md",
     "框架or中间件/Redis/img/stream消费者组.png",
     "框架or中间件/Redis/img/stream消费者组.png.crdownload",
     "框架or中间件/Redis/img/stream独立消费.png",
@@ -173,11 +181,8 @@
     "框架or中间件/Redis/img/添加消息.png.crdownload",
     "框架or中间件/Redis/img/stream内部原理.png",
     "框架or中间件/Redis/img/stream内部原理.png.crdownload",
-    "框架or中间件/Redis/Redis进阶.md",
-    "框架or中间件/Redis/Redis基础.md",
     "Java/IO/BIO&NIO&AIO.md",
     "设计模式/观察者.md",
-    "设计模式/工厂.md",
     "设计模式/适配器.md",
     "设计模式/装饰器.md",
     "Java/并发/锁.md",
@@ -198,13 +203,8 @@
     "操作系统/Pasted image 20240128210354.png",
     "操作系统/Pasted image 20240128210338.png",
     "操作系统/Pasted image 20240128210332.png",
-    "Java/JVM/Java内存区域与内存溢出异常.md",
-    "Java/JVM/垃圾收集器与内存分配策略.md",
-    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
-    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
     "框架or中间件/Spring/img/FactoryBean调用getObject流程.png",
     "框架or中间件/Spring/img/FactoryBean调用getObject流程.png.crdownload",
-    "框架or中间件/Redis/img/redisson分布式锁原理流程.png",
     "框架or中间件/Redis/img/redisson分布式锁原理流程.png.crdownload",
     "Java/并发/img/Thread、ThreadLocalMap、ThreadLocal.png.crdownload",
     "未命名.canvas"
