@@ -52,8 +52,15 @@ private static BeanDefinition parse(Element element, ParserContext parserContext
 3. `DubboNameSpaceHandler`名称空间处理器会创建dubbo标签解析器`DubboBeanDefinitionParser`
 4. 标签解析器`DubboBeanDefinitionParser`会解析Dubbo每个标签，每个标签都会解析出一个Config类与标签一一对应
 5. 标签解析出对应类时，存在`<dubbo:service>`标签解析出`ServiceBean`，`ServiceBean`解析的过程涉及到服务暴漏的过程
-
 ## 3. 服务暴漏
+<img src="D:\Project\IT-notes\框架or中间件\Dubbo\img\dubbo服务暴露.png" style="width:700px;height:500px;" />
+
+1. 通过ServiceConfig解析标签，创建dubbo标签解析器来**解析dubbo的标签**，容器创建完成之后，**触发ContextRefreshEvent事件回调开始暴露服务**
+2. 通过proxyFactory.getInvoker方法，并利用**javassist或DdkProxyFactory来进行动态代理**，将服务暴露接口**封装成invoke**r对象，里面包含了需要执行的方法的对象信息和具体的URL地址。
+3. 再通过DubboProtocol的实现把包装后的**invoker转换成exporter**，
+4. 然后**启动服务器server**，监听端口
+5. 最后RegistryProtocol保存URL地址和invoker的映射关系，同时**注册到服务中心**
+
 <img src="D:\Project\IT-notes\框架or中间件\Dubbo\img\服务暴露.png" style="width:700px;height:350px;" />
 
 `ServiceBean`实现了两个重要机制：
@@ -232,8 +239,13 @@ public class ProviderConsumerRegTable {
 	}
 }
 ```
-
 ## 4. 获取服务引用
+<img src="D:\Project\IT-notes\框架or中间件\Dubbo\img\dubbo服务引用.png" style="width:700px;height:100px;" />
+
+1. 首先客户端根据config文件信息从注册中心**订阅服务**，首次会全量**缓存到本地**，后续的更新会监听动态更新到本地
+2. 之后DubboProtocol**根据provider**的地址和接口信息**连接到服务端**server，**开启客户端clien**t，然后创建invoker
+3. 之后通过invoker为服务接口**生成代理对象**，这个代理对象用于远程调用provider，至此完成了服务引用
+
 <img src="D:\Project\IT-notes\框架or中间件\Dubbo\img\服务引用.png" style="width:700px;height:350px;" />
 
 在解析Dubbo配置文件生成`ServiceBean`的同时，也会由<dubbo:reference>标签生成`ReferenceBean`
@@ -305,6 +317,24 @@ public <T> Invoker<T> refer(Class<T> serviceType, URL url) throws RpcException {
 ```
 
 ## 5. 服务调用
+<img src="D:\Project\IT-notes\框架or中间件\Dubbo\img\dubbo调用过程.png" style="width:700px;height:400px;" />
+
+1. Proxy持有一个Invoker对象，**使用Invoker调用**
+2. 之后通过**Cluster进行负载容错**，失败重试
+3. 调用Directory**获取远程服务的Invoker**列表
+4. 负载均衡
+    - 用户**配置了路由规则**，则根据路由规则过滤获取到的Invoker列表
+    - 用户没**有配置路由规则或配置路由后还有很多节点**，则使用LoadBalance方法做负载均衡，选用一个可以调用的Invoker
+5. **经过一个一个过滤器链**，通常是处理上下文、限流、计数等。
+6. 会**使用Client做数据传输**
+7. **私有化协议的构造**(Codec)
+8. 进行**序列化**
+9. 服务端收到这个Request请求，将其**分配到ThreadPool**中进行处理
+10. **Server来处理这些Request**
+11. 根据**请求查找对应的Exporter**
+12. 之后**经过**一个服务提供者端的**过滤器链**
+13. 然后找到接口实现并**真正的调用**，将请求结果返回
+
 <img src="D:\Project\IT-notes\框架or中间件\Dubbo\img\服务调用流程.png" style="width:700px;height:600px;" />
 
 ```java
