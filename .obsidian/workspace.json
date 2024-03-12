@@ -4,17 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "a80cc78d87df4493",
+        "id": "5e2acac23e30beb2",
         "type": "tabs",
         "children": [
           {
-            "id": "a4a04939d17e02a9",
+            "id": "2f9a66e68389ce2f",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "框架or中间件/Dubbo/Dubbo原理.md",
-                "mode": "preview",
+                "file": "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
+                "mode": "source",
                 "source": false
               }
             }
@@ -97,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/Dubbo/Dubbo原理.md",
+                "file": "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/Dubbo/Dubbo原理.md",
+                "file": "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/Dubbo/Dubbo原理.md"
+                "file": "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md"
               }
             }
           },
@@ -147,7 +147,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 311.5
+    "width": 311.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -159,8 +160,14 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "a4a04939d17e02a9",
+  "active": "2f9a66e68389ce2f",
   "lastOpenFiles": [
+    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+    "框架or中间件/Docker/Docker概念与应用.md",
+    "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Sentinel.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Nacos.md",
+    "框架or中间件/Dubbo/Dubbo原理.md",
     "框架or中间件/Dubbo/img/dubbo服务引用.png",
     "框架or中间件/Dubbo/img/dubbo服务引用.png.crdownload",
     "框架or中间件/Dubbo/img/dubbo服务暴露.png",
@@ -200,13 +207,7 @@
     "Java/并发/并发编程基础.md",
     "Java/并发/并发工具类.md",
     "Java/并发/并发基础知识.md",
-    "Java/并发/并发容器与框架.md",
-    "Java/并发/原子操作类.md",
-    "Java/并发/Executor框架.md",
-    "Java/并发/异步.md",
-    "操作系统/虚拟内存.md",
     "操作系统/Pasted image 20240128210354.png",
-    "操作系统/Pasted image 20240128210338.png",
     "未命名.canvas"
   ]
 }

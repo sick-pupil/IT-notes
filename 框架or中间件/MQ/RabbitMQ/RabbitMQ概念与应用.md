@@ -1,4 +1,8 @@
-## 1. MQ工作类型
+## 1. 安装
+1. 安装`Erlang26`，配置环境变量`%ERLANG_HOME%\bin`
+2. 安装`RabbitMQ3.13`，进入`rabbitmq/sbin`并开启管理员`CMD`控制台，执行`rabbitmq-plugins enable rabbitmq_management`
+3. 设置`rabbitmq`服务
+## 2. MQ工作类型
 - 简单模式
 <img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\simple简单模式.png" style="width:300px;height:100px;" />
 - work工作模式
@@ -10,14 +14,15 @@
 - 主题模式
 <img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\主题模式.png" style="width:300px;height:100px;" />
 
-## 2. MQ四大概念
+## 3. MQ四大概念
 <img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\MQ工作原理.png" style="width:700px;height:300px;" />
+
 - 生产者：产生数据发送消息的程序
 - 消费者：消费与接收含义相似，消费者类似于等待接收消息的程序
 - 交换机：一方面接收来自生产者的消息，另一方面把接收到的消息推送到队列中
 - 队列：消息缓冲区，消息只能存储在队列中，多个生产者可以将消息发送到一个队列中，多个消费者可以尝试从一个队列中取出消息
 
-## 3. 简单使用
+## 4. 简单使用
 ```java
 package cn.buyforyou;
 
@@ -116,7 +121,7 @@ public class Recv {
 }
 ```
 
-## 4. Work工作队列
+## 5. Work工作队列
 **多线程消费者订阅队列**
 ```java
 public class RabbitMQUtils {
@@ -182,7 +187,7 @@ public class RabbitMQUtils {
 	connection.close();
 ```
 
-## 5. 消息应答
+## 6. 消息应答
 消费者完成一个任务可能需要一段时间，如果其中一个消费者处理一个长的任务并仅只完成了部分突然消费者挂掉，为了保证消息在发送过程中不丢失，`rabbitmq`引入消息应答机制，消息应答就是：消费者在接收到消息并且处理该消息之后，告诉`rabbitmq`消费者处理完成，`rabbitmq`给消息标记删除记录，并把消息删除
 
 - 自动应答：这种模式会在系统在**高吞吐量**与**数据传输安全**两方面做权衡，适用于消费者在某种速率下高校处理消息的情况使用
@@ -217,7 +222,7 @@ public class RabbitMQUtils {
 	channel.basicConsume(QUEUE_NAME,autoAck,deliverCallback，cancelCallback);
 ```
 
-## 6. 队列与消息持久化
+## 7. 队列与消息持久化
 默认情况下`RabbitMQ`退出或由于某种原因崩溃时，它忽视队列自动应答和消息，即消息队列在内存中丢失
 确保消息不会在内存丢失需要做两件事：我们需要将队列和消息都标记为持久化
 
@@ -344,13 +349,13 @@ MQ持久化包括三步：
 	}
 ```
 
-## 7. 消息分发与预取值
+## 8. 消息分发与预取值
 默认消息公平轮询分发，可以设置为不公平分发，消费者平均消费小心，通过**设置消费者的信道属性**`channel.basicQos(1)`
 默认轮询情况下预取为1；可以指定消息分发的时候，给消费者的预取值`prefetch：channel.basicQos(prefetch)`
 
 `channel.basicQos(prefetch)`可以理解为指定消费者能最多处理积压消费的消息个数
 
-## 8. 交换机
+## 9. 交换机
 `RabbitMQ`消息传递模型的核心思想是：生产者生产的消息从不会直接发送到队列。实际上，通常生产者甚至都不知道这些消息传递传递到了哪些队列中
 相反，生产者只能将消息发送到交换机`exchange`，交换机工作的内容非常简单，一方面它接收来自生产者的消息，另一方面将它们推入队列。交换机必须确切知道如何处理收到的消息：是应该把这些消息放到特定队列还是说把他们到许多队列中还是说应该丢弃它们，这都由交换机的类型来决定
 
@@ -468,7 +473,7 @@ MQ持久化包括三步：
 	}
 ```
 
-## 9. 死信队列
+## 10. 死信队列
 生产者把消息投递到交换机或者队列中，消费者从队列取出消息进行消费，**出于某些原因导致队列中某些消息无法被正常消费**，这些消息会经过后续处理变成死信拉入死信队列（如：保证订单业务消息处理不丢失把消息投入死信队列，下单成功然而支付超时订单自动失效把消息投入死信队列）
 
 死信来源：
@@ -553,7 +558,7 @@ public class Producer {
 }
 ```
 
-## 10. TTL延迟队列
+## 11. TTL延迟队列
 <img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\TTL延迟队列.png" style="width:700px;height:300px;" />
 ### 1. 基于死信的延迟队列
 ```xml
@@ -772,7 +777,7 @@ public class DelayQueueConsumer {
 }
 ```
 
-## 11. 发布确认高级
+## 12. 发布确认高级
 `rabbitmq`宕机造成生产者投递失败，消息丢失，需要手动处理和恢复
 
 ### 1. 回调接口
@@ -959,13 +964,13 @@ public class produceController {
 	
 ```
 
-## 12. 消息重复消费
+## 13. 消息重复消费
 **确保幂等性**
 ### 1. 唯一ID+指纹码机制
 
 ### 2. Redis SETNX原子性
 
-## 13. 优先级队列
+## 14. 优先级队列
 ```java
 //队列添加优先级
 Map<String, Object> params = new HashMap<>();
@@ -976,7 +981,7 @@ channel.queueDeclare("hello", true, false, false, params);
 AMQP.BasicProperties properties = new AMQP.BasicProperties().builder().priority(5).build();
 ```
 
-## 14. 惰性队列
+## 15. 惰性队列
 消息保存在磁盘中，存在default、lazy两种模式，应用场景是消息积压
 ```java
 Map<String, Object> args = new HashMap<String, Object>();
@@ -984,7 +989,7 @@ args.put("x-queue-mode", "lazy");
 channel.queueDeclare("myqueue", false, false, false, args);
 ```
 
-## 15. 集群
+## 16. 集群
 - 单机模式
 - 普通集群模式：**多台机器**上启动**多个rabbitmq实例**，**每个机器启动一个。**但是你创建的**queue**，只会放在**一个rabbtimq实例**上，但是**每个实例都同步queue的元数据(存放含queue数据的真正实例位置)**。消费的时候，实际上如果连接到了另外一个实例，那么那个实例会从queue所在实例上拉取数据过来
 - 镜像模式：创建的queue，无论元数据还是queue里的消息都会存在于多个实例上，然后每次你写消息到queue的时候，都会自动把消息到多个实例的queue里进行消息同步
