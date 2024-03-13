@@ -399,6 +399,54 @@ MQ持久化包括三步：
 	}
 ```
 
+```java
+private final static String FANOUT_EXCHANGE_NAME = "fanout-exchange";
+private final static String FANOUT_QUEUE1_NAME = "fanout-queue1";
+private final static String FANOUT_QUEUE2_NAME = "fanout-queue2";
+private final static String FANOUT_ROUTING_KEY = "";
+
+//Produce
+ConnectionFactory factory = new ConnectionFactory();  
+factory.setHost("localhost");  
+factory.setPort(5672);  
+factory.setUsername("guest");  
+factory.setPassword("guest");  
+  
+Connection connection = factory.newConnection();  
+Channel channel = connection.createChannel();  
+  
+channel.exchangeDeclare(FANOUT_EXCHANGE_NAME, BuiltinExchangeType.FANOUT);  
+channel.queueDeclare(FANOUT_QUEUE1_NAME, true, false, false, null);  
+channel.queueDeclare(FANOUT_QUEUE2_NAME, true, false, false, null);  
+channel.queueBind(FANOUT_QUEUE1_NAME, FANOUT_EXCHANGE_NAME, FANOUT_ROUTING_KEY);  
+channel.queueBind(FANOUT_QUEUE2_NAME, FANOUT_EXCHANGE_NAME, FANOUT_ROUTING_KEY);  
+  
+channel.basicPublish(FANOUT_EXCHANGE_NAME, FANOUT_ROUTING_KEY, MessageProperties.PERSISTENT_TEXT_PLAIN, getRandomString(10).getBytes());
+
+//Consume
+ConnectionFactory factory = new ConnectionFactory();  
+factory.setHost("localhost");  
+factory.setPort(5672);  
+factory.setUsername("guest");  
+factory.setPassword("guest");  
+  
+Connection connection = factory.newConnection();  
+Channel channel = connection.createChannel();  
+  
+DeliverCallback deliverCallback = (consumerTag, message) -> {  
+    log.info(consumerTag);  
+    log.info(new String(message.getBody()));  
+    log.info("消费成功");  
+};  
+  
+CancelCallback cancelCallback = consumerTag -> {  
+    log.info(consumerTag);  
+    log.info("消费被中断");  
+};  
+  
+channel.basicConsume(FANOUT_QUEUE1_NAME, true, deliverCallback, cancelCallback);  
+channel.basicConsume(FANOUT_QUEUE2_NAME, true, deliverCallback, cancelCallback);
+```
 ### 3. Direct直接路由Exchange
 <img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\direct单个绑定.png" style="width:500px;height:200px;" />
 <img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\direct多个绑定.png" style="width:500px;height:200px;" />
