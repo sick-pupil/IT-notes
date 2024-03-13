@@ -190,7 +190,7 @@ public class RabbitMQUtils {
 ## 6. 消息应答
 消费者完成一个任务可能需要一段时间，如果其中一个消费者处理一个长的任务并仅只完成了部分突然消费者挂掉，为了保证消息在发送过程中不丢失，`rabbitmq`引入消息应答机制，消息应答就是：消费者在接收到消息并且处理该消息之后，告诉`rabbitmq`消费者处理完成，`rabbitmq`给消息标记删除记录，并把消息删除
 
-- 自动应答：这种模式会在系统在**高吞吐量**与**数据传输安全**两方面做权衡，适用于消费者在某种速率下高校处理消息的情况使用
+- 自动应答：这种模式会在系统在**高吞吐量**与**数据传输安全**两方面做权衡，适用于消费者在某种速率下高效处理消息的情况使用
 - 手动应答：适用于复杂业务，可以批量应答一个信道上的若干消息并减少网络阻塞（但不建议批量，因为应答的消息不一定已经业务上处理成功）
 
 手动消息应答方式
@@ -369,6 +369,7 @@ MQ持久化包括三步：
 
 ### 2. Fanout扇出广播Exchange
 <img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\fanout广播.png" style="width:500px;height:200px;" />
+
 将消息广播到所路由到的所有队列，**`fanout`类型`exchange`会把同一个消息从交换机发给匹配到的所有队列**
 ```java
 	public static final String EXANGE_NAME = "logs";
@@ -401,6 +402,8 @@ MQ持久化包括三步：
 ### 3. Direct直接路由Exchange
 <img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\direct单个绑定.png" style="width:500px;height:200px;" />
 <img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\direct多个绑定.png" style="width:500px;height:200px;" />
+
+
 支持多重`routingKey`绑定
 ```java
 	public static final String EXANGE_NAME = "console";
@@ -432,6 +435,8 @@ MQ持久化包括三步：
 
 ### 4. Topic主题Exchange
 <img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\topic主题.png" style="width:500px;height:200px;" />
+
+
 `topic`交换机的`routingKey`不能随便乱写，需要满足为单调列表，以点号分隔开，如`"stock.usd.nyse/nyse.vmw"`，存在替换符：星号`*`代替一个单词，井号`#`代替零个或多个单词，如：`*.orange.*/*.*.rabbit/lazy.#`
 
 当`routingKey`被设置为单独一个`#`，则类似`fanout`；当`routingKey`中没有出现`#`和`*`，则类似`direct`
@@ -560,6 +565,7 @@ public class Producer {
 
 ## 11. TTL延迟队列
 <img src="D:\Project\IT-notes\框架or中间件\MQ\RabbitMQ\img\TTL延迟队列.png" style="width:700px;height:300px;" />
+
 ### 1. 基于死信的延迟队列
 ```xml
 <dependency>
