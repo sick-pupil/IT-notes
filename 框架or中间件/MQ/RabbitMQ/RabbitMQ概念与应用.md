@@ -780,7 +780,7 @@ public class DelayedQueueConfig {
 		 * 是否需要自动删除
 		 * 其他参数
 		**/
-		return new CustomExchange(DELAYED_EXCHANGE_NAME, "x-delayed-message", true, false, );
+		return new CustomExchange(DELAYED_EXCHANGE_NAME, "x-delayed-message", true, false, arguments);
 	}
 	
 	@Bean
@@ -830,8 +830,204 @@ public class DelayQueueConsumer {
 	}
 }
 ```
+## 14. RabbitMQ整合SpringBoot
+### 1. 依赖
+```xml
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-amqp</artifactId>
+</dependency>
+```
+### 2. 配置
+```yml
+# 简单配置
+spring:
+  rabbitmq:
+    host: 127.0.0.1 #ip
+    port: 5672      #端口
+    username: guest #账号
+    password: guest #密码
 
-## 12. 发布确认高级
+# 全量配置
+spring:
+  rabbitmq:
+    host: 127.0.0.1 #ip
+    port: 5672      #端口
+    username: guest #账号
+    password: guest #密码
+    virtualHost:    #链接的虚拟主机
+    addresses: 127.0.0.1:5672     #多个以逗号分隔，与host功能一样。
+    requestedHeartbeat: 60 #指定心跳超时，单位秒，0为不指定；默认60s
+    publisherConfirms: true  #发布确认机制是否启用
+    publisherReturns: #发布返回是否启用
+    connectionTimeout: #链接超时。单位ms。0表示无穷大不超时
+    ### ssl相关
+    ssl:
+      enabled: #是否支持ssl
+      keyStore: #指定持有SSL certificate的key store的路径
+      keyStoreType: #key store类型 默认PKCS12
+      keyStorePassword: #指定访问key store的密码
+      trustStore: #指定持有SSL certificates的Trust store
+      trustStoreType: #默认JKS
+      trustStorePassword: #访问密码
+      algorithm: #ssl使用的算法，例如，TLSv1.1
+      verifyHostname: #是否开启hostname验证
+    ### cache相关
+    cache:
+      channel: 
+        size: #缓存中保持的channel数量
+        checkoutTimeout: #当缓存数量被设置时，从缓存中获取一个channel的超时时间，单位毫秒；如果为0，则总是创建一个新channel
+      connection:
+        mode: #连接工厂缓存模式：CHANNEL 和 CONNECTION
+        size: #缓存的连接数，只有是CONNECTION模式时生效
+    ### listener
+    listener:
+       type: #两种类型，SIMPLE，DIRECT
+       ## simple类型
+       simple:
+         concurrency: #最小消费者数量
+         maxConcurrency: #最大的消费者数量
+         transactionSize: #指定一个事务处理的消息数量，最好是小于等于prefetch的数量
+         missingQueuesFatal: #是否停止容器当容器中的队列不可用
+         ## 与direct相同配置部分
+         autoStartup: #是否自动启动容器
+         acknowledgeMode: #表示消息确认方式，其有三种配置方式，分别是none、manual和auto；默认auto
+         prefetch: #指定一个请求能处理多少个消息，如果有事务的话，必须大于等于transaction数量
+         defaultRequeueRejected: #决定被拒绝的消息是否重新入队；默认是true（与参数acknowledge-mode有关系）
+         idleEventInterval: #container events发布频率，单位ms
+         ##重试机制
+         retry: 
+           stateless: #有无状态
+           enabled:  #是否开启
+           maxAttempts: #最大重试次数,默认3
+           initialInterval: #重试间隔
+           multiplier: #对于上一次重试的乘数
+           maxInterval: #最大重试时间间隔
+       direct:
+         consumersPerQueue: #每个队列消费者数量
+         missingQueuesFatal:
+         #...其余配置看上方公共配置
+     ## template相关
+     template:
+       mandatory: #是否启用强制信息；默认false
+       receiveTimeout: #`receive()`接收方法超时时间
+       replyTimeout: #`sendAndReceive()`超时时间
+       exchange: #默认的交换机
+       routingKey: #默认的路由
+       defaultReceiveQueue: #默认的接收队列
+       ## retry重试相关
+       retry: 
+         enabled: #是否开启
+         maxAttempts: #最大重试次数
+         initialInterval: #重试间隔
+         multiplier: #失败间隔乘数
+         maxInterval: #最大间隔
+```
+### 3. 队列交换机配置
+```java
+@Configuration
+public class RabbitMQQueueExchangeConfig {
+	// 队列名
+	public static final String FANOUT_QUEUE_NAME = "fanout_queue";
+	//交换机名
+	public static final String TEST_FANOUT_EXCHANGE = "fanout_exchange";
+	
+	public static final String DIRECT_QUEUE_NAME = "direct_queue";
+	public static final String TEST_DIRECT_EXCHANGE = "direct_exchange";
+	public static final String DIRECT_ROUTINGKEY = "test";
+	
+	// 创建队列
+	@Bean
+	public Queue createFanoutQueue() {
+	    return new Queue(FANOUT_QUEUE_NAME);
+	}
+	
+	@Bean
+	public Queue createDirectQueue() {
+	    return new Queue(DIRECT_QUEUE_NAME);
+	}
+	
+	// 创建交换机
+	@Bean
+	public FanoutExchange defFanoutExchange() {
+	     return new FanoutExchange(TEST_FANOUT_EXCHANGE);
+	}
+	
+	@Bean
+	DirectExchange directExchange() {
+	    return new DirectExchange(TEST_DIRECT_EXCHANGE);
+	}
+	
+	// 队列与交换机进行绑定
+	@Bean
+	Binding bindingFanout() {
+	   return BindingBuilder.bind(createFanoutQueue()).to(defFanoutExchange());
+	}
+	
+	//队列与交换机绑定并添加路由key（direct和topic模式）
+	@Bean
+	Binding bindingDirect() {
+	    return BindingBuilder.bind(createDirectQueue()).to(directExchange()).with(DIRECT_ROUTINGKEY);
+	}
+}
+```
+### 4. 生产者端
+```java
+//rabbitTemplate.convertAndSend(exchange_name, routeingKey, orderId);
+
+//AqmpTemplate功能一样，也可以用
+@Autowired
+private RabbitTemplate template;
+
+@Test
+public void sendSimple() {
+	String context = "simple---> " + new Date();
+	//如果没有配置默认交换机,直接传入queue的name
+	template.convertAndSend("ly_simple", context);
+	//如果配置了默认的交换机，（交换机，queue_name，内容）
+	template.convertAndSend("","""ly_simple", context);
+}
+
+@Test
+public void sendDirect() {
+	String context = "direct---> " + new Date();
+	//（交换机名称,路由的key,内容）
+	template.convertAndSend("ly_direct", "ly", context);
+}
+```
+### 5. 消费者端
+```java
+//基础注解，指定queue的名称，可以多个。如果是simple不需要交换机的直接写队列名称就好。
+//如果是其他的也想只指定一个queues——name的话，需要上面的配置类配置queue或者其他绑定关系
+@RabbitListener(queues = "ly_simple")
+@RabbitHandler
+public void processSimpleMsg(String message) {
+	System.out.println("########################received simple" + message);
+}
+
+//如果不想使用配置类，可以直接注解通过bindings，绑定，spring会根据注解生成绑定
+//ps：如果已有同名称的类。不会覆盖。会影响功能
+@RabbitListener(bindings = { 
+	@QueueBinding(
+		value = @Queue(value = "ly_direct", durable = "true"),
+		exchange = @Exchange(value = "ly_direct", type = "direct"), key = "ly") 
+})
+@RabbitHandler
+public void processDirectMsg(String message) {
+	System.out.println("########################received" + message);
+}
+
+@RabbitListener(bindings = { 
+	@QueueBinding(
+		value = @Queue(value = "ly_fanout", durable = "true"),
+		exchange = @Exchange(value = "ly_fanout", type = "fanout")) 
+})
+@RabbitHandler
+public void processFanoutMsg(String message) {
+	System.out.println("########################received" + message);
+}
+```
+## 13. 发布确认高级
 `rabbitmq`宕机造成生产者投递失败，消息丢失，需要手动处理和恢复
 
 ### 1. 回调接口
@@ -1018,13 +1214,13 @@ public class produceController {
 	
 ```
 
-## 13. 消息重复消费
+## 14. 消息重复消费
 **确保幂等性**
 ### 1. 唯一ID+指纹码机制
 
 ### 2. Redis SETNX原子性
 
-## 14. 优先级队列
+## 15. 优先级队列
 ```java
 //队列添加优先级
 Map<String, Object> params = new HashMap<>();
@@ -1035,7 +1231,7 @@ channel.queueDeclare("hello", true, false, false, params);
 AMQP.BasicProperties properties = new AMQP.BasicProperties().builder().priority(5).build();
 ```
 
-## 15. 惰性队列
+## 16. 惰性队列
 消息保存在磁盘中，存在default、lazy两种模式，应用场景是消息积压
 ```java
 Map<String, Object> args = new HashMap<String, Object>();
@@ -1043,7 +1239,7 @@ args.put("x-queue-mode", "lazy");
 channel.queueDeclare("myqueue", false, false, false, args);
 ```
 
-## 16. 集群
+## 17. 集群
 - 单机模式
 - 普通集群模式：**多台机器**上启动**多个rabbitmq实例**，**每个机器启动一个。**但是你创建的**queue**，只会放在**一个rabbtimq实例**上，但是**每个实例都同步queue的元数据(存放含queue数据的真正实例位置)**。消费的时候，实际上如果连接到了另外一个实例，那么那个实例会从queue所在实例上拉取数据过来
 - 镜像模式：创建的queue，无论元数据还是queue里的消息都会存在于多个实例上，然后每次你写消息到queue的时候，都会自动把消息到多个实例的queue里进行消息同步
