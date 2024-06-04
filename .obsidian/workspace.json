@@ -4,15 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "ec4e7db8c947c8e5",
+        "id": "a5bee1bd32208887",
         "type": "tabs",
         "children": [
           {
-            "id": "a0d83fafcf92d6a6",
+            "id": "d0d1beee0e8ae3a5",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "框架or中间件/Nginx/Nginx基础.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -65,7 +69,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 292.5
+    "width": 292.5,
+    "collapsed": true
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -92,6 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "框架or中间件/Nginx/Nginx基础.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -108,6 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "框架or中间件/Nginx/Nginx基础.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +125,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "框架or中间件/Nginx/Nginx基础.md"
+              }
             }
           },
           {
@@ -138,7 +147,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 311.5
+    "width": 311.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -150,8 +160,20 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "a0d83fafcf92d6a6",
+  "active": "d0d1beee0e8ae3a5",
   "lastOpenFiles": [
+    "框架or中间件/Mybatis/Mybatis-Plus.md",
+    "框架or中间件/Nginx/Nginx基础.md",
+    "框架or中间件/MyCat2/Mycat2概念与应用.md",
+    "框架or中间件/PostgreSql/PostgreSql基础.md",
+    "框架or中间件/PostgreSQL/未命名",
+    "框架or中间件/PostgreSql",
+    "框架or中间件/ETL/Kettle基础.md",
+    "框架or中间件/ETL/DataX基础.md",
+    "框架or中间件/Mysql/Mysql基础.md",
+    "框架or中间件/Minio/Minio概念与应用.md",
+    "框架or中间件/ETL",
+    "框架or中间件/Nginx",
     "Python/Scrapy应用.md",
     "Python/Python基础.md",
     "框架or中间件/Dubbo/Dubbo原理.md",
@@ -173,9 +195,7 @@
     "框架or中间件/Dubbo/img/dubbo调用过程.png",
     "框架or中间件/Dubbo/img/dubbo调用过程.png.crdownload",
     "框架or中间件/Mysql/Mysql进阶.md",
-    "框架or中间件/Mysql/Mysql基础.md",
     "设计模式/工厂.md",
-    "框架or中间件/Minio/Minio概念与应用.md",
     "框架or中间件/Redis/img/stream消费者组.png",
     "框架or中间件/Redis/img/stream消费者组.png.crdownload",
     "框架or中间件/Redis/img/stream独立消费.png",
@@ -183,20 +203,10 @@
     "框架or中间件/Redis/img/stream查看消息.png",
     "框架or中间件/Redis/img/stream查看消息.png.crdownload",
     "框架or中间件/Redis/img/stream添加消息.png",
-    "框架or中间件/Redis/~$edis进阶.docx",
     "框架or中间件/Redis/img/添加消息.png",
-    "框架or中间件/Redis/img/添加消息.png.crdownload",
     "框架or中间件/Redis/img/stream内部原理.png",
-    "框架or中间件/Redis/img/stream内部原理.png.crdownload",
     "Java/IO/BIO&NIO&AIO.md",
     "设计模式/观察者.md",
-    "设计模式/适配器.md",
-    "设计模式/装饰器.md",
-    "Java/并发/锁.md",
-    "设计模式",
-    "Java/并发/并发机制底层实现原理.md",
-    "Java/并发/线程池.md",
-    "Java/并发/内存模型JMM.md",
     "操作系统/Pasted image 20240128210354.png",
     "未命名.canvas"
   ]
