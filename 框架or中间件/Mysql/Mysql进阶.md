@@ -911,3 +911,115 @@ Mysql中进行不同方式的备份还要考虑存储引擎是否支持
 2. 如果数据量还行，可以`mysqldump+复制BIN LOGS`，先使用`mysqldump`对数据库进行完全备份，然后定期备份`BINARY LOG`达到增量备份的效果
 3. 如果数据量一般，而又不过分影响业务运行，可以`lvm2快照+复制BIN LOGS`，使用`lvm2`的快照对数据文件进行备份，而后定期备份`BINARY LOG`达到增量备份的效果
 4. 如果数据量很大，而又不过分影响业务运行，可以`xtrabackup+复制BIN LOGS`，使用`xtrabackup`进行完全备份后，定期使用`xtrabackup`进行增量备份或差异备份
+
+## 14. 分区
+将同一个表中的不同记录根据分区键分配到不同的物理表（物理`.idb`文件）中，一个逻辑表有多少个分区则有多少个`.idb`文件，达到拆解大表的功能，因此数据与索引也是分区存储
+
+分区表是一个独立的逻辑表，底层由多个物理子表组成，实际上通过对一组底层表实现句柄对象封装（指针数据），将分区表的请求转化为存在句柄的存储引擎接口调用
+
+对分区表进行操作，通常分区逻辑表会打开并锁所有底层分区子表，优化器判断是否可以过滤部分分区，再调用存储引擎接口访问数据
+
+```sql
+--语法：
+alter table `表名` drop partition 分区p0;
+--实例：
+ALTER TABLE tbl_users DROP PARTITION p0;
+
+
+ALTER TABLE `表名` ADD PARTITION (PARTITION_definitions);
+ALTER TABLE `表名` ADD PARTITION (PARTITION 分区名 分区语句的要求(查看新建表分区));
+--RANGE添加分区实例：
+ALTER TABLE tbl_users ADD PARTITION (PARTITION p3 VALUES LESS THAN(30));
+--LIST添加分区实例：
+ALTER TABLE tbl_users2 ADD PARTITION (PARTITION p0 VALUES in(1,2,3,5));
+
+-- 删除所有分区，但保留数据
+alter table tbl_name remove partitioning
+alter table bm_scenes_data_reminder truncate partition p20210104;
+
+-- 增加分区
+ALTER TABLE bm_scenes_data_reminder ADD PARTITION (PARTITION p20210104 VALUES LESS THAN (738159) ENGINE = InnoDB);
+
+```
+
+存在若干种分区类型：
+1. `range`分区，行数据基于一个给定的连续区间值被放入分区
+```sql
+CREATE TABLE `m_test_db`.`Order` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `partition_key` INT NOT NULL,
+    `amt` DECIMAL(5) NULL,
+    PRIMARY KEY (`id` , `partition_key`)
+) PARTITION BY RANGE (partition_key) PARTITIONS 5 (
+PARTITION part0 VALUES LESS THAN (201901) , 
+PARTITION part1 VALUES LESS THAN (201902) , 
+PARTITION part2 VALUES LESS THAN (201903) , 
+PARTITION part3 VALUES LESS THAN (201904) , 
+PARTITION part4 VALUES LESS THAN (201905));
+```
+2. `list`分区，列值匹配一个离散值集合中的某个值来进行选择
+```sql
+CREATE TABLE tbl_users2 (
+	`uuid` INT NOT NULL,
+	`customerId` VARCHAR(200),
+	`pwd` VARCHAR(20),
+	`showName` VARCHAR(100),
+	`trueName` VARCHAR(100),
+	`registerTime` VARCHAR(100)
+)
+PARTITION BY List(uuid) (
+	PARTITION p0 VALUES in(1,2,3,5),
+	PARTITION p1 VALUES in(7,9,10),
+	PARTITION p2 VALUES in(11,15)
+);
+--插入数据，注意：加入数据需要根据主键来，不可以时主键分区中没有的，否则报错
+INSERT INTO tbl_users2 VALUES(1,"只为你","123456","qzp","quezhipeng","20200808"),(7,"人生","123456","人生","无名","20200808"),(10,"无须终有","123456","无须终有","无声","20200808"),(15,"坚持","123456","胜利","坚持","20200808");
+```
+3. `hash`分区，基于用户定义的表达式的返回值来进行选择的分区，该表达式使用将要插入到表中的这些行的列值进行计算，这个函数必须产生非负整数值
+```sql
+--创建一张hash分区表
+CREATE TABLE tbl_users4 (
+	`uuid` INT NOT NULL,
+	`customerId` VARCHAR(200),
+	`pwd` VARCHAR(20),
+	`showName` VARCHAR(100),
+	`trueName` VARCHAR(100),
+	`registerTime` VARCHAR(100)
+)
+PARTITION BY hash(uuid)
+	PARTITIONS 3;
+--插入数据，注意：分区是有uuid/3求余数决定,余数为0，在p0;余数为1，在p1;余数为2，在p2,以此类推....
+INSERT INTO tbl_users2 VALUES(1,"只为你","123456","qzp","quezhipeng","20200808"),(7,"人生","123456","人生","无名","20200808"),(10,"无须终有","123456","无须终有","无声","20200808"),(15,"坚持","123456","胜利","坚持","20200808");
+```
+4. `key`分区，由MySQL服务器提供其自身的哈希函数
+```sql
+--创建一张key分区表
+CREATE TABLE tbl_users5 (
+	`uuid` INT NOT NULL,
+	`customerId` VARCHAR(200),
+	`pwd` VARCHAR(20),
+	`showName` VARCHAR(100),
+	`trueName` VARCHAR(100),
+	`registerTime` VARCHAR(100)
+)
+PARTITION BY LINEAR key(uuid)
+	PARTITIONS 3;
+--插入数据，注意：分区是有uuid/3求余数决定,余数为0，在p0;余数为1，在p1;余数为2，在p2,以此类推....
+INSERT INTO tbl_users5 VALUES(1,"只为你","123456","qzp","quezhipeng","20200808"),(7,"人生","123456","人生","无名","20200808"),(10,"无须终有","123456","无须终有","无声","20200808"),(15,"坚持","123456","胜利","坚持","20200808");
+```
+
+**注意**：
+1. 最大分区数目不能操作1024，一般建议对单表的分区数不要超过150个
+2. 如果含有唯一索引或者主键，则分区列必须被包含在所有的唯一索引或者主键内
+3. 不支持外键
+4. 不支持全文索引，对分区表的分区键创建索引，那么这个索引也将被分区
+5. 按日期进行分区很合适，因为很多日期函数可以用，但是对于字符串来说合适的分区函数不太多
+6. 只有`RANGE`和`LIST`分区能进行子分区，`HASH`和`KEY`分区不能进行子分区
+7. 临时表不能被分区
+8. 分区表对于单条记录的查询没有优势
+9. 要注意选择分区的成本，每插入一行数据都需要按照表达式筛选插入的分区
+10. 分区字段尽量不要为`null`，在这种情况下MySQL把NULL视为0
+
+## 15. MysqlDump
+- 导入：系统命令行`mysql -uusername -ppassword db1 <db1tb2.sql` 或 `SQL`命令行`source db1_tb2.sql;`
+- 导出：`mysqldump -h132.72.192.432 -P3307 -uroot -p8888 db_name tb_name > bak.sql`
