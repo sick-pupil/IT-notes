@@ -824,42 +824,221 @@ MySQL 主从复制是基于主服务器在二进制日志跟踪所有对数据�
 - 主从半同步：在异步复制的基础上，确保任何一个主库上的事物在提交之前**至少有一个从库**已经收到该事务并把日志记录下来
 
 主从配置：
-```
-主数据库配置
+```sh
+#主数据库配置
+[mysqld]
 server-id=1
-log_bin=mysql-bin 打开日志
-#binlog-do-db=czc 主机可以被同步的数据库 ，czc是一个数据库，自行先创建，不加则同步所有库
-binlog-ignore-db=mysql 不给从机同步的数据库
-binlog-ignore-db=performance_schema 不给从机同步的数据库
-binlog-ignore-db=information_schema 不给从机同步的数据库
-expire_logs_days=2 自动清理两天前的log文件
-执行show master status，可以查看到file以及position的值，这两个值随后的从服务器会使用到
-还需要在主机上创建用户并授权从机，让从机可以使用该用户复制binlog
+log_bin=mysql-master-bin # 打开日志
+binlog_format=row
+#binlog-do-db=czc # 主机可以被同步的数据库 ，czc是一个数据库，自行先创建，不加则同步所有库
+binlog-ignore-db=mysql # 不给从机同步的数据库
+binlog-ignore-db=performance_schema # 不给从机同步的数据库
+binlog-ignore-db=information_schema # 不给从机同步的数据库
+expire_logs_days=2 # 自动清理两天前的log文件
+# mysql8编码配置
+character-set-server=utf8mb4
+collation-server=utf8mb4_unicode_ci
+
+# 执行show master status，可以查看到file以及position的值，这两个值随后的从服务器会使用到
+# 还需要在主机上创建用户并授权从机，让从机可以使用该用户复制binlog
 create user 'slave1'@'%' identified by '123456';
-grant replication slave on *.* to 'slave1'@'%';
-alter user 'slave1'@'%' identified with mysql_native_password by '123456';
+grant replication slave,replication client on *.* to 'slave1'@'%';
 flush privileges;
-执行show master status查看主机状态
+# 执行show master status查看主机状态
+```
 
-
-从数据库配置方式1
+```sh
+# 从数据库配置方式
+[mysqld]
 server-id=2
-master-host=192.168.1.1  主数据库的ip
-master-user=slave1       主机中创建授权账号的用户名
-master-password=123456   主机中创建授权账号的密码
-master-port=3306
-master-connect-retry=60
+log_bin=mysql-slave-bin # 打开日志
+binlog_format=row
 #replicate-do-db=czc    从机要同步的数据库,要同步多个数据库，就多加几个replicate-db-db=数据库名，不加则同步所有库
-从数据库配置方式2
-当mysql版本小于5.5，不能使用修改配置文件的方式直接配置，只能使用命令行的方式配置
-配置文件中添加 server-id=3
-执行以下change命令
-change master to master_host='118.25.2437.342',master_port=3306,master_user='slave1',master_password='123456',master_log_file='mysql-bin.000015',master_log_pos=606;
-注意，change master to这条命令中的master_log_file与master_log_pos可在主机的show mater status查看
-change master to option='new value'
-最后从mysql服务器执行start slave
+binlog-ignore-db=mysql # 不给从机同步的数据库
+binlog-ignore-db=performance_schema # 不给从机同步的数据库
+binlog-ignore-db=information_schema # 不给从机同步的数据库
+expire_logs_days=2 # 自动清理两天前的log文件
+# mysql8编码配置
+character-set-server=utf8mb4
+collation-server=utf8mb4_unicode_ci
 
-执行show slave status查看从机状态，可以查看到slave_io_running与slave_sql_running，都为yes则算是配置成功
+# 执行以下change命令
+change master to master_host='118.25.2437.342',master_port=3306,master_user='slave1',master_password='123456',master_log_file='mysql-bin.000015',master_log_pos=606;
+# 注意，change master to这条命令中的master_log_file与master_log_pos可在主机的show mater status查看
+
+
+##注意：如果不希望手动配置master_log_file与master_log_pos，可以在上述master.cnf、slave.cnf中添加一下配置
+# 开启GTID模式
+gtid-mode=on
+enforce-gtid-consistency=1
+log-slave-updates=1
+# 后修改change master命令如下
+change master to master_host='118.25.2437.342',master_port=3306,master_user='slave1',master_password='123456',master_auto_position=1;
+
+
+start slave;
+# 执行show slave status查看从机状态，可以查看到slave_io_running与slave_sql_running，都为yes则算是配置成功
+```
+
+**`mysql`的`docker-compose`式主从复制配置**：
+1. `docker-compose.yml`
+```yml
+version: '3'
+services:
+  mysql-master:
+    image: mysql:8.0.34
+    container_name: mysql-master
+    ports:
+      - 3300:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      SYNC_USER: sync_admin
+      SYNC_PASSWORD: 123456
+      TZ: Asia/Shanghai
+    networks:
+      mysql-cluster:
+        ipv4_address: 10.10.10.10
+    volumes:
+      - ./init/master:/docker-entrypoint-initdb.d
+      - ./conf/master:/etc/mysql/conf.d
+  mysql-slave1:
+    image: mysql:8.0.34
+    container_name: mysql-slave1
+    ports:
+      - 3301:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      SYNC_USER: sync_admin
+      SYNC_PASSWORD: 123456
+      MASTER_HOST: 10.10.10.10
+      TZ: Asia/Shanghai
+    networks:
+      - mysql-cluster
+    volumes:
+      - ./init/slave:/docker-entrypoint-initdb.d
+      - ./conf/slave1:/etc/mysql/conf.d
+  mysql-slave2:
+    image: mysql:8.0.34
+    container_name: mysql-slave2
+    ports:
+      - 3302:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      SYNC_USER: sync_admin
+      SYNC_PASSWORD: 123456
+      MASTER_HOST: 10.10.10.10
+      TZ: Asia/Shanghai
+    networks:
+      - mysql-cluster
+    volumes:
+      - ./init/slave:/docker-entrypoint-initdb.d
+      - ./conf/slave2:/etc/mysql/conf.d
+networks:
+  mysql-cluster:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.0.0/16
+          gateway: 10.10.0.1
+```
+
+2. `master-addition.cnf`
+```sh
+[mysqld]
+server-id=100
+
+gtid-mode=on
+enforce-gtid-consistency=1
+log-slave-updates=1
+
+log_bin=mysql-master-bin
+binlog_format=row
+binlog-ignore-db=mysql
+binlog-ignore-db=performance_schema
+binlog-ignore-db=information_schema
+expire_logs_days=2
+
+character-set-server=utf8mb4
+collation-server=utf8mb4_unicode_ci
+```
+
+3. `slave1-addition.cnf`
+```sh
+[mysqld]
+server-id=101
+
+gtid-mode=on
+enforce-gtid-consistency=1
+log-slave-updates=1
+
+log_bin=mysql-master-bin
+binlog_format=row
+binlog-ignore-db=mysql
+binlog-ignore-db=performance_schema
+binlog-ignore-db=information_schema
+expire_logs_days=2
+
+character-set-server=utf8mb4
+collation-server=utf8mb4_unicode_ci
+```
+
+4. `slave2-addition.cnf`
+```sh
+[mysqld]
+server-id=102
+
+gtid-mode=on
+enforce-gtid-consistency=1
+log-slave-updates=1
+
+log_bin=mysql-master-bin
+binlog_format=row
+binlog-ignore-db=mysql
+binlog-ignore-db=performance_schema
+binlog-ignore-db=information_schema
+expire_logs_days=2
+
+character-set-server=utf8mb4
+collation-server=utf8mb4_unicode_ci
+```
+
+5. `master-init.sh`
+```sh
+#!/bin/bash
+MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+SYNC_USER=$SYNC_USER
+SYNC_PASSWORD=$SYNC_PASSWORD
+
+CREATE_USER_SQL="CREATE USER '$SYNC_USER'@'%' IDENTIFIED BY '$SYNC_PASSWORD';"
+
+GRANT_PRIVILEGES_SQL="GRANT REPLICATION SLAVE,REPLICATION CLIENT ON *.* TO '$SYNC_USER'@'%';"
+
+FLUSH_PRIVILEGES_SQL="FLUSH PRIVILEGES;"
+
+mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "$CREATE_USER_SQL $GRANT_PRIVILEGES_SQL $FLUSH_PRIVILEGES_SQL"
+```
+
+6. `slave-init.sh`
+```sh
+#!/bin/bash
+MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+SYNC_USER=$SYNC_USER
+SYNC_PASSWORD=$SYNC_PASSWORD
+MASTER_HOST=$MASTER_HOST
+
+sleep 3
+
+mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "stop slave;reset slave all;"
+
+SYNC_SQL="change master to master_host='$MASTER_HOST',master_user='$SYNC_USER',master_password='$SYNC_PASSWORD',master_auto_position=1,get_master_public_key=1;"
+
+
+START_SYNC_SQL="start slave;"
+
+STATUS_SQL="show slave status\G;"
+
+mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "$SYNC_SQL $START_SYNC_SQL $STATUS_SQL"
 ```
 
 ## 13. 备份与恢复

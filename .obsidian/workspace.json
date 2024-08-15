@@ -4,17 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "9ae32f24f598bdf9",
+        "id": "a518097c4da9a622",
         "type": "tabs",
         "children": [
           {
-            "id": "14e03faa3568c0c3",
+            "id": "f4d878665b2da21c",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "框架or中间件/Mysql/Mysql进阶.md",
-                "mode": "source",
+                "file": "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
+                "mode": "preview",
                 "source": false
               }
             }
@@ -96,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/Mysql/Mysql进阶.md",
+                "file": "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/Mysql/Mysql进阶.md",
+                "file": "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/Mysql/Mysql进阶.md"
+                "file": "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md"
               }
             }
           },
@@ -146,8 +146,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 311.5,
-    "collapsed": true
+    "width": 311.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -159,23 +158,26 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "14e03faa3568c0c3",
+  "active": "f4d878665b2da21c",
   "lastOpenFiles": [
+    "框架or中间件/Mysql/Mysql进阶.md",
+    "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
+    "框架or中间件/Docker/Docker概念与应用.md",
     "框架or中间件/Mysql/Mysql基础.md",
     "框架or中间件/Mysql/Mysql8新特性.md",
-    "框架or中间件/Mysql/Mysql进阶.md",
+    "框架or中间件/ZooKeeper/Zookeeper相关原理与配置.md",
+    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/ShardingJDBC概念与应用.md",
+    "框架or中间件/Nginx/Nginx基础.md",
+    "Python/Python基础.md",
     "框架or中间件/ElasticSearch/ES概念与应用.md",
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
     "框架or中间件/ElasticSearch",
     "框架or中间件/ETL/Kettle基础.md",
-    "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
     "框架or中间件/CDC/Debezium.md",
-    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/ShardingJDBC概念与应用.md",
     "框架or中间件/ETL/DataX基础.md",
     "框架or中间件/PostgreSql/PostgreSql基础.md",
     "框架or中间件/Mybatis/Mybatis-Plus.md",
     "框架or中间件/Mybatis/Mybatis相关配置.md",
-    "框架or中间件/Nginx/Nginx基础.md",
     "框架or中间件/MyCat2/Mycat2概念与应用.md",
     "框架or中间件/PostgreSQL/未命名",
     "框架or中间件/PostgreSql",
@@ -183,14 +185,11 @@
     "框架or中间件/ETL",
     "框架or中间件/Nginx",
     "Python/Scrapy应用.md",
-    "Python/Python基础.md",
     "框架or中间件/Dubbo/Dubbo原理.md",
     "框架or中间件/Dubbo/Dubbo相关配置.md",
-    "框架or中间件/ZooKeeper/Zookeeper相关原理与配置.md",
     "框架or中间件/MQ/RabbitMQ/RabbitMQ概念与应用.md",
     "框架or中间件/Redis/Redis基础.md",
     "框架or中间件/Redis/Redis进阶.md",
-    "框架or中间件/Docker/Docker概念与应用.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Sentinel.md",
     "框架or中间件/Dubbo/img/dubbo服务引用.png",
     "框架or中间件/Dubbo/img/dubbo服务引用.png.crdownload",

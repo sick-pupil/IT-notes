@@ -14,6 +14,53 @@ systemctl start docker
 docker run hello-world
 ```
 
+**Linux环境安装Docker**
+```sh
+# 更新软件包索引
+sudo apt-get update
+ 
+# 安装需要的软件包以使apt能够通过HTTPS使用仓库
+sudo apt-get install ca-certificates curl gnupg lsb-release
+
+# 添加阿里云官方GPG密钥
+curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+ 
+# 写入阿里云Docker仓库地址
+sudo sh -c 'echo "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list'
+
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+# 验证是否成功安装了docker
+sudo systemctl status docker
+docker --version
+
+# 修改daemon.json文件，
+vim /etc/docker/daemon.json
+
+# daemon.json内容如下：
+{
+    "registry-mirrors": [
+        "https://dockerproxy.com",
+        "https://docker.m.daocloud.io",
+        "https://cr.console.aliyun.com",
+        "https://ccr.ccs.tencentyun.com",
+        "https://hub-mirror.c.163.com",
+        "https://mirror.baidubce.com",
+        "https://docker.nju.edu.cn",
+        "https://docker.mirrors.sjtug.sjtu.edu.cn",
+        "https://github.com/ustclug/mirrorrequest",
+        "https://registry.docker-cn.com"
+    ]
+}
+
+# 重载配置文件，并重启 docker
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+# 查看 Registry Mirrors 配置是否成功
+sudo docker info
+```
 ## 3. docker常用操作命令
 <img src="D:\Project\IT-notes\框架or中间件\Docker\img\docker命令大全.jpg" style="width:700px;height:500px;" />
 
@@ -329,3 +376,34 @@ docker-compose down
 - `down`：停止被`up`命令启动的容器，并移除网络
 - `images`：列出`compose`文件包含的镜像
 - `ports`：设置端口映射
+
+## 9. EntryPoint.sh
+许多`dockerfile`内的`entrypoint`如下：`ENTRYPOINT ["docker-entrypoint.sh"]`
+
+举例：
+`MySQL`容器启动时，`docker-entrypoint-initdb.d/docker-entrypoint.sh`会初始化自定义数据库
+```
+When a container is started for the first time, a new database with the specified name will be created and initialized with the provided configuration variables. Furthermore, it will execute files with extensions `.sh`, `.sql` and `.sql.gz` that are found in `/docker-entrypoint-initdb.d`. Files will be executed in alphabetical order. You can easily populate your `mysql` services by [mounting a SQL dump into that directory⁠](https://docs.docker.com/storage/bind-mounts/) and provide [custom images⁠](https://docs.docker.com/reference/dockerfile/) with contributed data. SQL files will be imported by default to the database specified by the `MYSQL_DATABASE` variable.
+```
+
+再如`redis`：
+```sh
+#!/bin/bash
+if [[ $redis_ip ]]; then
+	sed -i 's/redis_ip="[0-9.]*"/redis_ip="'$redis_ip'"/' config.ini
+fi
+if [[ $redis_port ]]; then
+	sed -i 's/redis_port="[0-9]*"/redis_port="'$redis_port'"/' config.ini
+fi
+echo "1" > /proc/sys/kernel/core_uses_pid
+echo $CORE_PATH"/core-%e-%p-%t" > /proc/sys/kernel/core_pattern
+exec "$@"
+```
+
+```sh
+docker run -d --restart=always \
+  --ulimit core=-1 --privileged=true\
+  -e redis_ip=$REDIS_IP \
+  -e redis_port=$REDIS_PORT \
+  xxx
+```
