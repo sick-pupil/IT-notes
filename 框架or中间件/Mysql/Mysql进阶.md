@@ -883,11 +883,12 @@ start slave;
 **`mysql`的`docker-compose`式主从复制配置**：
 1. `docker-compose.yml`
 ```yml
-version: '3'
+version: '3.8'
 services:
   mysql-master:
     image: mysql:8.0.34
     container_name: mysql-master
+    privileged: true
     ports:
       - 3300:3306
     environment:
@@ -901,9 +902,16 @@ services:
     volumes:
       - ./init/master:/docker-entrypoint-initdb.d
       - ./conf/master:/etc/mysql/conf.d
+      - ./healthcheck/mysql-master/healthcheck.sh:/healthcheck.sh
+    healthcheck:
+      test: ["CMD-SHELL", "/healthcheck.sh"]
+      interval: 10s
+      timeout: 10s
+      retries: 1
   mysql-slave1:
     image: mysql:8.0.34
     container_name: mysql-slave1
+    privileged: true
     ports:
       - 3301:3306
     environment:
@@ -917,9 +925,19 @@ services:
     volumes:
       - ./init/slave:/docker-entrypoint-initdb.d
       - ./conf/slave1:/etc/mysql/conf.d
+      - ./healthcheck/mysql-slave/healthcheck.sh:/healthcheck.sh
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "/healthcheck.sh"]
+      interval: 10s
+      timeout: 10s
+      retries: 1
   mysql-slave2:
     image: mysql:8.0.34
     container_name: mysql-slave2
+    privileged: true
     ports:
       - 3302:3306
     environment:
@@ -933,6 +951,15 @@ services:
     volumes:
       - ./init/slave:/docker-entrypoint-initdb.d
       - ./conf/slave2:/etc/mysql/conf.d
+      - ./healthcheck/mysql-slave/healthcheck.sh:/healthcheck.sh
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "/healthcheck.sh"]
+      interval: 10s
+      timeout: 10s
+      retries: 1
 networks:
   mysql-cluster:
     driver: bridge
@@ -944,7 +971,7 @@ networks:
 ```
 
 2. `master-addition.cnf`
-```sh
+```shell
 [mysqld]
 server-id=100
 
@@ -964,7 +991,7 @@ collation-server=utf8mb4_unicode_ci
 ```
 
 3. `slave1-addition.cnf`
-```sh
+```shell
 [mysqld]
 server-id=101
 
@@ -984,7 +1011,7 @@ collation-server=utf8mb4_unicode_ci
 ```
 
 4. `slave2-addition.cnf`
-```sh
+```shell
 [mysqld]
 server-id=102
 
@@ -1003,8 +1030,9 @@ character-set-server=utf8mb4
 collation-server=utf8mb4_unicode_ci
 ```
 
-5. `master-init.sh`
-```sh
+5. `init.sh`
+**`master-init.sh`**
+```shell
 #!/bin/bash
 MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
 SYNC_USER=$SYNC_USER
@@ -1019,26 +1047,66 @@ FLUSH_PRIVILEGES_SQL="FLUSH PRIVILEGES;"
 mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "$CREATE_USER_SQL $GRANT_PRIVILEGES_SQL $FLUSH_PRIVILEGES_SQL"
 ```
 
-6. `slave-init.sh`
-```sh
+**`slave-init.sh`**
+```shell
 #!/bin/bash
 MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
 SYNC_USER=$SYNC_USER
 SYNC_PASSWORD=$SYNC_PASSWORD
 MASTER_HOST=$MASTER_HOST
 
-sleep 3
-
 mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "stop slave;reset slave all;"
 
 SYNC_SQL="change master to master_host='$MASTER_HOST',master_user='$SYNC_USER',master_password='$SYNC_PASSWORD',master_auto_position=1,get_master_public_key=1;"
-
 
 START_SYNC_SQL="start slave;"
 
 STATUS_SQL="show slave status\G;"
 
 mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "$SYNC_SQL $START_SYNC_SQL $STATUS_SQL"
+```
+
+6. `healthcheck.sh`
+**`master-healthcheck.sh`**
+```shell
+#!/bin/bash
+MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+SYNC_USER=$SYNC_USER
+SYNC_PASSWORD=$SYNC_PASSWORD
+
+MASTER_STATUS=$(mysql -hlocalhost -uroot -p$MYSQL_ROOT_PASSWORD -e "SHOW MASTER STATUS\G")
+
+MASTER_LOG_FILE=$(echo "$MASTER_STATUS" | grep "File:" | awk '{print $2}')
+MASTER_LOG_POS=$(echo "$MASTER_STATUS" | grep "Position:" | awk '{print $2}')
+MASTER_GTID_SET=$(echo "$MASTER_STATUS" | grep "Executed_Gtid_Set:" | awk '{print $2}')
+
+mysql -hlocalhost -u$SYNC_USER -p$SYNC_PASSWORD -e "exit"
+USER_EXISTS=$?
+
+if [ -n "$MASTER_LOG_FILE" ] && [ -n "$MASTER_LOG_POS" ] && [ -n "$MASTER_GTID_SET" ] && [ "$USER_EXISTS" -eq 0 ]; then
+    exit 0
+else
+    exit 1
+fi
+```
+
+**`slave-healthcheck.sh`**
+```shell
+#!/bin/bash
+MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+SYNC_USER=$SYNC_USER
+SYNC_PASSWORD=$SYNC_PASSWORD
+
+SLAVE_STATUS=$(mysql -hlocalhost -uroot -p$MYSQL_ROOT_PASSWORD -e "SHOW SLAVE STATUS\G")
+
+SLAVE_IO_RUNNING=$(echo "$SLAVE_STATUS" | grep "Slave_IO_Running:" | awk '{print $2}')
+SLAVE_SQL_RUNNING=$(echo "$SLAVE_STATUS" | grep "Slave_SQL_Running:" | awk '{print $2}')
+
+if [ "$SLAVE_IO_RUNNING" = "Yes" ] && [ "$SLAVE_SQL_RUNNING" = "Yes" ]; then
+    exit 0
+else
+    exit 1
+fi
 ```
 
 ## 13. 备份与恢复

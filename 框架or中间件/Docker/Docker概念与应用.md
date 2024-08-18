@@ -329,25 +329,257 @@ docker-compose up -d
 docker-compose down
 ```
 
+### 示例mysql主从docker-compose构建
+1. `docker-compose.yml`
+```yml
+version: '3.8'
+services:
+  mysql-master:
+    image: mysql:8.0.34
+    container_name: mysql-master
+    privileged: true
+    ports:
+      - 3300:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      SYNC_USER: sync_admin
+      SYNC_PASSWORD: 123456
+      TZ: Asia/Shanghai
+    networks:
+      mysql-cluster:
+        ipv4_address: 10.10.10.10
+    volumes:
+      - ./init/master:/docker-entrypoint-initdb.d
+      - ./conf/master:/etc/mysql/conf.d
+      - ./healthcheck/mysql-master/healthcheck.sh:/healthcheck.sh
+    healthcheck:
+      test: ["CMD-SHELL", "/healthcheck.sh"]
+      interval: 10s
+      timeout: 10s
+      retries: 1
+  mysql-slave1:
+    image: mysql:8.0.34
+    container_name: mysql-slave1
+    privileged: true
+    ports:
+      - 3301:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      SYNC_USER: sync_admin
+      SYNC_PASSWORD: 123456
+      MASTER_HOST: 10.10.10.10
+      TZ: Asia/Shanghai
+    networks:
+      - mysql-cluster
+    volumes:
+      - ./init/slave:/docker-entrypoint-initdb.d
+      - ./conf/slave1:/etc/mysql/conf.d
+      - ./healthcheck/mysql-slave/healthcheck.sh:/healthcheck.sh
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "/healthcheck.sh"]
+      interval: 10s
+      timeout: 10s
+      retries: 1
+  mysql-slave2:
+    image: mysql:8.0.34
+    container_name: mysql-slave2
+    privileged: true
+    ports:
+      - 3302:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      SYNC_USER: sync_admin
+      SYNC_PASSWORD: 123456
+      MASTER_HOST: 10.10.10.10
+      TZ: Asia/Shanghai
+    networks:
+      - mysql-cluster
+    volumes:
+      - ./init/slave:/docker-entrypoint-initdb.d
+      - ./conf/slave2:/etc/mysql/conf.d
+      - ./healthcheck/mysql-slave/healthcheck.sh:/healthcheck.sh
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "/healthcheck.sh"]
+      interval: 10s
+      timeout: 10s
+      retries: 1
+networks:
+  mysql-cluster:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.0.0/16
+          gateway: 10.10.0.1
+```
+
+2. `master-addition.cnf`
+```shell
+[mysqld]
+server-id=100
+
+gtid-mode=on
+enforce-gtid-consistency=1
+log-slave-updates=1
+
+log_bin=mysql-master-bin
+binlog_format=row
+binlog-ignore-db=mysql
+binlog-ignore-db=performance_schema
+binlog-ignore-db=information_schema
+expire_logs_days=2
+
+character-set-server=utf8mb4
+collation-server=utf8mb4_unicode_ci
+```
+
+3. `slave1-addition.cnf`
+```shell
+[mysqld]
+server-id=101
+
+gtid-mode=on
+enforce-gtid-consistency=1
+log-slave-updates=1
+
+log_bin=mysql-master-bin
+binlog_format=row
+binlog-ignore-db=mysql
+binlog-ignore-db=performance_schema
+binlog-ignore-db=information_schema
+expire_logs_days=2
+
+character-set-server=utf8mb4
+collation-server=utf8mb4_unicode_ci
+```
+
+4. `slave2-addition.cnf`
+```shell
+[mysqld]
+server-id=102
+
+gtid-mode=on
+enforce-gtid-consistency=1
+log-slave-updates=1
+
+log_bin=mysql-master-bin
+binlog_format=row
+binlog-ignore-db=mysql
+binlog-ignore-db=performance_schema
+binlog-ignore-db=information_schema
+expire_logs_days=2
+
+character-set-server=utf8mb4
+collation-server=utf8mb4_unicode_ci
+```
+
+5. `init.sh`
+**`master-init.sh`**
+```shell
+#!/bin/bash
+MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+SYNC_USER=$SYNC_USER
+SYNC_PASSWORD=$SYNC_PASSWORD
+
+CREATE_USER_SQL="CREATE USER '$SYNC_USER'@'%' IDENTIFIED BY '$SYNC_PASSWORD';"
+
+GRANT_PRIVILEGES_SQL="GRANT REPLICATION SLAVE,REPLICATION CLIENT ON *.* TO '$SYNC_USER'@'%';"
+
+FLUSH_PRIVILEGES_SQL="FLUSH PRIVILEGES;"
+
+mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "$CREATE_USER_SQL $GRANT_PRIVILEGES_SQL $FLUSH_PRIVILEGES_SQL"
+```
+
+**`slave-init.sh`**
+```shell
+#!/bin/bash
+MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+SYNC_USER=$SYNC_USER
+SYNC_PASSWORD=$SYNC_PASSWORD
+MASTER_HOST=$MASTER_HOST
+
+mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "stop slave;reset slave all;"
+
+SYNC_SQL="change master to master_host='$MASTER_HOST',master_user='$SYNC_USER',master_password='$SYNC_PASSWORD',master_auto_position=1,get_master_public_key=1;"
+
+START_SYNC_SQL="start slave;"
+
+STATUS_SQL="show slave status\G;"
+
+mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "$SYNC_SQL $START_SYNC_SQL $STATUS_SQL"
+```
+
+6. `healthcheck.sh`
+**`master-healthcheck.sh`**
+```shell
+#!/bin/bash
+MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+SYNC_USER=$SYNC_USER
+SYNC_PASSWORD=$SYNC_PASSWORD
+
+MASTER_STATUS=$(mysql -hlocalhost -uroot -p$MYSQL_ROOT_PASSWORD -e "SHOW MASTER STATUS\G")
+
+MASTER_LOG_FILE=$(echo "$MASTER_STATUS" | grep "File:" | awk '{print $2}')
+MASTER_LOG_POS=$(echo "$MASTER_STATUS" | grep "Position:" | awk '{print $2}')
+MASTER_GTID_SET=$(echo "$MASTER_STATUS" | grep "Executed_Gtid_Set:" | awk '{print $2}')
+
+mysql -hlocalhost -u$SYNC_USER -p$SYNC_PASSWORD -e "exit"
+USER_EXISTS=$?
+
+if [ -n "$MASTER_LOG_FILE" ] && [ -n "$MASTER_LOG_POS" ] && [ -n "$MASTER_GTID_SET" ] && [ "$USER_EXISTS" -eq 0 ]; then
+    exit 0
+else
+    exit 1
+fi
+```
+
+**`slave-healthcheck.sh`**
+```shell
+#!/bin/bash
+MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+SYNC_USER=$SYNC_USER
+SYNC_PASSWORD=$SYNC_PASSWORD
+
+SLAVE_STATUS=$(mysql -hlocalhost -uroot -p$MYSQL_ROOT_PASSWORD -e "SHOW SLAVE STATUS\G")
+
+SLAVE_IO_RUNNING=$(echo "$SLAVE_STATUS" | grep "Slave_IO_Running:" | awk '{print $2}')
+SLAVE_SQL_RUNNING=$(echo "$SLAVE_STATUS" | grep "Slave_SQL_Running:" | awk '{print $2}')
+
+if [ "$SLAVE_IO_RUNNING" = "Yes" ] && [ "$SLAVE_SQL_RUNNING" = "Yes" ]; then
+    exit 0
+else
+    exit 1
+fi
+```
 ### `compose`文件配置
 1. `version`：`compose`版本
 2. `services`：
 	- 服务名称，自定义
 		- `image`，镜像名称与标签
 		- `container_name`，容器名称
+		- `privileged`：会赋予容器几乎与主机相同的权限
 		- `ports`，宿主机端口:容器端口
 		- `environment`：创建容器时的环境变量
 		- `volumes`，容器卷
 		- `build`，根据所给路径执行`dockerfile`
 			- `context`，`dockerfile`所在目录
 			- `dockerfile`，文件名称
-		- `depends_on`：该容器在哪些依赖容器后才启动执行
+		- `depends_on`：该容器在哪些依赖容器后才启动执行，其中的`condition`可配置依赖容器所处阶段`service_started service_healthy service_completed_successfully`
+		- `healthcheck`：进行自身容器健康检查，结合`depends_on`可以实现自定义容器启动顺序编排，可以使用`CMD`命令行或`CMD-SHell`脚本进行检查，返回码0-成功，1-失败
 		- `restart`：有四个选项，`no on-failure always unless-stopped`决定容器是否跟随`docker`服务同时启动
 		- `networks`：连接网络
-3. `networks`：
+1. `networks`：
 	- 网络条目名称，自定义
 		- `name`：网络名称
 		- `driver`：网络模式，`bridge host none`
+		- `subnet`：子网
+		- `gateway`：网关
 
 ### `compose`命令
 `docker-compose`命令基本使用格式：`docker-compose [-f or --file -p or --project-name --x-networking --x-network-driver --verbose -v] [command] [args]`
@@ -377,7 +609,7 @@ docker-compose down
 - `images`：列出`compose`文件包含的镜像
 - `ports`：设置端口映射
 
-## 9. EntryPoint.sh
+## 9. EntryPoint
 许多`dockerfile`内的`entrypoint`如下：`ENTRYPOINT ["docker-entrypoint.sh"]`
 
 举例：
