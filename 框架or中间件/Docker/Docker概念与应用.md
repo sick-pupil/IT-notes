@@ -561,20 +561,40 @@ fi
 1. `version`：`compose`版本
 2. `services`：
 	- 服务名称，自定义
-		- `image`，镜像名称与标签
-		- `container_name`，容器名称
+		- `image`：镜像名称与标签
+		- `deploy`：指定服务部署与运行，只能配合`swarm`模式工作
+		- `container_name`：容器名称
+		- `logging`：容器日志记录配置
+			- `driver`：可以设置`json-file syslog none`
+			- `options`：
+				- `max-size`
+				- `max-file`
+				- `syslog-address`
 		- `privileged`：会赋予容器几乎与主机相同的权限
-		- `ports`，宿主机端口:容器端口
+		- `ports`：宿主机端口:容器端口作映射
+		- `expose`：暴露端口但不映射端口到宿主机，只作容器集群之间的端口访问
 		- `environment`：创建容器时的环境变量
-		- `volumes`，容器卷
-		- `build`，根据所给路径执行`dockerfile`
-			- `context`，`dockerfile`所在目录
-			- `dockerfile`，文件名称
-		- `depends_on`：该容器在哪些依赖容器后才启动执行，其中的`condition`可配置依赖容器所处阶段`service_started service_healthy service_completed_successfully`
+		- `env_file`：从文件中添加环境变量
+		- `secrets`：存储敏感数据，例如连接密码
+		- `volumes`：容器卷，挂载文件或目录
+		- `devices`：设备映射列表，相当于设备挂载
+		- `dns`：自定义`dns`服务器
+		- `dns_search`：自定义`dns`搜索域
+		- `build`：根据所给路径执行`dockerfile`
+			- `context`：`dockerfile`所在目录
+			- `dockerfile`：文件名称
+		- `depends_on`：该容器在哪些依赖容器后才启动执行
+			- `condition`：其中的`condition`可配置依赖容器所处阶段`service_started service_healthy service_completed_successfully`
 		- `healthcheck`：进行自身容器健康检查，结合`depends_on`可以实现自定义容器启动顺序编排，可以使用`CMD`命令行或`CMD-SHell`脚本进行检查，返回码0-成功，1-失败
+			- `test`：`["CMD-SHELL", "/healthcheck.sh"]`可以选择使用命令`CMD`或脚本`CMD-SHELL`方式进行健康检查
+			- `interval`：进行健康检查的间隔
+			- `timeout`：健康检查的超时时间
+			- `retries`：重试次数
 		- `restart`：有四个选项，`no on-failure always unless-stopped`决定容器是否跟随`docker`服务同时启动
 		- `networks`：连接网络
-1. `networks`：
+		- `command`：覆盖容器启动的默认命令`["bundle", "exec", "thin", "-p", "3000"]`
+		- `entrypoint`：覆盖容器默认的`entrypoint`，可以使用命令或者脚本
+3. `networks`：
 	- 网络条目名称，自定义
 		- `name`：网络名称
 		- `driver`：网络模式，`bridge host none`

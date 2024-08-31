@@ -185,21 +185,21 @@ services:
 
 ## 3. 命令行操作
 - 生产者：`kafka-console-producer.sh`
-- 主题：`kafka-topic.sh`
+- 主题：`kafka-topics.sh`
 - 消费者：`kafka-console-consumer.sh`
 
-| 参数 | 描述 |
-| ----- | ----- |
-| --bootstrap-server <String: server toconnect to> | 连接的Kafka Broker主机名称和端口号 |
-| --topic <String: topic> | 操作的topic名称 |
-| --create | 创建主题 |
-| --delete | 删除主题 |
-| --alter | 修改主题 |
-| --list | 查看所有主题 |
-| --describe | 查看主题详细描述 |
-| --partitions <Integer: # of partitions> | 设置分区数 |
-| --replication-factor<Integer: replication factor> | 设置分区副本 |
-| --config <String: name=value> | 更新系统默认的配置 |
+| `kafka-topics.sh`主题相关参数                           | 描述                      |
+| ------------------------------------------------- | ----------------------- |
+| --bootstrap-server <String: server toconnect to>  | 连接的Kafka Broker主机名称和端口号 |
+| --topic <String: topic>                           | 操作的topic名称              |
+| --create                                          | 创建主题                    |
+| --delete                                          | 删除主题                    |
+| --alter                                           | 修改主题                    |
+| --list                                            | 查看所有主题                  |
+| --describe                                        | 查看主题详细描述                |
+| --partitions <Integer: # of partitions>           | 设置分区数                   |
+| --replication-factor<Integer: replication factor> | 设置分区副本                  |
+| --config <String: name=value>                     | 更新系统默认的配置               |
 
 ## 4. 存储机制
 `kafka`消息队列支持大数据量的写入写出，因此即使是基于`scale`和`java`实现的，也不会在`JVM`上进行读写（需要开辟大量的堆空间、内存空间），因此使用磁盘存储数据
@@ -271,6 +271,8 @@ kafka-topic
 <img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\生产者发送消息流程.png" style="width:700px;height:700px;" />
 
 <img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\Kafka生产者发送消息流程.png" style="width:700px;height:350px;" />
+
+<img src="D:\Project\IT-notes\框架or中间件\MQ\Kafka\img\kafka生产者原理.png" style="width:700px;height:400px;" />
 
 1. 根据原始消息组装`ProducerRecord`进行发送
 2. 经过`Serializer`进行序列化
@@ -423,16 +425,23 @@ properties.put(ProducerConfig.RETRIES_CONFIG, 3);
 ```
 
 ### 6. 数据不重复与事务
+`leader`分区的宕机可能导致已同步到`follower`的数据再次由生产者生产至`follower`，从而产生重复；批次数据请求可能也因为网络问题触发重试机制，因此需要**幂等**与**事务**
+**幂等**保证单会话的数据不重复
+**事务**保证多会话的数据不重复
+
+开启幂等的前提是开启重试、开启`ack=all`、请求缓冲区请求批次数量不能大于5
+开启事务的前提是开启幂等
+
 ```java
 //幂等阻止单分区单会话数据重复，根据<pid, partition, seq>判断，pid为生产者会话id，partition为分区序号，seq为消息序号
 properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
 ```
 
-**开启事务必须开启幂等性**，幂等性由消息的主键：`<PID, Partition, SeqNumber>`起主要作用：
+**开启事务必须开启幂等性**，幂等性由消息批次的主键：`<PID, Partition, SeqNumber>`起主要作用：
 - `pid`：`ProducerID`，每个生产者启动时，`Kafka`都会分配生产者客户端一个`ID`，`Kafka`重启也会重新分配`pid`
 - `partition`：消息需要发往的分区号
 - `seqNumber`：生产者记录下来的消息的自增`ID`
-`Kafka`不会持久化以上主键一致的数据，然而只能保证单分区内数据不重复
+`Kafka`不会持久化以上主键一致的数据，然而只能保证单分区内发送的批次数据不重复
 
 **Kafka的事务机制可以实现对多个topic多个partition原子性的写入，即处于同一个事务内的所有消息，要么写入成功，要么写入失败**
 
@@ -508,7 +517,8 @@ try {
 ### 2. 节点服役与退役
 向一个正在运行的旧集群中的`topic`新增一个新节点，或者重新分配正在使用的主题分区到新的`broker`列表，并重新同步原始数据到新的`broker`列表
 #### 1. 服役
-1. 创建一个要负载均衡的主题，`vim topics-to-move.json`
+1. 在原有集群正常启动并运行的情况下，配置新的物理节点机器，配置`kafka`并正常启动连接至原有集群
+2. 创建一个要负载均衡的主题，`vim topics-to-move.json`
 ```json
 {
 	"topic": [
@@ -591,7 +601,7 @@ try {
 5. 验证副本存储计划：`bin/kafka-reassign-partitions.sh --bootstrap-server ip:port --reassignment-json-file increase-replication-factor.json --verify`
 6. 查看：`bin/kafka-topics.sh --bootstrap-server ip:port --describe --topic test`
 
-### 8. 分区副本的负载均衡
+### 8. 分区Leader的负载均衡
 正常情况下，`kafka`本身会自动把`leader partition`均匀分散在各个机器上，来保证每台机器的读写吞吐量都是均匀的。但是如果某些`broker`宕机，会导致`leader partition`过于集中在其他少部分几台`broker`上，这会导致少数几台`broker`读写请求压力过高，其他宕机的`broker`重启之后都是`follower partition`，读写请求很低，造成集群负载不均衡
 
 - `auto.leader.rebalance.enable`：默认为`true`，自动`leader partition`平衡
