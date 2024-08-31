@@ -665,7 +665,7 @@ try {
 Properties properties = new Properties();
 
 //连接bootstrap.servers
-properties.put(ConsumerConfig.BOOTSTRAP_SERVER_CONFIG, "ip:port,ip:port");
+properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "ip:port,ip:port");
 //反序列化
 properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -697,7 +697,7 @@ while(true) {
 Properties properties = new Properties();
 
 //连接bootstrap.servers
-properties.put(ConsumerConfig.BOOTSTRAP_SERVER_CONFIG, "ip:port,ip:port");
+properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "ip:port,ip:port");
 //反序列化
 properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -835,7 +835,7 @@ while(assignment.size() == 0) {
 	assignment = kafkaConsumer.assignment();
 }
 
-//时间转化为offset，即可将offset按照时间进行seek偏移
+//时间转化为offset，例如把offset置为一天前相同时刻的offset，即可将offset按照时间进行seek偏移
 //HashMap<TopicPartition, Long> topicPartitionLongHashMap = new HashMap<>();
 //for (TopicPartition topicPartition : assignment) {
 	//topicPartitionLongHashMap.put(topicPartition, System.currentTimeMills() - 1 * 24 * 3600 * 1000);
@@ -874,8 +874,26 @@ while(true) {
 - 生产速度大于消费速度，也会出现生产者端的数据积压
 
 ## 10. kafka-eagle监控
+如果是使用`zookeeper`模式的`kafka`，则可以使用`kafka-eagle`
+如果是使用`kraft`模式的`kafka`，则可以使用`kafka-ui`进行监控
 
-## 11. springboot整合kafka
+## 11. Kraft模式
+**配置`./kafka/config/kraft/server.properties`**
+```shell
+process.roles=broker,controller
+
+node.id=4
+
+controller.quorum.voters=4@ip:9093,5@ip:9093,6@ip:9093
+
+listeners=PLAINTEXT://:9092,CONTROLLER://:9093
+
+advertised.listeners=PLAINTEXT://ip:port
+
+controller_listener_names=CONTROLLER
+```
+
+## 12. springboot整合kafka
 ### 1. 生产者
 ```xml
 <dependency>

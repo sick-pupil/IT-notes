@@ -69,7 +69,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 292.5
+    "width": 292.5,
+    "collapsed": true
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -146,7 +147,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 311.5
+    "width": 311.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -158,10 +160,12 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "68c0094c761f3272",
+  "active": "9e964c24066f1113",
   "lastOpenFiles": [
-    "框架or中间件/Docker/Docker概念与应用.md",
+    "框架or中间件/ETL/Kettle基础.md",
+    "框架or中间件/ETL/DataX基础.md",
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+    "框架or中间件/Docker/Docker概念与应用.md",
     "框架or中间件/MQ/Kafka/img/kafka生产者原理.png",
     "框架or中间件/MQ/Kafka/img/kafka生产者原理.png.crdownload",
     "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
@@ -177,9 +181,7 @@
     "Python/Python基础.md",
     "框架or中间件/ElasticSearch/ES概念与应用.md",
     "框架or中间件/ElasticSearch",
-    "框架or中间件/ETL/Kettle基础.md",
     "框架or中间件/CDC/Debezium.md",
-    "框架or中间件/ETL/DataX基础.md",
     "框架or中间件/PostgreSql/PostgreSql基础.md",
     "框架or中间件/Mybatis/Mybatis相关配置.md",
     "框架or中间件/MyCat2/Mycat2概念与应用.md",
