@@ -757,6 +757,7 @@ Mysql中的数据以页为基本单位在内存和磁盘之间加载与载入。
 一个事务中可能有多个增删改SQL，一个增删改SQL可能会产生多条`undo log`，一个事务中的`undo log`会从0开始被编号
 
 <img src="D:\Project\IT-notes\框架or中间件\Mysql\img\行记录格式隐藏列.png" style="width:700px;height:60px;" />
+
 在InnoDB的行记录格式中，存在三个隐藏列：
 - `DB_ROW_ID`：如果表中没有定义非空主键以及非空唯一索引，InnoDB会自动为表结构添加一个`row_id`隐藏列作为主键
 - `DB_TRX_ID`：对某条记录作增删改操作，会将最后操作的事务ID写入该隐藏列

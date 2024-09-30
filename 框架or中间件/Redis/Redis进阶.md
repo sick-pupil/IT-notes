@@ -220,6 +220,7 @@ redis-server --port 6300 --slaveof 127.0.0.1 6379
 - 当哨兵监测到主服务器发生故障时，会自动在从节点中选择一台将机器，并其提升为主服务器，然后使用`PubSub`发布订阅模式，通知其他的从节点，修改配置文件，跟随新的主服务器。
 
 <img src="D:\Project\IT-notes\框架or中间件\Redis\img\多节点哨兵模式.png" style="width:600px;height:500px;" />
+
 *多个节点通过Sentinel进程互相监控，Sentinel有点类似zookeeper的客户端去获取服务列表注册*
 
 - **主观下线**：适用于主服务器与从服务器，规定时间内`Sentinel`发出的`ping`命令没有接收到相应的`pong`命令，则认为对方下线
@@ -474,3 +475,145 @@ return 1;
 <img src="D:\Project\IT-notes\框架or中间件\Redis\img\redisson分布式锁原理流程.png" style="width:700px;height:450px;" />
 只要线程一加锁成功，就会启动一个`watch dog`看门狗，它是一个后台线程，会每隔10秒检查一下，如果线程1还持有锁，那么就会不断的延长锁`key`的生存时间。因此，`Redisson`就是使用`Redisson`解决了**锁过期释放，业务没执行**问题
 ## 7. 数据一致性
+双写一致性主要指在一个数据同时存在于缓存（如`Redis`）和持久化存储（如数据库）的情况下，任何一方的数据更新都必须确保另一方数据的同步更新，以保持双方数据的一致状态
+
+### 1. Cache Aside Pattern旁路缓存模式
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\旁路缓存模式.png" style="width:700px;height:700px;" />
+
+- 读：首先尝试从缓存中获取数据，如果缓存命中，则直接返回；否则，从数据库中读取数据并将其放入缓存，最后返回给客户端
+- 写：当需要更新数据时，首先更新数据库，然后再清除或使缓存中的对应数据失效。这样一来，后续的读请求将无法从缓存获取数据，从而迫使系统从数据库加载最新的数据并重新填充缓存
+### 2. Read-Through/Write-Through读写穿透
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\Read-Through.png" style="width:700px;height:500px;" />
+
+读：
+- 客户端发起读请求到缓存系统
+- 缓存系统检查是否存在请求的数据
+- 如果数据不在缓存中，缓存系统会透明地向底层数据存储（如数据库）发起读请求
+- 数据库返回数据后，缓存系统将数据存储到缓存中，并将数据返回给客户端
+- 下次同样的读请求就可以直接从缓存中获取数据，提高了读取效率
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\Write-Through.png" style="width:700px;height:300px;" />
+
+写：
+- 当客户端向缓存系统发出写请求时，缓存系统首先更新缓存中的数据
+- 同时，缓存系统还会把这次更新操作同步到底层数据存储（如数据库）
+- 当数据在数据库中成功更新后，整个写操作才算完成
+- 这样，无论是从缓存还是直接从数据库读取，都能得到最新一致的数据
+
+### 3. Write behind异步缓存写入
+<img src="D:\Project\IT-notes\框架or中间件\Redis\img\Write behind.png" style="width:700px;height:400px;" />
+
+### 4. 解决双写一致性问题
+#### 1. 延时双删
+当更新数据库时，首先删除对应的缓存项，以确保后续的读请求会从数据库加载最新数据。  
+但是由于网络延迟或其他不确定性因素，删除缓存与数据库更新之间可能存在时间窗口，导致在这段时间内的读请求从数据库读取数据后写回缓存，新写入的缓存数据可能还未反映出数据库的最新变更
+
+所以为了解决这个问题，延时双删策略在第一次删除缓存后，设定一段短暂的延迟时间，如几百毫秒，然后在这段延迟时间结束后再次尝试删除缓存。这样做的目的是确保在数据库更新传播到所有节点，并且在缓存中的旧数据彻底过期失效之前，第二次删除操作可以消除缓存中可能存在的旧数据，从而提高数据一致性
+
+```java
+public class DelayDoubleDeleteService {
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private TaskScheduler taskScheduler;
+
+    public void updateAndScheduleDoubleDelete(String key, String value) {
+        // 更新数据库...
+        updateDatabase(key, value);
+
+        // 删除缓存
+        redisTemplate.delete(key);
+
+        // 延迟执行第二次删除
+        taskScheduler.schedule(() -> {
+            redisTemplate.delete(key);
+        }, new CronTrigger("0/1 * * * * ?")); // 假设1秒后执行，实际应根据需求设置定时表达式
+    }
+
+    // 更新数据库的逻辑
+    private void updateDatabase(String key, String value) {
+        
+    }
+}
+```
+
+#### 2. 删除缓存重试
+删除缓存重试机制是在删除缓存操作失败时，设定一个重试策略，确保缓存最终能被正确删除，以维持与数据库的一致性
+
+在执行数据库更新操作后，尝试删除关联的缓存项。如果首次删除缓存失败（例如网络波动、缓存服务暂时不可用等情况），系统进入重试逻辑，按照预先设定的策略（如指数退避、固定间隔重试等）进行多次尝试。直到缓存删除成功，或者达到最大重试次数为止
+
+```java
+@Service
+public class RetryableCacheService {
+
+    @Autowired
+    private CacheManager cacheManager;
+
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000L))
+    public void deleteCacheWithRetry(String key) {
+        ((org.springframework.data.redis.cache.RedisCacheManager) cacheManager).getCache("myCache").evict(key);
+    }
+
+    public void updateAndDeleteCache(String key, String value) {
+        // 更新数据库...
+        updateDatabase(key, value);
+
+        // 尝试删除缓存，失败时自动重试
+        deleteCacheWithRetry(key);
+    }
+
+    // 更新数据库的逻辑，此处仅示意
+    private void updateDatabase(String key, String value) {
+        // ...
+    }
+}
+```
+
+#### 3. 监听并读取biglog异步删除缓存
+在数据库发生写操作时，将变更记录在`binlog`或类似的事务日志中，然后使用一个专门的异步服务或者监听器订阅binlog的变化（比如`Canal`），一旦检测到有数据更新，便根据`binlog`中的操作信息定位到受影响的缓存项。讲这些需要更新缓存的数据发送到消息队列，消费者处理消息队列中的事件，异步地删除或更新缓存中的对应数据，确保缓存与数据库保持一致
+
+```java
+@Service
+public class BinlogEventHandler {
+
+    @Autowired
+    private RocketMQTemplate rocketMQTemplate;
+
+    public void handleBinlogEvent(BinlogEvent binlogEvent) {
+        // 解析binlogEvent，获取需要更新缓存的key
+        String cacheKey = deriveCacheKeyFromBinlogEvent(binlogEvent);
+
+        // 发送到RocketMQ
+        rocketMQTemplate.asyncSend("cacheUpdateTopic", cacheKey, new SendCallback() {
+            @Override
+            public void onSuccess(SendResult sendResult) {
+                // 发送成功处理
+            }
+
+            @Override
+            public void onException(Throwable e) {
+                // 发送失败处理
+            }
+        });
+    }
+
+    // 从binlog事件中获取缓存key的逻辑，这里仅为示意
+    private String deriveCacheKeyFromBinlogEvent(BinlogEvent binlogEvent) {
+        // ...
+    }
+}
+
+@RocketMQMessageListener(consumerGroup = "myConsumerGroup", topic = "cacheUpdateTopic")
+public class CacheUpdateConsumer {
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Override
+    public void onMessage(MessageExt messageExt) {
+        String cacheKey = new String(messageExt.getBody());
+        redisTemplate.delete(cacheKey);
+    }
+}
+```

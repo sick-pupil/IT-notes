@@ -4,15 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "838dd16e8db94fc4",
+        "id": "1e616cb310d0bd44",
         "type": "tabs",
         "children": [
           {
-            "id": "34bdca6dc67ce393",
+            "id": "20fade4226739470",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "框架or中间件/Redis/Redis进阶.md",
+                "mode": "preview",
+                "source": false
+              }
             }
           }
         ]
@@ -65,7 +69,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 292.5
+    "width": 292.5,
+    "collapsed": true
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -92,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/CDC/Debezium.md",
+                "file": "框架or中间件/Redis/Redis进阶.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -109,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/CDC/Debezium.md",
+                "file": "框架or中间件/Redis/Redis进阶.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -121,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/CDC/Debezium.md"
+                "file": "框架or中间件/Redis/Redis进阶.md"
               }
             }
           },
@@ -157,51 +162,51 @@
   },
   "active": "9e964c24066f1113",
   "lastOpenFiles": [
-    "框架or中间件/CDC/Canal.md",
-    "框架or中间件/CDC/Debezium.md",
+    "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
+    "框架or中间件/Redis/Redis基础.md",
+    "框架or中间件/Redis/Redis进阶.md",
+    "框架or中间件/Redis/img/Write behind.png",
+    "框架or中间件/Redis/img/Write behind.png.crdownload",
+    "框架or中间件/Redis/img/Write-Through.png",
+    "框架or中间件/Redis/img/Write-Through.png.crdownload",
+    "框架or中间件/Redis/img/Read-Through.png",
+    "框架or中间件/Redis/img/Read-Through.png.crdownload",
+    "框架or中间件/Redis/img/旁路缓存模式.png",
+    "框架or中间件/Redis/img/旁路缓存模式.png.crdownload",
+    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
+    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
+    "框架or中间件/SpringMVC/SpringMVC相关概念.md",
+    "框架or中间件/SpringMVC/SpringMVC配置与原理.md",
+    "框架or中间件/Spring/JdbcTemplate.md",
+    "框架or中间件/Spring/IOC控制反转.md",
+    "框架or中间件/Spring/AOP面向切面.md",
+    "框架or中间件/Spring/数据与事务.md",
+    "框架or中间件/Dubbo/Dubbo相关配置.md",
+    "框架or中间件/Dubbo/Dubbo原理.md",
+    "框架or中间件/ZooKeeper/Zookeeper相关原理与配置.md",
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
-    "框架or中间件/ElasticSearch/ES概念与应用.md",
+    "框架or中间件/Mysql/Mysql进阶.md",
+    "框架or中间件/Mysql/Mysql基础.md",
+    "Java/JVM/Java内存区域与内存溢出异常.md",
+    "Java/JVM/字节码执行引擎.md",
+    "Java/JVM/垃圾收集器与内存分配策略.md",
+    "Java/JVM/类加载机制.md",
+    "Java/JVM/类文件结构.md",
+    "Java/并发/并发容器与框架.md",
+    "Java/并发/并发基础知识.md",
+    "Java/并发/并发编程基础.md",
+    "操作系统/Pasted image 20240128210354.png",
+    "操作系统/Pasted image 20240128210338.png",
+    "操作系统/Pasted image 20240128210332.png",
     "框架or中间件/ElasticSearch/img/filebeat原理.png",
     "框架or中间件/ElasticSearch/img/filebeat原理.png.crdownload",
     "框架or中间件/ElasticSearch/img/分词分析器大致原理.png",
     "框架or中间件/ElasticSearch/img/分词分析器大致原理.png.crdownload",
     "框架or中间件/ElasticSearch/img/倒排索引原理2.png",
     "框架or中间件/ElasticSearch/img/倒排索引原理2.png.crdownload",
-    "框架or中间件/ElasticSearch/img/倒排索引原理1.png",
     "框架or中间件/ElasticSearch/img/倒排索引原理1.png.crdownload",
-    "框架or中间件/ElasticSearch/img/底层写入机制.png",
     "框架or中间件/ElasticSearch/img/底层写入机制.png.crdownload",
-    "框架or中间件/ElasticSearch/img/读取原理.png",
     "框架or中间件/ElasticSearch/img/读取原理.png.crdownload",
-    "框架or中间件/ElasticSearch/img/写入原理.png",
-    "框架or中间件/ElasticSearch/img/写入原理.png.crdownload",
-    "框架or中间件/ElasticSearch/img/ES检索类型.png",
-    "框架or中间件/ElasticSearch/img/ES检索类型.png.crdownload",
-    "框架or中间件/ElasticSearch/img/倒排索引结构.png",
-    "框架or中间件/ElasticSearch/img/倒排索引结构.png.crdownload",
-    "框架or中间件/Docker/Docker概念与应用.md",
-    "框架or中间件/ElasticSearch/img/ES系统架构.png",
-    "框架or中间件/ElasticSearch/img/ES系统架构.png.crdownload",
-    "框架or中间件/Dubbo/Dubbo相关配置.md",
-    "操作系统/虚拟内存.md",
-    "操作系统/进程描述与控制.md",
-    "操作系统/内存管理.md",
-    "操作系统/单处理器调度.md",
-    "操作系统/操作系统概述.md",
-    "框架or中间件/CDC/Maxwell.md",
-    "框架or中间件/ETL/Kettle基础.md",
-    "框架or中间件/ETL/DataX基础.md",
-    "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
-    "框架or中间件/Mysql/Mysql进阶.md",
-    "技术要点/Apache-Commons.md",
-    "框架or中间件/Mybatis/Mybatis-Plus.md",
-    "框架or中间件/ShardingSphere/ShardingSphere-JDBC/ShardingJDBC概念与应用.md",
-    "框架or中间件/Mysql/Mysql8新特性.md",
-    "框架or中间件/Mysql/Mysql基础.md",
-    "Java/Java基础.md",
-    "框架or中间件/ZooKeeper/Zookeeper相关原理与配置.md",
-    "框架or中间件/Nginx/Nginx基础.md",
-    "Python/Python基础.md",
     "未命名.canvas"
   ]
 }

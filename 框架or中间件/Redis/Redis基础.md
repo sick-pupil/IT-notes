@@ -367,6 +367,7 @@ zrange class 0 4
 ```
 #### 6. 消费者组
 <img src="D:\Project\IT-notes\框架or中间件\Redis\img\stream消费者组.png" style="width:700px;height:450px;" />
+
 ##### 1. 创建消费者组
 ```ruby
 xgroup create stream-key(Stream 名) g1(消费者组名) 0-0(表示从头开始消费)
@@ -466,7 +467,21 @@ xgroup create stream-key g3 1636362619125-0  #1636362619125-0 这个是上方aa�
 127.0.0.1:6379>
 ```
 如果某个消息，不能被消费者处理，也就是不能被`XACK`，这是要长时间处于`Pending`列表中，即使被反复的转移给各个消费者也是如此。此时该消息的`delivery counter`就会累加（上一节的例子可以看到），当累加到某个我们预设的临界值时，我们就认为是坏消息（也叫死信，`DeadLetter`，无法投递的消息），由于有了判定条件，我们将坏消息处理掉即可，删除即可
-### 7. 关于key键
+### 7. bitmap
+位图，是一串连续的二进制数组（0和1），可以通过偏移量（`offset`）定位元素。`BitMap`通过最小的单位`bit`来进行`0|1`的设置，表示某个元素的值或者状态
+`Bitmap`本身是用`String`类型作为底层数据结构实现的一种统计二值状态的数据类型
+
+| 命令                                      | 介绍                                            |
+| --------------------------------------- | --------------------------------------------- |
+| `SETBIT key offset value`               | 设置指定 offset 位置的值                              |
+| `GETBIT key offset`                     | 获取指定 offset 位置的值                              |
+| `BITCOUNT key start end`                | 获取 start 和 end 之间值为 1 的元素个数                   |
+| `BITOP operation destkey key1 key2 ...` | 对一个或多个 Bitmap 进行运算，可用运算符有 AND, OR, XOR 以及 NOT |
+### 8. hyperloglog
+
+### 9. geo
+
+### 10. 关于key键
 - `key`的类型对应`value`的类型，使用`type key`命令查看类型
 - 可以使用空字符串作为`key`值，`set "" value`，但不建议
 - 可以对相同类型相同`key`值的键值对重新赋值，`value`会被覆盖
@@ -1462,7 +1477,235 @@ public final class RedisUtil {
     }
 }
 ```
-### 3. SpringCache整合redis
+### 3. 使用Redisson
+```java
+import org.redisson.api.*;
+import org.redisson.client.codec.StringCodec;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
+
+@Component
+public class RedisUtils {
+
+    private RedisUtils() {
+    }
+
+    /**
+     * 默认缓存时间
+     */
+    private static final Long DEFAULT_EXPIRED = 32000L;
+
+    /**
+     * 自动装配redisson client对象
+     */
+    @Resource
+    private RedissonClient redissonClient;
+
+    /**
+     * 用于操作key
+     * @return RKeys 对象
+     */
+    public RKeys getKeys() {
+        return redissonClient.getKeys();
+    }
+    /**
+     * 移除缓存
+     *
+     * @param key
+     */
+    public void delete(String key) {
+        redissonClient.getBucket(key).delete();
+    }
+
+    /**
+     * 获取getBuckets 对象
+     *
+     * @return RBuckets 对象
+     */
+    public RBuckets getBuckets() {
+        return redissonClient.getBuckets();
+    }
+
+    /**
+     * 读取缓存中的字符串，永久有效
+     *
+     * @param key 缓存key
+     * @return 字符串
+     */
+    public String getStr(String key) {
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        return bucket.get();
+    }
+
+    /**
+     * 缓存字符串
+     *
+     * @param key
+     * @param value
+     */
+    public void setStr(String key, String value) {
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        bucket.set(value);
+    }
+
+    /**
+     * 缓存带过期时间的字符串
+     *
+     * @param key     缓存key
+     * @param value   缓存值
+     * @param expired 缓存过期时间，long类型，必须传值
+     */
+    public void setStr(String key, String value, long expired) {
+        RBucket<String> bucket = redissonClient.getBucket(key, StringCodec.INSTANCE);
+        bucket.set(value, expired <= 0L ? DEFAULT_EXPIRED : expired, TimeUnit.SECONDS);
+    }
+
+    /**
+     * string 操作，如果不存在则写入缓存（string方式，不带有redisson的格式信息）
+     *
+     * @param key     缓存key
+     * @param value   缓存值
+     * @param expired 缓存过期时间
+     */
+    public Boolean setIfAbsent(String key, String value, long expired) {
+        RBucket<String> bucket = redissonClient.getBucket(key, StringCodec.INSTANCE);
+        return bucket.trySet(value, expired <= 0L ? DEFAULT_EXPIRED : expired, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 如果不存在则写入缓存（string方式，不带有redisson的格式信息），永久保存
+     *
+     * @param key   缓存key
+     * @param value 缓存值
+     */
+    public Boolean setIfAbsent(String key, String value) {
+        RBucket<String> bucket = redissonClient.getBucket(key, StringCodec.INSTANCE);
+        return bucket.trySet(value);
+    }
+
+    /**
+     * 判断缓存是否存在
+     *
+     * @param key
+     * @return true 存在
+     */
+    public Boolean isExists(String key) {
+        return redissonClient.getBucket(key).isExists();
+    }
+
+    /**
+     * 获取RList对象
+     *
+     * @param key RList的key
+     * @return RList对象
+     */
+    public <T> RList<T> getList(String key) {
+        return redissonClient.getList(key);
+    }
+
+    /**
+     * 获取RMapCache对象
+     *
+     * @param key
+     * @return RMapCache对象
+     */
+    public <K, V> RMapCache<K, V> getMap(String key) {
+        return redissonClient.getMapCache(key);
+    }
+
+    /**
+     * 获取RSET对象
+     *
+     * @param key
+     * @return RSET对象
+     */
+    public <T> RSet<T> getSet(String key) {
+        return redissonClient.getSet(key);
+    }
+
+    /**
+     * 获取RScoredSortedSet对象
+     *
+     * @param key
+     * @param <T>
+     * @return RScoredSortedSet对象
+     */
+    public <T> RScoredSortedSet<T> getScoredSortedSet(String key) {
+        return redissonClient.getScoredSortedSet(key);
+    }
+}
+```
+
+#### 1. 通用对象桶
+```java
+   /**
+     * String 数据类型
+     */
+    private void strDemo() {
+        redisUtils.setStr(DEMO_STR, "Hello, String.");
+        log.info("String 测试数据：{}", redisUtils.getStr(DEMO_STR));
+        redisUtils.setStr("myBucket", "myBucketIsXxx");
+        RBuckets buckets = redisUtils.getBuckets();
+        Map<String, String> foundBuckets = buckets.get("myBucket*");
+        Map<String, Object> map = new HashMap<>();
+        map.put("myBucket1", "value1");
+        map.put("myBucket2", 30L);
+
+        // 同时保存全部通用对象桶。
+        buckets.set(map);
+        Map<String, String> loadedBuckets = buckets.get("myBucket1", "myBucket2", "myBucket3");
+        log.info("跨桶String 测试数据：{}", loadedBuckets);
+        map.put("myBucket3", 320L);
+    }
+```
+#### 2. 散列
+```java
+    /**
+     * Hash类型
+     */
+    private void hashDemo() {
+        RMap<Object, Object> map = redisUtils.getMap("mapDemo");
+        map.put("demoId1", "123");
+        map.put("demoId100", "13000");
+        Object demoId1Obj = map.get("demoId1");
+        log.info("Hash 测试数据：{}", demoId1Obj);
+    }
+```
+#### 3. 集合
+```java
+    /**
+     * Set 测试
+     */
+    private void setDemo() {
+        RSet<String> set = redisUtils.getSet("setKey");
+        set.add("value777");
+        log.info("Set 测试数据");
+        Iterator<String> iterator = set.iterator();
+        while (iterator.hasNext()) {
+            String next = iterator.next();
+            log.info(next);
+        }
+    }
+```
+#### 4. 列表
+```java
+    /**
+     * List数据类型
+     */
+    private void listDemo() {
+        RList<String> list = redisUtils.getList("listDemo");
+        list.add("listValue1");
+        list.add("listValue2");
+
+        log.info("List 测试数据：{}", list.get(1));
+    }
+```
+
+### 4. SpringCache整合redis
 ```xml
 <!-- 使用spring cache -->
 <dependency>
@@ -1685,4 +1928,3 @@ public void loadBooks(InputStream batch)
 public Book importBooks(String deposit, Date date)
 ```
 #### 5. `CacheConfig`
-### 4. Springboot整合redis订阅发布
