@@ -448,7 +448,7 @@ public class TestInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request,
             HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
-        System.out.println("afterCompletion方法在控制器的处理请求方法执行完成后执行，即视图渲染结束之后执行");
+        System.out.println("afterCompletion在整个请求结束之后，即视图渲染之后进行调用，主要用于资源清理工作");
 
     }
 
@@ -456,13 +456,13 @@ public class TestInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler,
             ModelAndView modelAndView) throws Exception {
-        System.out.println("postHandle方法在控制器的处理请求方法调用之后，解析视图之前执行");
+        System.out.println("postHandle在Controller方法处理之后，视图渲染之前调用，可以通过它修改ModelAndView");
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("preHandle方法在控制器的处理请求方法调用之后，解析视图之前执行");
+        System.out.println("preHandle在Controller方法处理之前调用，返回值为boolean，若返回true则继续执行后续的Interceptor和Controller，若返回false则中断执行");
         return false;
     }
 }

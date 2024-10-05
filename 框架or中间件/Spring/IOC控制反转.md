@@ -185,6 +185,10 @@ public class Mybean implements FactoryBean<Course> {
 
 <img src="D:\Project\IT-notes\框架or中间件\spring\img\FactoryBean调用getObject流程.png" style="width:700px;height:1200px;" />
 
+**BeanFactory与FactoryBean的区别：**
+1. `BeanFactory`是最基础的`IOC`容器，提供依赖查找与依赖注入等功能，读取并加载`applicationContext.xml`配置文件中的定义
+2. `FactoryBean`与普通`Bean`同级，但属于一种特殊的`Bean`，用于产生其他`Bean`实例。**一个Bean实现了FactoryBean接口后，通过BeanFactory获取该FactoryBean（BeanFactory.getBean），实际上是调用了FactoryBean中的getObject方法**
+3. 调用`BeanFactory.getBean("&实现了FactoryBean的实体类")`则可以获取该`FactoryBean`
 ## 6. Bean作用域
 Bean作用域：在IOC容器中决定bean对象是**单实例singleton**还是**多实例prototype**，在`applicationContext.getBean`的返回值会存在返回同一个对象或者多个同类型的不同对象，Spring容器中默认bean为单实例
 
@@ -197,6 +201,14 @@ Bean作用域：在IOC容器中决定bean对象是**单实例singleton**还是**
 ```
 
 scope还可以填request、session
+
+| 作用域 | 描述 |
+| ----- | ----- |
+| singleton | 在spring IoC容器仅存在一个Bean实例，Bean以单例方式存在，bean作用域范围的默认值 |
+| prototype | 每次从容器中调用Bean时，都返回一个新的实例，即每次调用getBean()时，相当于执行newXxxBean() |
+| request | 每次HTTP请求都会创建一个新的Bean，该作用域仅适用于web的Spring WebApplicationContext环境 |
+| session | 同一个HTTP Session共享一个Bean，不同Session使用不同的Bean。该作用域仅适用于web的Spring WebApplicationContext环境 |
+| application | 限定一个Bean的作用域为`ServletContext`的生命周期。该作用域仅适用于web的Spring WebApplicationContext环境 |
 
 ## 7. Bean生命周期
 1. 通过构造器创建bean实例

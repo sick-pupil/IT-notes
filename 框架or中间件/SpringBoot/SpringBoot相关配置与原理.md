@@ -302,11 +302,11 @@ spring:
 
 ## 6. 配置文件、配置加载、自动配置
 Spring Boot项目中可以存在多个`application.properties`或`apllication.yml`，Spring Boot启动时会扫描以下 5 个位置的`application.properties`或`apllication.yml`文件，并将它们作为Spring boot的默认配置文件：
-1. `file：.\/config\/\*\/`
-2. `file：.\/config\/`
-3. `file：.\/`
-4. `classpath：\/config\/`
-5. `classpath：\/`
+1. `file：./config/*/`
+2. `file：./config/`
+3. `file：./`
+4. `classpath：/config/`
+5. `classpath：/`
 
 以上所有位置的配置文件都会被加载，且它们优先级依次降低，序号越小优先级越高。其次，位于相同位置的 `application.properties` 的优先级高于 `application.yml`
 
@@ -1005,7 +1005,7 @@ public class DefaultErrorAttributes implements ErrorAttributes, HandlerException
 1. @ExceptionHandler
 2. @ControllerAdvice+@ExceptionHandler
 3. 注册SimpleMappingExceptionResolver
-4. 自定义HandlerExceptinResolver接口实现类
+4. 自定义HandlerExceptionResolver接口实现类
 
 ### 9. 注册原生web-bean
 1. @WebServlet
