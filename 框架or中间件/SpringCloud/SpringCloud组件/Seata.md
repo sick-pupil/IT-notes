@@ -15,6 +15,7 @@
 	- `RM`：`Resource Manager`，资源管理器，是资源的管理者（这里可以将其理解为各服务使用的数据库）。它负责管理分支事务上的资源，向`TC`注册分支事务，汇报分支事务状态，驱动分支事务的提交或回滚
 
 <img src="D:\Project\IT-notes\框架or中间件\SpringCloud\img\Seata工作流程.png" style="width:700px;height:500px;" />
+
 `Seata`的整体工作流程如下：
 1. `TM`向`TC`申请开启一个全局事务，全局事务创建成功后，`TC`会针对这个全局事务生成一个全局唯一的`XID`
 2. `XID`通过服务的调用链传递到其他服务

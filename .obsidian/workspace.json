@@ -4,11 +4,35 @@
     "type": "split",
     "children": [
       {
-        "id": "ee21957c7a051868",
+        "id": "81ab0c7eececf3a2",
         "type": "tabs",
         "children": [
           {
-            "id": "6f25523a1b0fdbb0",
+            "id": "2063fedda98ab76a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "框架or中间件/ElasticSearch/ES概念与应用.md",
+                "mode": "preview",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "ac996a70b801d179",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+                "mode": "preview",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "73f7519f9df8d015",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -19,7 +43,8 @@
               }
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -69,8 +94,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 292.5,
-    "collapsed": true
+    "width": 292.5
   },
   "right": {
     "id": "b3a3b99f186fa725",
@@ -147,8 +171,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 311.5,
-    "collapsed": true
+    "width": 311.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -160,54 +183,53 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "9e964c24066f1113",
+  "active": "73f7519f9df8d015",
   "lastOpenFiles": [
-    "框架or中间件/SpringCloud/img/Ribbon属性配置与类配置优先级.png",
-    "框架or中间件/SpringCloud/img/Ribbon不同服务不同配置6.png",
-    "框架or中间件/SpringCloud/img/Ribbon不同服务不同配置5.png",
-    "框架or中间件/SpringCloud/img/Ribbon不同服务不同配置4.png",
-    "框架or中间件/SpringCloud/img/Ribbon不同服务不同配置3.png",
-    "框架or中间件/SpringCloud/img/Ribbon不同服务不同配置2.png",
-    "框架or中间件/SpringCloud/img/Ribbon不同服务不同配置1.png",
-    "框架or中间件/SpringCloud/img/Nacos2.x探活机制.png",
-    "框架or中间件/SpringCloud/img/Nacos1.x配置中心长轮询机制.png",
-    "框架or中间件/SpringCloud/img/Nacos1.x配置中心长轮询机制.jpg",
-    "框架or中间件/SpringCloud/img/Nacos1.x配置中心长轮询机制.jpg.crdownload",
-    "框架or中间件/SpringCloud/img/Nacos-Distro协议.png",
-    "框架or中间件/SpringCloud/SpringCloud基本概念与配置.md",
-    "框架or中间件/SpringCloud/CloudAlibaba八股.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Nacos.md",
+    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Seata.md",
+    "框架or中间件/SpringCloud/CloudAlibaba八股.md",
+    "框架or中间件/SpringCloud/img/Seata全局事务AT模式的执行流程.png",
+    "框架or中间件/SpringCloud/img/Seata全局事务ID在Feign中的传递.png",
+    "框架or中间件/SpringCloud/img/2PC流程.png",
     "框架or中间件/SpringCloud/SpringCloud组件/Gateway.md",
+    "框架or中间件/SpringCloud/img/熔断开启与关闭过程.png",
+    "框架or中间件/SpringCloud/img/令牌桶算法.png",
+    "框架or中间件/SpringCloud/img/漏桶限流算法.png",
+    "框架or中间件/SpringCloud/img/滑动窗口限流算法.png",
     "框架or中间件/SpringCloud/SpringCloud组件/Sentinel.md",
+    "框架or中间件/ElasticSearch/ES概念与应用.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/OpenFeign.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Nacos.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Ribbon.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Resilience4J.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/OpenFeign.md",
-    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
-    "Java/IO/BIO&NIO&AIO.md",
-    "框架or中间件/Dubbo/Dubbo原理.md",
-    "框架or中间件/Dubbo/Dubbo相关配置.md",
-    "Plan.md",
-    "框架or中间件/ZooKeeper/Zookeeper相关原理与配置.md",
-    "框架or中间件/ElasticSearch/ES概念与应用.md",
-    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
-    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
-    "框架or中间件/SpringMVC/SpringMVC配置与原理.md",
-    "框架or中间件/SpringMVC/SpringMVC相关概念.md",
-    "框架or中间件/Spring/数据与事务.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Eureka.md",
+    "框架or中间件/SpringCloud/SpringCloud基本概念与配置.md",
     "框架or中间件/Spring/IOC控制反转.md",
+    "框架or中间件/SpringCloud/img/整体微服务架构.png",
+    "框架or中间件/SpringCloud/img/Ribbon属性配置与类配置优先级.png",
+    "框架or中间件/SpringCloud/img/Ribbon不同服务不同配置6.png",
     "框架or中间件/Spring/AOP面向切面.md",
-    "框架or中间件/Spring/JdbcTemplate.md",
+    "框架or中间件/Spring/数据与事务.md",
     "框架or中间件/Redis/Redis进阶.md",
+    "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
+    "框架or中间件/Redis/Redis基础.md",
     "框架or中间件/Redis/img/Write behind.png.crdownload",
     "框架or中间件/Redis/img/Write-Through.png.crdownload",
     "框架or中间件/Redis/img/Read-Through.png.crdownload",
     "框架or中间件/Redis/img/旁路缓存模式.png.crdownload",
+    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
+    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
+    "框架or中间件/SpringMVC/SpringMVC相关概念.md",
+    "框架or中间件/SpringMVC/SpringMVC配置与原理.md",
+    "框架or中间件/Spring/JdbcTemplate.md",
+    "框架or中间件/Dubbo/Dubbo相关配置.md",
+    "框架or中间件/Dubbo/Dubbo原理.md",
     "框架or中间件/ElasticSearch/img/filebeat原理.png.crdownload",
     "框架or中间件/ElasticSearch/img/分词分析器大致原理.png.crdownload",
     "框架or中间件/ElasticSearch/img/倒排索引原理2.png.crdownload",
     "框架or中间件/ElasticSearch/img/倒排索引原理1.png.crdownload",
     "框架or中间件/ElasticSearch/img/底层写入机制.png.crdownload",
+    "框架or中间件/ElasticSearch/img/读取原理.png.crdownload",
     "未命名.canvas"
   ]
 }

@@ -131,8 +131,108 @@ public interface RequestInterceptor {
 }
 ```
 ## 3. Sentinel
+### 1. Sentinel中使用的限流算法
+#### 1. 计数器滑动窗口算法
+设定1秒内允许通过的请求是200个，但是在这里我们需要把1秒的时间分成多格，假设分成5格（格数越多，流量过渡越平滑），每格窗口的时间大小是200毫秒，每过200毫秒，就将窗口向前移动一格
 
+在当前时间快（200毫秒）允许通过的请求数应该是70而不是200（只要超过70就会被限流），因为我们最终统计请求数时是需要把当前窗口的值进行累加，进而得到当前请求数来判断是不是需要进行限流
+
+<img src="D:\Project\IT-notes\框架or中间件\SpringCloud\img\滑动窗口限流算法.png" style="width:700px;height:350px;" />
+#### 2. 漏桶算法
+漏桶算法以一个常量限制了出口流量速率，因此漏桶算法可以平滑突发的流量。其中漏桶作为流量容
+器我们可以看做一个FIFO的队列，当入口流量速率大于出口流量速率时，因为流量容器是有限的，
+当超出流量容器大小时，超出的流量会被丢弃
+
+<img src="D:\Project\IT-notes\框架or中间件\SpringCloud\img\漏桶限流算法.png" style="width:700px;height:400px;" />
+
+- 漏桶具有固定容量，出口流量速率是固定常量（流出请求）
+- 入口流量可以以任意速率流入到漏桶中（流入请求）
+- 如果入口流量超出了桶的容量，则流入流量会溢出（新请求被拒绝）
+- 因为漏桶算法限制了流出速率是一个固定常量值，所以漏桶算法不支持出现突发流出流量
+#### 3. 令牌桶算法
+最开始，令牌桶是空的，我们以恒定速率往令牌桶里加入令牌，令牌桶被装满时，多余的令牌会被丢弃。当请求到来时，会先尝试从令牌桶获取令牌（相当于从令牌桶移除一个令牌），获取成功则请求被放行，获取失败则阻塞活拒绝请求
+
+<img src="D:\Project\IT-notes\框架or中间件\SpringCloud\img\令牌桶算法.png" style="width:700px;height:500px;" />
+
+- 最多可以存发b个令牌。如果令牌到达时令牌桶已经满了，那么这个令牌会被丢弃
+- 每当一个请求过来时，就会尝试从桶里移除一个令牌；如果没有令牌的话，请求无法通过
+- 令牌桶算法限制的是平均流量，因此其允许突发流量（只要令牌桶中有令牌，就不会被限流）
+### 2. Sentinel服务熔断过程
+- 熔断关闭状态：服务没有故障时，熔断器所处的状态，对调用方的调用不做任何限制
+- 熔断开启状态：后续对该服务接口的调用不再经过网络，直接执行本地的`fallback`方法
+- 半熔断状态：尝试恢复服务调用，允许有限的流量调用该服务，并监控调用成功率。如果成功率达到预期，则说明服务已恢复，进入熔断关闭状态；如果成功率仍旧很低，则重新进入熔断关闭状态
+
+<img src="D:\Project\IT-notes\框架or中间件\SpringCloud\img\熔断开启与关闭过程.png" style="width:700px;height:250px;" />
 ## 4. Gateway
+### 1. Gateway中实现路由的平滑迁移
+使用`Weight`路由的断言工厂进行服务权重的配置，并将配置放到`Nacos`配置中心进行动态迁移
+包含两个参数，`group`与`weight`，可以针对同一个路由的目的地址，设置多个`routes`但为同一个`group`，并给每个`routes`设置不同的权重
 
+```yml
+spring:
+	cloud:
+		gateway:
+			routes:
+			- id: weight_high
+				uri: https://weighthigh.org
+				predicates:
+				- Weight=group1, 8
+			- id: weight_low
+				uri: https://weightlow.org
+				predicates:
+				- Weight=group1, 2
+```
 ## 5. Seata
+### 1. Seata支持的事务模式
+`Seata`是一款开源的分布式事务解决方案，致力于提供高性能和简单易用的分布式事务服务。
+`Seata`将为用户提供了`AT`、`TCC`、`SAGA`和`XA`事务模式
+都为`2PC`两阶段提交
+1. `AT`：提供无侵入自动补偿的事务模式，基于本地能支持事务的关系型数据库，然后
+`java`代码可以通过`JDBC`访问数据库， 这里的无侵入：我们只需要加上对应的注解就可以开启全
+局事务
 
+
+2. `XA`：支持已实现`XA`接口的数据库的`XA`模式，需要数据库实现对应的XA模式的接
+口，一般像`mysql oracle`都实现了`XA`
+
+3. `TCC`：`TCC`则可以理解为在应用层面的`2PC`，是需要我们编写业务逻辑来实现
+
+4. `SAGA`：为长事务提供有效的解决方案
+
+### 2. 2PC流程
+<img src="D:\Project\IT-notes\框架or中间件\SpringCloud\img\2PC流程.png" style="width:700px;height:400px;" />
+
+- **单点问题**：事务管理器在整个流程中扮演的角色很关键，如果其宕机，比如在第一阶段已经完
+成，在第二阶段正准备提交的时候事务管理器宕机，资源管理器就会一直阻塞，导致数据库无法
+使用
+- **同步阻塞**：在准备就绪之后，资源管理器中的资源一直处于阻塞，直到提交完成，释放资源
+- **数据不一致**：两阶段提交协议虽然为分布式数据强一致性所设计，但仍然存在数据不一致性的可
+能，比如在第二阶段中，假设协调者发出了事务`commit`的通知，但是因为网络问题该通知仅被
+一部分参与者所收到并执行了`commit`操作，其余的参与者则因为没有收到通知一直处于阻塞状
+态，这时候就产生了数据的不一致性
+
+### 3. Seata中的xid通过Feign进行全局传递
+<img src="D:\Project\IT-notes\框架or中间件\SpringCloud\img\Seata全局事务ID在Feign中的传递.png" style="width:700px;height:500px;" />
+### 5. Seata的AT模式两阶段提交过程
+1. 一阶段：开启全局事务、注册分支事务、储存全局锁、业务数据和回滚日志`undoLog`行提交
+2. 二阶段：事务协调者根据所有分支的情况，决定本次全局事务是`Commit`还是`Rollback`（二阶段是完全异步删除undolog日志，全局事务、分支事务、储存的全局锁）
+
+<img src="D:\Project\IT-notes\框架or中间件\SpringCloud\img\Seata全局事务AT模式的执行流程.png" style="width:700px;height:500px;" />
+
+1. 开启全局事务
+	1. 向`TC`发起`GlobalBeginRequest`请求
+	2. 生成全局事务信息`GlobalSession`存储到`global`表中
+	3. 返回全局事务`xid`，绑定到`RootContext`
+2. 开启分支事务
+	1. 执行业务逻辑
+	2. 获取前置镜像`beforeImage`，即`tableRecord`
+	3. 执行业务`SQL`
+	4. 获取后置镜像`afterImage`，即`tableRecord`
+	5. 生成`undolog`并缓存
+	6. 向`TC`注册分支事务，向`TC`发起`BranchRegisterRequest`请求，存储分支事务`BranchSession`到`branch`表中，并存储行锁到`lock`表中，返回`branchId`
+	7. 保存`undolog`到`undo_log`表中
+	8. 本地事务提交
+3. 提交全局事务
+	1. 向`TC`发起`GlobalCommitRequest`请求
+	2. 更新`global`表中的全局事务记录状态（`global、branch、undo、lock`表存在定时任务定期删除完成的全局事务记录）
+	3. 返回`GlobalStatus`
