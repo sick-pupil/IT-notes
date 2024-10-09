@@ -8,19 +8,19 @@
         "type": "tabs",
         "children": [
           {
-            "id": "2063fedda98ab76a",
+            "id": "7562532542f04cc7",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "框架or中间件/ElasticSearch/ES概念与应用.md",
+                "file": "框架or中间件/SpringCloud/CloudAlibaba八股.md",
                 "mode": "preview",
                 "source": false
               }
             }
           },
           {
-            "id": "ac996a70b801d179",
+            "id": "f03a431d1a0e1a3c",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -30,21 +30,9 @@
                 "source": false
               }
             }
-          },
-          {
-            "id": "73f7519f9df8d015",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "框架or中间件/SpringCloud/CloudAlibaba八股.md",
-                "mode": "source",
-                "source": false
-              }
-            }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -121,7 +109,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/SpringCloud/CloudAlibaba八股.md",
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -138,7 +126,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/SpringCloud/CloudAlibaba八股.md",
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/SpringCloud/CloudAlibaba八股.md"
+                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md"
               }
             }
           },
@@ -183,11 +171,22 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "73f7519f9df8d015",
+  "active": "f03a431d1a0e1a3c",
   "lastOpenFiles": [
-    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Seata.md",
+    "框架or中间件/ElasticSearch/ES概念与应用.md",
+    "框架or中间件/ElasticSearch/img/搜索流程-Fetch阶段.png",
+    "框架or中间件/ElasticSearch/img/搜索流程-Fetch阶段.png.crdownload",
+    "框架or中间件/ElasticSearch/img/搜索流程-Query阶段.png",
+    "框架or中间件/ElasticSearch/img/搜索流程-Query阶段.png.crdownload",
     "框架or中间件/SpringCloud/CloudAlibaba八股.md",
+    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
+    "数据结构/查找.md",
+    "数据结构/串.md",
+    "数据结构/图.md",
+    "数据结构/栈 队列.md",
+    "框架or中间件/SpringCloud/SpringCloud基本概念与配置.md",
+    "框架or中间件/CDC/Canal.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Seata.md",
     "框架or中间件/SpringCloud/img/Seata全局事务AT模式的执行流程.png",
     "框架or中间件/SpringCloud/img/Seata全局事务ID在Feign中的传递.png",
     "框架or中间件/SpringCloud/img/2PC流程.png",
@@ -197,17 +196,13 @@
     "框架or中间件/SpringCloud/img/漏桶限流算法.png",
     "框架or中间件/SpringCloud/img/滑动窗口限流算法.png",
     "框架or中间件/SpringCloud/SpringCloud组件/Sentinel.md",
-    "框架or中间件/ElasticSearch/ES概念与应用.md",
     "框架or中间件/SpringCloud/SpringCloud组件/OpenFeign.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Nacos.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Ribbon.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Resilience4J.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Eureka.md",
-    "框架or中间件/SpringCloud/SpringCloud基本概念与配置.md",
     "框架or中间件/Spring/IOC控制反转.md",
     "框架or中间件/SpringCloud/img/整体微服务架构.png",
-    "框架or中间件/SpringCloud/img/Ribbon属性配置与类配置优先级.png",
-    "框架or中间件/SpringCloud/img/Ribbon不同服务不同配置6.png",
     "框架or中间件/Spring/AOP面向切面.md",
     "框架or中间件/Spring/数据与事务.md",
     "框架or中间件/Redis/Redis进阶.md",
@@ -219,17 +214,10 @@
     "框架or中间件/Redis/img/旁路缓存模式.png.crdownload",
     "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
     "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
-    "框架or中间件/SpringMVC/SpringMVC相关概念.md",
-    "框架or中间件/SpringMVC/SpringMVC配置与原理.md",
-    "框架or中间件/Spring/JdbcTemplate.md",
-    "框架or中间件/Dubbo/Dubbo相关配置.md",
-    "框架or中间件/Dubbo/Dubbo原理.md",
     "框架or中间件/ElasticSearch/img/filebeat原理.png.crdownload",
     "框架or中间件/ElasticSearch/img/分词分析器大致原理.png.crdownload",
     "框架or中间件/ElasticSearch/img/倒排索引原理2.png.crdownload",
     "框架or中间件/ElasticSearch/img/倒排索引原理1.png.crdownload",
-    "框架or中间件/ElasticSearch/img/底层写入机制.png.crdownload",
-    "框架or中间件/ElasticSearch/img/读取原理.png.crdownload",
     "未命名.canvas"
   ]
 }

@@ -1084,7 +1084,39 @@ PUT my_index
 | ik_smart                                                                                                     | ik分词器中的简单分词器，支持自定义字典，远程字典                                                                     | 学如逆水行舟，不进则退                                              | \[学如逆水行舟,不进则退\]                                                          |
 | ik_max_word                                                                                                  | ik_分词器的全量分词器，支持自定义字典，远程字典                                                                     | 学如逆水行舟，不进则退                                              | \[学如逆水行舟,学如逆水,逆水行舟,逆水,行舟,不进则退,不进,则,退\]                                   |
 ## 12. 锁
+若`http-2`向`ES`提交更新数据时，`ES`会判断提交过来的版本号与当前`document`版本号，`document`版本号单调递增，如果提交过来的版本号比`document`版本号小，则说明是过期数据，更新请求将提示错误
 
+模拟两个线程修改同一条document数据
+```json
+{
+  "_index": "music",
+  "_type": "children",
+  "_id": "2",
+  "_version": 2,
+  "found": true,
+  "_source": {
+    "name": "wake me, shark me",
+    "content": "don't let me sleep too late, gonna get up brightly early in the morning",
+    "language": "english",
+    "length": "55"
+  }
+}
+```
+
+`ES`允许不使用内置的`version`进行版本控制，可以自定义使用外部的`version`，例如常见的使用`Elasticsearch`做数据查询加速的经典方案，关系型数据库作为主数据库，然后使用`Elasticsearch`做搜索数据，主数据会同步数据到`Elasticsearch`中，而主数据库并发控制，本身就是使用的乐观锁机制，有自己的一套`version`生成机制，数据同步到`ES`那里时，直接使用更方便
+
+```
+POST /music/children/2?version=2&version_type=external
+{
+ "doc": {
+   "length": 56
+ }
+}
+```
+
+在`Elasticsearch`内部，每当`primary shard`收到新的数据时，都需要向`replica shard`进行数据同步，这种同步请求特别多，并且是异步的。如果同一个`document`进行了多次修改，`Shard`同步的请求是无序的，可能会出现"后发先至"的情况，如果没有任何的并发控制机制，那结果将无法相像
+
+`Elasticsearch`内部在更新`document`时，会比较一下`version`，如果请求的`version`与`document`的`version`相等，就做更新，如果document的version已经大于请求的`version`，说明此数据已经被后到的线程更新过了，此时会丢弃当前的请求
 ## 13. Kibana
 **docker部署**
 ```yml
@@ -1754,3 +1786,48 @@ public interface DocumentMapper extends BaseEsMapper<Document> {
 }
 ```
 ## 18. MySQL同步ES
+## 19. 八股
+### 1. 为什么要使用ElasticSearch
+系统中的数据，随着业务的发展，时间的推移，将会非常多，而业务中往往采用模糊查询进行数据的搜索，而模糊查询会导致查询引擎放弃索引，导致系统查询数据时都是全表扫描，在百万级别数据库中，查询效率是非常低下的，而我们使用`es`做一个全文索引，将经常查询的系统功能的某些字段，比如说电商系统的商品表中商品名、描述、价格还有id这些字段放入`es`索引库中
+### 2. ElasticSearch的master选举流程
+1. `ElasticSearch`的选主是`ZenDiscovery`模块负责的，主要包含`Ping`（节点之间通过这个`RPC`来发现彼此）和`Unicast`（单播模块包含一个主机列表已控制哪些节点需要`ping`通）
+2. 对所有可以成为`master`的节点（`node.master: true`）根据`nodeId`字典排序，每次选举时每个节点把自己所知道节点进行一次排序，然后选出第一个节点暂定为`master`节点
+3. 如果对某个节点投票数达到一定的值（可以成为`master`节点数`n/2+1`）并且该节点自己也选举自己，则这个节点为`master`节点。否则重新选举
+4. `master`节点职责主要包括集群、节点和索引的管理，不负责文档级别的管理
+### 3. 脑裂问题
+造成原因：
+1. 网络问题：集群间的网络延迟导致一些节点访问不到`master`，认为`master`挂掉了从而选举出新的`master`，并对`master`上的分片和副本标红，分配新的主分片
+2. 节点负载：主节点的角色既为`master`又为`data`，访问量较大时可能会导致`ES`停止响应造成大面积延迟，此时其他节点得不到主节点的响应认为主节点挂掉了，会重新选取主节点
+3. 内存回收：`data`节点上的ES进程占用的内存较大，引发`JVM`的大规模内存回收，造成`ES`进程失去响应
+
+解决方案：
+1. 增加超时时间，减少误判：增加节点状态的响应时间`discovery.zen.ping_timeout`，如果`master`在该响应时间的范围内没有做出响应应答，则判断节点挂掉
+2. 增加选举触发的节点数量：`discovery.zen.minimum_master_nodes: 1`，该参数是用于控制选举行为发生的最小集群主节点数量。当备选主节点的个数大于等于该参数的值，且备选主节点中有该参数个节点认为主节点挂了，进行选举
+3. 将`master`节点从`data`节点中分离出来：主节点`node.master: true node.data: false`；从节点`node.master: false node.data: true`
+### 4. 索引文档的流程（写流程）
+<img src="D:\Project\IT-notes\框架or中间件\ElasticSearch\img\底层写入机制.png" style="width:700px;height:500px;" />
+
+### 5. 更新和删除文档过程
+- 删除和更新都是写操作，但是`es`中的文档不可变，因此不能被删除或者改动已展示其变更
+- 磁盘上的每个`segment`都有一个相应的`.del`文件。当删除请求发送后，文档并没有真的被删除，而是在`.del`文件中被标记为删除。该文档依然能匹配查询，但是会在结果中被过滤掉。当段合并时，在`.del`文件中被标记为删除的文档不会被写入新`segment`
+- 在新的文档被创建时，会为该文档指定一个版本号，当执行更新时，旧版本的文档`.del`文件会被标记为删除，新版本文档被索引到一个新`segment`。旧版本文档依然能匹配查询，但在结果中会被过滤
+### 6. 搜索流程
+搜索流程原理即为：`query then fetch`
+
+<img src="D:\Project\IT-notes\框架or中间件\ElasticSearch\img\搜索流程-Query阶段.png" style="width:700px;height:400px;" />
+
+1. 客户端发送请求到任意一个`coordinate node`，构建一个优先级队列，长度已请求的`from+size`为准
+2. `coordinate node`对请求进行路由转发到`data node`，随后针对主从分片进行负载均衡读
+3. 每个分片本地搜索后，构建一个本地的优先级队列，大小为`from+size`
+4. 每个分片将自己的优先级队列返回给协调节点，合并排序进入协调节点的优先级队列
+
+<img src="D:\Project\IT-notes\框架or中间件\ElasticSearch\img\搜索流程-Fetch阶段.png" style="width:700px;height:400px;" />
+
+1. `coordinate node`协调节点获取`query`阶段得到的优先级队列，其实是包含的都是文档`id`，结合文档`id`再向各分片发送查询请求
+2. 各个分片将文档返回给协调节点，重新排序
+3. 协调节点合并结果返回给客户端
+### 7. 保持读写一致性
+- 可以通过版本号使用乐观并发控制，以确保新版本不会被旧版本覆盖，由应用层来处理具体的冲突
+- 另外对于写操作，一致性级别支持`quorum`（一半以上写入成功）/`one`（主分片写入成功）/`all`（主分片副本分片都写入成功），默认为`quorum`，即只有当大多数分片可用时才允许写操作。但即使大多数可用，也可能存在因为网络等原因导致写入副本失败，这样该副本被认为故障，分片将会在一个不同的节点上重建
+- 对于读操作，可以设置`replication`为`sync`(默认)，这使得操作在主分片和副本分片都完成后才会返回；如果设置`replication`为`async`时，也可以通过设置搜索请求参数`_preference`为`primary`来查询主分片，确保文档是最新版本
+### 8. 字典树
