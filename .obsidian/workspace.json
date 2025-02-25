@@ -4,35 +4,20 @@
     "type": "split",
     "children": [
       {
-        "id": "81ab0c7eececf3a2",
+        "id": "ba123611b38d028e",
         "type": "tabs",
         "children": [
           {
-            "id": "7562532542f04cc7",
+            "id": "59b0d1b4f5a2929c",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "框架or中间件/SpringCloud/CloudAlibaba八股.md",
-                "mode": "preview",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "f03a431d1a0e1a3c",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
-                "mode": "preview",
-                "source": false
-              }
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "新标签页"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -51,8 +36,11 @@
             "state": {
               "type": "file-explorer",
               "state": {
-                "sortOrder": "alphabetical"
-              }
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
             }
           },
           {
@@ -67,7 +55,9 @@
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical"
-              }
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
             }
           },
           {
@@ -75,7 +65,9 @@
             "type": "leaf",
             "state": {
               "type": "bookmarks",
-              "state": {}
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
             }
           }
         ]
@@ -99,8 +91,12 @@
               "type": "tag",
               "state": {
                 "sortOrder": "frequency",
-                "useHierarchy": true
-              }
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
             }
           },
           {
@@ -109,7 +105,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -117,7 +112,9 @@
                 "searchQuery": "",
                 "backlinkCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-coming-in",
+              "title": "反向链接"
             }
           },
           {
@@ -126,10 +123,11 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-going-out",
+              "title": "出链"
             }
           },
           {
@@ -138,8 +136,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "框架or中间件/MQ/Kafka/Kafka概念与应用.md"
-              }
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "大纲"
             }
           },
           {
@@ -151,7 +153,9 @@
                 "sortOrder": "frequency",
                 "showSearch": false,
                 "searchQuery": ""
-              }
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
             }
           }
         ],
@@ -171,15 +175,16 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "f03a431d1a0e1a3c",
+  "active": "59b0d1b4f5a2929c",
   "lastOpenFiles": [
+    "Vue3/Vue2.md",
+    "框架or中间件/SpringCloud/CloudAlibaba八股.md",
+    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
     "框架or中间件/ElasticSearch/ES概念与应用.md",
     "框架or中间件/ElasticSearch/img/搜索流程-Fetch阶段.png",
     "框架or中间件/ElasticSearch/img/搜索流程-Fetch阶段.png.crdownload",
     "框架or中间件/ElasticSearch/img/搜索流程-Query阶段.png",
     "框架or中间件/ElasticSearch/img/搜索流程-Query阶段.png.crdownload",
-    "框架or中间件/SpringCloud/CloudAlibaba八股.md",
-    "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
     "数据结构/查找.md",
     "数据结构/串.md",
     "数据结构/图.md",
