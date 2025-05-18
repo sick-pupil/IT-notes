@@ -4,17 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "ba123611b38d028e",
+        "id": "07574e7bfb16dfeb",
         "type": "tabs",
         "children": [
           {
-            "id": "59b0d1b4f5a2929c",
+            "id": "6fe0d08d70f168ab",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "框架or中间件/Mybatis/Mybatis-Plus.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "新标签页"
+              "title": "Mybatis-Plus"
             }
           }
         ]
@@ -49,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "druid",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -136,12 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "框架or中间件/Mybatis/Mybatis-Plus.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "大纲"
+              "title": "Mybatis-Plus 的大纲"
             }
           },
           {
@@ -163,7 +168,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 311.5
+    "width": 311.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -175,8 +181,20 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "59b0d1b4f5a2929c",
+  "active": "9e964c24066f1113",
   "lastOpenFiles": [
+    "框架or中间件/Mybatis/Mybatis相关配置.md",
+    "框架or中间件/Redis/Redis基础.md",
+    "框架or中间件/Redis/Redis进阶.md",
+    "框架or中间件/Mybatis/Mybatis-Plus.md",
+    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
+    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
+    "框架or中间件/SpringCloud/SpringCloud组件/Nacos.md",
+    "框架or中间件/SpringCloud/SpringCloud基本概念与配置.md",
+    "技术要点/多数据源切换.md",
+    "技术要点/Hutool.md",
+    "技术要点/Apache-Commons.md",
+    "技术要点/EasyExcel.md",
     "Vue3/Vue2.md",
     "框架or中间件/SpringCloud/CloudAlibaba八股.md",
     "框架or中间件/MQ/Kafka/Kafka概念与应用.md",
@@ -189,7 +207,6 @@
     "数据结构/串.md",
     "数据结构/图.md",
     "数据结构/栈 队列.md",
-    "框架or中间件/SpringCloud/SpringCloud基本概念与配置.md",
     "框架or中间件/CDC/Canal.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Seata.md",
     "框架or中间件/SpringCloud/img/Seata全局事务AT模式的执行流程.png",
@@ -202,23 +219,12 @@
     "框架or中间件/SpringCloud/img/滑动窗口限流算法.png",
     "框架or中间件/SpringCloud/SpringCloud组件/Sentinel.md",
     "框架or中间件/SpringCloud/SpringCloud组件/OpenFeign.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Nacos.md",
     "框架or中间件/SpringCloud/SpringCloud组件/Ribbon.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Resilience4J.md",
-    "框架or中间件/SpringCloud/SpringCloud组件/Eureka.md",
-    "框架or中间件/Spring/IOC控制反转.md",
     "框架or中间件/SpringCloud/img/整体微服务架构.png",
-    "框架or中间件/Spring/AOP面向切面.md",
-    "框架or中间件/Spring/数据与事务.md",
-    "框架or中间件/Redis/Redis进阶.md",
-    "框架or中间件/ShardingSphere/ShardingSphere-Proxy/ShardingProxy概念与应用.md",
-    "框架or中间件/Redis/Redis基础.md",
     "框架or中间件/Redis/img/Write behind.png.crdownload",
     "框架or中间件/Redis/img/Write-Through.png.crdownload",
     "框架or中间件/Redis/img/Read-Through.png.crdownload",
     "框架or中间件/Redis/img/旁路缓存模式.png.crdownload",
-    "框架or中间件/SpringBoot/SpringBoot相关配置与原理.md",
-    "框架or中间件/SpringBoot/SpringBoot的常用application.yml配置.md",
     "框架or中间件/ElasticSearch/img/filebeat原理.png.crdownload",
     "框架or中间件/ElasticSearch/img/分词分析器大致原理.png.crdownload",
     "框架or中间件/ElasticSearch/img/倒排索引原理2.png.crdownload",
